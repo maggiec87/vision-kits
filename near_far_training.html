@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>移近推远记录</title>
+    <style>
+        :root {
+            --primary-color: #2c5282; /* 深蓝 */
+            --secondary-color: #4a5568; /* 灰 */
+            --background-color: #f7fafc;
+            --card-bg-color: #ffffff;
+            --border-color: #e2e8f0;
+            --success-color: #38a169;
+            --danger-color: #e53e3e;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--secondary-color);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--card-bg-color);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        h1, h2 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        /* --- 新增：说明区域样式 --- */
+        .explanation-details {
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 25px;
+            background-color: #f8f9fa;
+        }
+        .explanation-summary {
+            padding: 12px 15px;
+            font-weight: 600;
+            color: var(--primary-color);
+            cursor: pointer;
+            outline: none;
+            list-style: none; /* 隐藏默认三角 */
+        }
+        .explanation-summary::-webkit-details-marker { display: none; } /* 兼容Chrome/Safari */
+        .explanation-summary:hover {
+            background-color: #eef2f7;
+        }
+        .explanation-content {
+            padding: 0 20px 20px 20px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 10px;
+        }
+        .explanation-content h3 {
+            color: var(--primary-color);
+            margin-top: 20px;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+        .explanation-content p {
+            line-height: 1.7;
+            margin: 0 0 15px 0;
+        }
+        /* --- 结束：新增样式 --- */
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        fieldset {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        legend {
+            font-weight: 600;
+            font-size: 1.1em;
+            color: var(--primary-color);
+            padding: 0 10px;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label {
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        .helper-text {
+            font-size: 0.8em;
+            color: #718096;
+            font-weight: normal;
+        }
+        .form-group input, .form-group select {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1em;
+        }
+        
+        .round-adder {
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #f7fafc;
+        }
+        .round-adder-header {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .round-adder-inputs {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+        .round-adder-inputs .form-group {
+            flex-grow: 1;
+        }
+        
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            white-space: nowrap;
+        }
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-primary:hover { background-color: #1a365d; }
+        .btn-secondary { background-color: var(--success-color); color: white; }
+        .btn-secondary:hover { background-color: #2f855a; }
+        .btn-danger { background-color: var(--danger-color); color: white; font-size: 0.8em; padding: 2px 6px; }
+
+        #rounds-list {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        #rounds-list li {
+            background-color: #edf2f7;
+            padding: 8px 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .history-section { margin-top: 40px; }
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        #export-btn { background-color: var(--success-color); }
+        #export-btn:hover { background-color: #2f855a; }
+        
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            table-layout: fixed;
+        }
+        .history-table th, .history-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+            word-wrap: break-word;
+        }
+        .history-table th { font-weight: 600; }
+        .history-table th:nth-child(6) { width: 30%; }
+        .history-table tr:last-child td { border-bottom: none; }
+        .history-table tr:hover { background-color: #f7fafc; }
+        .history-table td:last-child { text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>移近推远训练记录</h1>
+
+        <!-- --- 新增：可折叠的说明区域 --- -->
+        <details class="explanation-details">
+            <summary class="explanation-summary">什么是移近推远？（点击查看）</summary>
+            <div class="explanation-content">
+                <h3>正镜推远 (Plus Lens Push-away)</h3>
+                <p>
+                    使用反转拍的正镜片（放大镜效果），将视标卡从距离眼睛40cm的位置开始，缓慢向远处推移至60-70cm。随着距离增加，视标逐渐模糊，当视标刚刚模糊时停留片刻，尝试努力看清，若仍能看清则继续推远，直至完全模糊。此过程旨在放松睫状肌，缓解调节疲劳，模拟眼睛看远的状态。
+                </p>
+                <h3>负镜移近 (Minus Lens Pull-in)</h3>
+                <p>
+                    切换为反转拍的负镜片（缩小镜效果），将视标卡从40cm处逐渐向眼睛移近，保持视标清晰，直至距离眼睛15-20cm左右（具体距离可根据个体耐受程度调整）。这一过程通过增加调节刺激，锻炼睫状肌的力量，提升眼睛的调节幅度。
+                </p>
+                <h3>目的与原理</h3>
+                <p>
+                    通过交替进行“移近”（增强调节力）和“推远”（放松调节）的动作，模拟眼睛在看近与看远之间的调节切换，帮助改善眼睛的调节功能，增强睫状肌的灵活性和力量，从而预防或缓解近视进展，尤其适用于调节幅度不足、调节灵敏度差等问题。
+                </p>
+            </div>
+        </details>
+        <!-- --- 结束：新增区域 --- -->
+
+        <form id="record-form">
+            <fieldset>
+                <legend>训练基数</legend>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="flipper-diopter">反转拍</label>
+                        <select id="flipper-diopter">
+                            <option value="1.00">±1.00 D</option>
+                            <option value="1.50">±1.50 D</option>
+                            <option value="2.00" selected>±2.00 D</option>
+                            <option value="2.50">±2.50 D</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="acuity-chart">视标卡</label>
+                        <select id="acuity-chart">
+                            <option value="20/50">20/50</option>
+                            <option value="20/40" selected>20/40</option>
+                            <option value="20/30">20/30</option>
+                            <option value="20/25">20/25</option>
+                            <option value="20/20">20/20</option>
+                        </select>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>记录</legend>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="record-date">日期</label>
+                        <input type="date" id="record-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="practice-duration">时长</label>
+                        <input type="text" id="practice-duration" placeholder="例如: 15分钟">
+                    </div>
+                     <div class="form-group">
+                        <label for="practice-reps">次数 <span class="helper-text">(一轮/次=远~近~远)</span></label>
+                        <input type="number" id="practice-reps" placeholder="例如: 10次">
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>推远距离cm</legend>
+                <div class="round-adder">
+                    <div id="round-adder-header" class="round-adder-header">第 1 轮</div>
+                    <div class="round-adder-inputs">
+                        <div class="form-group">
+                            <label for="round-far1-input">远1</label>
+                            <input type="number" id="round-far1-input" placeholder="输入推远距离">
+                        </div>
+                        <div class="form-group">
+                            <label for="round-far2-input">远2</label>
+                            <input type="number" id="round-far2-input" placeholder="输入推远距离">
+                        </div>
+                <button type="button" id="add-round-btn" class="btn btn-secondary">添加</button>
+                    </div>
+                </div>
+                <ul id="rounds-list"></ul>
+            </fieldset>
+
+            <button type="submit" class="btn btn-primary">保存</button>
+        </form>
+
+        <div class="history-section">
+            <div class="history-header">
+                <h2>历史记录</h2>
+                <button id="export-btn" class="btn">导出记录</button>
+            </div>
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>日期</th>
+                        <th>反转拍</th>
+                        <th>视标卡</th>
+                        <th>时长</th>
+                        <th>次数</th>
+                        <th>推远距离 (cm)</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="history-table-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- DOM元素获取 ---
+        const form = document.getElementById('record-form');
+        const recordDateInput = document.getElementById('record-date');
+        const addRoundBtn = document.getElementById('add-round-btn');
+        const roundFar1Input = document.getElementById('round-far1-input');
+        const roundFar2Input = document.getElementById('round-far2-input');
+        const roundsList = document.getElementById('rounds-list');
+        const roundAdderHeader = document.getElementById('round-adder-header');
+        const historyTableBody = document.getElementById('history-table-body');
+        const exportBtn = document.getElementById('export-btn');
+
+        // --- 状态管理 ---
+        let records = JSON.parse(localStorage.getItem('pushUpRecordsV2')) || [];
+        let currentRounds = [];
+
+        // --- 核心功能函数 ---
+
+        const renderCurrentRounds = () => {
+            roundsList.innerHTML = '';
+            currentRounds.forEach((round, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span><strong>第${round.round}轮:</strong> 远1: ${round.far1}cm, 远2: ${round.far2}cm</span>
+                    <button type="button" class="btn btn-danger" data-index="${index}">×</button>
+                `;
+                roundsList.appendChild(li);
+            });
+            roundAdderHeader.textContent = `第 ${currentRounds.length + 1} 轮`;
+        };
+
+        const renderHistory = () => {
+            historyTableBody.innerHTML = '';
+            const sortedRecords = [...records].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            sortedRecords.forEach(record => {
+                const tr = document.createElement('tr');
+                const distancesStr = record.distances
+                    .map(r => `R${r.round}(${r.far1}, ${r.far2})`)
+                    .join('; ');
+
+                tr.innerHTML = `
+                    <td>${record.date}</td>
+                    <td>±${record.diopter} D</td>
+                    <td>${record.chart}</td>
+                    <td>${record.duration || 'N/A'}</td>
+                    <td>${record.reps || 'N/A'}</td>
+                    <td>${distancesStr}</td>
+                    <td><button class="btn btn-danger delete-btn" data-id="${record.id}">删除</button></td>
+                `;
+                historyTableBody.appendChild(tr);
+            });
+        };
+
+        const saveRecords = () => {
+            localStorage.setItem('pushUpRecordsV2', JSON.stringify(records));
+        };
+
+        const addRound = () => {
+            const far1 = parseFloat(roundFar1Input.value);
+            const far2 = parseFloat(roundFar2Input.value);
+
+            if (isNaN(far1) || isNaN(far2)) {
+                alert('请输入有效的“远1”和“远2”距离数值。');
+                return;
+            }
+
+            const roundNumber = currentRounds.length + 1;
+            currentRounds.push({ round: roundNumber, far1: far1, far2: far2 });
+            
+            renderCurrentRounds();
+            roundFar1Input.value = '';
+            roundFar2Input.value = '';
+            roundFar1Input.focus();
+        };
+        
+        const handleFormSubmit = (e) => {
+            e.preventDefault();
+            if (currentRounds.length === 0) {
+                alert('请至少添加一轮的推远距离记录。');
+                return;
+            }
+            const newRecord = {
+                id: Date.now(),
+                date: recordDateInput.value,
+                diopter: document.getElementById('flipper-diopter').value,
+                chart: document.getElementById('acuity-chart').value,
+                duration: document.getElementById('practice-duration').value.trim(),
+                reps: document.getElementById('practice-reps').value,
+                distances: [...currentRounds]
+            };
+            records.push(newRecord);
+            saveRecords();
+            renderHistory();
+            form.reset();
+            currentRounds = [];
+            renderCurrentRounds();
+            recordDateInput.value = new Date().toISOString().split('T')[0];
+            alert('记录保存成功！');
+        };
+
+        const handleHistoryTableClick = (e) => {
+            if (e.target.classList.contains('delete-btn')) {
+                if (confirm('确定要删除这条记录吗？该操作不可撤销。')) {
+                    const recordId = parseInt(e.target.dataset.id, 10);
+                    records = records.filter(record => record.id !== recordId);
+                    saveRecords();
+                    renderHistory();
+                }
+            }
+        };
+        
+        const handleRoundsListClick = (e) => {
+            if (e.target.tagName === 'BUTTON') {
+                const index = parseInt(e.target.dataset.index, 10);
+                currentRounds.splice(index, 1);
+                currentRounds.forEach((round, i) => {
+                    round.round = i + 1;
+                });
+                renderCurrentRounds();
+            }
+        };
+
+        const exportToCSV = () => {
+            if (records.length === 0) {
+                alert('没有历史记录可导出。');
+                return;
+            }
+            const escapeCSV = (str) => `"${(str || '').replace(/"/g, '""')}"`;
+            let csvContent = '\uFEFF"日期","反转拍度数(D)","视标卡","练习时长","练习次数","推远距离详情"\n';
+            const sortedRecords = [...records].sort((a, b) => new Date(a.date) - new Date(b.date));
+            sortedRecords.forEach(record => {
+                const distancesStr = record.distances
+                    .map(r => `R${r.round}(${r.far1}, ${r.far2})`)
+                    .join('; ');
+                const row = [
+                    escapeCSV(record.date),
+                    escapeCSV(`±${record.diopter}`),
+                    escapeCSV(record.chart),
+                    escapeCSV(record.duration),
+                    escapeCSV(record.reps),
+                    escapeCSV(distancesStr)
+                ].join(',');
+                csvContent += row + '\n';
+            });
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `移近推远练习记录-${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+
+        // --- 事件监听器 ---
+        addRoundBtn.addEventListener('click', addRound);
+        roundFar2Input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addRound();
+            }
+        });
+        roundsList.addEventListener('click', handleRoundsListClick);
+        form.addEventListener('submit', handleFormSubmit);
+        historyTableBody.addEventListener('click', handleHistoryTableClick);
+        exportBtn.addEventListener('click', exportToCSV);
+
+        // --- 页面初始化 ---
+        recordDateInput.value = new Date().toISOString().split('T')[0];
+        renderHistory();
+        renderCurrentRounds();
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>近视防控工具中心</title>
+    <style>
+        :root {
+            --primary-color: #00796b; /* 护眼绿 */
+            --secondary-color: #4a5568; /* 灰 */
+            --background-color: #f4f5f7;
+            --card-bg-color: #ffffff;
+            --border-color: #e2e8f0;
+            --hover-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--secondary-color);
+            margin: 0;
+            padding: 20px;
+            -webkit-text-size-adjust: 100%;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            background-color: var(--card-bg-color);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 2.5em;
+        }
+        p.description {
+            font-size: 1.1em;
+            color: var(--secondary-color);
+            margin-bottom: 40px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .tool-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 25px;
+            background-color: var(--card-bg-color);
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            text-decoration: none;
+            color: var(--secondary-color);
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+            border-color: var(--primary-color);
+        }
+
+        .tool-card .icon {
+            font-size: 3em; /* Larger emoji icons */
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            line-height: 1; /* Adjust line height for emojis */
+        }
+
+        .tool-card h2 {
+            font-size: 1.5em;
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .tool-card p {
+            font-size: 0.95em;
+            color: #6b7280;
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+            p.description {
+                font-size: 1em;
+                margin-bottom: 30px;
+            }
+            .tool-grid {
+                grid-template-columns: 1fr; /* Stack cards on small screens */
+                gap: 20px;
+            }
+            .tool-card {
+                padding: 20px;
+            }
+            .tool-card .icon {
+                font-size: 2.5em;
+            }
+            .tool-card h2 {
+                font-size: 1.3em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>近视防控工具中心</h1>
+        <p class="description">
+            欢迎来到您的个人近视防控助手！这里集合了多种实用工具，帮助您全面管理和记录孩子的视力健康状况。
+            请点击下方卡片进入相应功能。
+        </p>
+
+        <div class="tool-grid">
+            <!-- 度数测算 -->
+            <a href="degree_calculator.html" class="tool-card">
+                <div class="icon">📐</div>
+                <h2>度数测算</h2>
+                <p>通过输入相关数据，快速估算近视度数，辅助了解视力发展趋势。</p>
+            </a>
+
+            <!-- 每日打卡 -->
+            <a href="daily_tracker.html" class="tool-card">
+                <div class="icon">✅</div>
+                <h2>每日打卡</h2>
+                <p>记录每日户外活动、读写习惯、视功能训练等，养成良好用眼习惯。</p>
+            </a>
+
+            <!-- 检查记录 (待开发) -->
+            <a href="check_data.html" class="tool-card">
+                <div class="icon">🏥</div>
+                <h2>检查记录</h2>
+                <p>记录眼轴、验光、视功能等专业检查数据，追踪视力变化，辅助医生诊断。</p>
+            </a>
+
+            <!-- 视训记录 (待开发) -->
+            <a href="vision_training.html" class="tool-card">
+                <div class="icon">🏋️‍♀️</div>
+                <h2>视训记录</h2>
+                <p>详细记录各项视功能训练的进度和效果，助力视力恢复和提升。</p>
+            </a>
+            
+            <!-- 您可以根据需要添加更多工具卡片 -->
+            <!--
+            <a href="#" class="tool-card">
+                <div class="icon">💡</div>
+                <h2>科普知识</h2>
+                <p>提供近视防控的最新研究和实用建议。</p>
+            </a>
+            -->
+        </div>
+    </div>
+
+</body>
+</html>

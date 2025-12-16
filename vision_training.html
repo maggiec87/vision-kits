@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视训记录 - 近视防控工具中心</title>
+    <style>
+        :root {
+            --primary-color: #00796b; /* 护眼绿 */
+            --secondary-color: #4a5568; /* 灰 */
+            --background-color: #f4f5f7;
+            --card-bg-color: #ffffff;
+            --border-color: #e2e8f0;
+            --success-color: #38a169;
+            --danger-color: #e53e3e;
+            --input-bg-color: #f8f9fa;
+            --hover-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--secondary-color);
+            margin: 0;
+            padding: 20px;
+            -webkit-text-size-adjust: 100%;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--card-bg-color);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        h1, h2 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .header-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 12px 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        .btn-primary { background-color: var(--primary-color); color: white; width: 100%; }
+        .btn-primary:hover { background-color: #005a4f; }
+        .btn-secondary { background-color: var(--secondary-color); color: white; }
+        .btn-secondary:hover { background-color: #2d3748; }
+        .btn-danger { background-color: var(--danger-color); color: white; }
+        
+        /* 工具卡片 */
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .tool-card {
+            display: flex; flex-direction: column; align-items: center; padding: 25px;
+            background-color: var(--card-bg-color); border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-decoration: none;
+            color: var(--secondary-color); transition: all 0.3s ease;
+            border: 1px solid var(--border-color); text-align: center;
+        }
+        .tool-card:hover { transform: translateY(-5px); box-shadow: var(--hover-shadow); border-color: var(--primary-color); }
+        .tool-card .icon { font-size: 2.5em; margin-bottom: 15px; color: var(--primary-color); line-height: 1; }
+        .tool-card h3 { font-size: 1.3em; color: var(--primary-color); margin: 0 0 10px 0; }
+        .tool-card p { font-size: 0.9em; color: #6b7280; margin: 0; }
+
+        /* 表单与历史记录 */
+        form { display: flex; flex-direction: column; gap: 20px; }
+        fieldset { border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; }
+        legend { font-weight: 600; font-size: 1.1em; color: var(--primary-color); padding: 0 10px; }
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        label { font-weight: 500; }
+        input[type="text"], input[type="date"], textarea {
+            padding: 10px; border: 1px solid var(--border-color); border-radius: 6px;
+            font-size: 16px; background-color: var(--input-bg-color); width: 100%; box-sizing: border-box;
+        }
+        textarea { resize: vertical; min-height: 80px; }
+        
+        .history-section { margin-top: 40px; }
+        .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+        #export-btn { background-color: var(--success-color); color: white; }
+        
+        .history-table { width: 100%; border-collapse: collapse; text-align: left; }
+        .history-table th, .history-table td { padding: 12px; border-bottom: 1px solid var(--border-color); vertical-align: top; word-wrap: break-word; }
+        .history-table th { font-weight: 600; background-color: #f8f9fa; }
+        .history-table td:last-child { text-align: center; vertical-align: middle;}
+
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .container { padding: 20px 15px; }
+            .header-nav { justify-content: center; }
+            .header-nav h1 { margin-bottom: 15px; width: 100%; }
+            .history-table { border: 0; }
+            .history-table thead { display: none; }
+            .history-table tr {
+                display: block; margin-bottom: 15px; border: 1px solid var(--border-color);
+                border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 15px;
+            }
+            .history-table td {
+                display: flex; justify-content: space-between; align-items: flex-start;
+                padding: 10px 5px; border-bottom: 1px solid #f0f0f0; text-align: right;
+            }
+            .history-table td:last-child { border-bottom: 0; align-items: center; justify-content: flex-end; }
+            .history-table td::before {
+                content: attr(data-label); font-weight: 600; color: var(--primary-color);
+                text-align: left; padding-right: 10px; white-space: nowrap; flex-shrink: 0;
+            }
+            .history-table td:last-child::before { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header-nav">
+            <h1>视训记录</h1>
+            <a href="index.html" class="btn btn-secondary">返回工具中心</a>
+        </div>
+
+        <div class="tool-grid">
+            <a href="near_far_training.html" class="tool-card">
+                <div class="icon">🎯</div>
+                <h3>移近推远</h3>
+                <p>点击进入记录移近推远训练</p>
+            </a>
+            <!-- 未来可以添加更多专用训练工具的链接 -->
+        </div>
+
+        <form id="custom-training-form">
+            <fieldset>
+                <legend>其他</legend>
+                <div class="form-group">
+                    <label for="training-date">日期</label>
+                    <input type="date" id="training-date" required>
+                </div>
+                <div class="form-group">
+                    <label for="training-name">项目</label>
+                    <input type="text" id="training-name" placeholder="例如: 聚散球, 反转拍, 红绿矢量图" required>
+                </div>
+                <div class="form-group">
+                    <label for="training-details">详情</label>
+                    <textarea id="training-details" placeholder="记录训练参数、组数、时长、感受等。例如: 15组, 每组20次, 使用±2.0D镜片"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">保存</button>
+            </fieldset>
+        </form>
+
+        <div class="history-section">
+            <div class="history-header">
+                <h2>训练历史</h2>
+                <button id="export-btn" class="btn">导出CSV</button>
+            </div>
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>日期</th>
+                        <th>项目</th>
+                        <th>详情</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="history-table-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- DOM元素获取 ---
+        const form = document.getElementById('custom-training-form');
+        const dateInput = document.getElementById('training-date');
+        const nameInput = document.getElementById('training-name');
+        const detailsInput = document.getElementById('training-details');
+        const historyTableBody = document.getElementById('history-table-body');
+        const exportBtn = document.getElementById('export-btn');
+
+        // --- 状态与配置 ---
+        let records = JSON.parse(localStorage.getItem('visionTrainingRecords')) || [];
+
+        // --- 核心功能函数 ---
+        const saveRecords = () => {
+            localStorage.setItem('visionTrainingRecords', JSON.stringify(records));
+        };
+
+        const renderHistory = () => {
+            historyTableBody.innerHTML = '';
+            const sortedRecords = [...records].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            sortedRecords.forEach(record => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td data-label="日期">${record.date}</td>
+                    <td data-label="项目">${record.name}</td>
+                    <td data-label="详情">${record.details.replace(/\n/g, '<br>') || '无'}</td>
+                    <td><button class="btn btn-danger delete-btn" data-id="${record.id}">删除</button></td>
+                `;
+                historyTableBody.appendChild(tr);
+            });
+        };
+
+        const handleFormSubmit = (e) => {
+            e.preventDefault();
+            
+            const newRecord = {
+                id: Date.now(),
+                date: dateInput.value,
+                name: nameInput.value.trim(),
+                details: detailsInput.value.trim()
+            };
+
+            records.push(newRecord);
+            saveRecords();
+            renderHistory();
+            form.reset();
+            dateInput.value = new Date().toISOString().split('T')[0];
+            alert('训练记录保存成功！');
+        };
+
+        const exportToCSV = () => {
+            if (records.length === 0) { alert('没有历史记录可导出。'); return; }
+            const escapeCSV = (str) => `"${(str || '').replace(/"/g, '""').replace(/\n/g, ' ')}"`;
+            let csvContent = '\uFEFF"日期","项目","详情"\n';
+            const sortedRecords = [...records].sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            sortedRecords.forEach(record => {
+                const row = [
+                    escapeCSV(record.date),
+                    escapeCSV(record.name),
+                    escapeCSV(record.details)
+                ].join(',');
+                csvContent += row + '\n';
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.setAttribute('href', URL.createObjectURL(blob));
+            link.setAttribute('download', `视训记录-${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+
+        // --- 事件监听器 ---
+        form.addEventListener('submit', handleFormSubmit);
+        exportBtn.addEventListener('click', exportToCSV);
+
+        historyTableBody.addEventListener('click', (e) => {
+            if (e.target.classList.contains('delete-btn')) {
+                if (confirm('确定要删除这条记录吗？该操作不可撤销。')) {
+                    const recordId = parseInt(e.target.dataset.id, 10);
+                    records = records.filter(record => record.id !== recordId);
+                    saveRecords();
+                    renderHistory();
+                }
+            }
+        });
+
+        // --- 页面初始化 ---
+        dateInput.value = new Date().toISOString().split('T')[0];
+        renderHistory();
+    });
+    </script>
+</body>
+</html>
