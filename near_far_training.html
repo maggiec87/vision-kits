@@ -20,7 +20,7 @@
             color: var(--secondary-color);
             margin: 0;
             padding: 20px;
-            -webkit-text-size-adjust: 100%; /* 防止iOS横屏时字体自动放大 */
+            -webkit-text-size-adjust: 100%;
         }
         .container {
             max-width: 800px;
@@ -78,25 +78,25 @@
         .form-group input, .form-group select {
             padding: 10px;
             border: 1px solid var(--border-color);
-        border-radius: 6px;
-            font-size: 16px; /* 优化：设置为16px可防止在iOS上输入时自动缩放 */
+            border-radius: 6px;
+            font-size: 16px;
         }
         
         .round-adder { border: 1px solid var(--border-color); padding: 15px; border-radius: 6px; background-color: #f7fafc; }
         .round-adder-header { font-weight: bold; margin-bottom: 10px; }
-        .round-adder-inputs { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; /* 优化：允许换行 */ }
+        .round-adder-inputs { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
         .round-adder-inputs .form-group { flex-grow: 1; }
         
         .btn {
-            padding: 12px 15px; /* 优化：增加垂直内边距，方便点击 */
+            padding: 12px 15px;
             border: none;
             border-radius: 6px;
-            font-size: 16px; /* 优化：统一字体大小 */
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: background-color 0.2s;
             white-space: nowrap;
-            -webkit-appearance: none; /* 优化：移除iOS默认按钮样式 */
+            -webkit-appearance: none;
         }
         .btn-primary { background-color: var(--primary-color); color: white; }
         .btn-primary:hover { background-color: #1a365d; }
@@ -109,8 +109,15 @@
 
         .history-section { margin-top: 40px; }
         .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
-        #export-btn { background-color: var(--success-color); }
-        #export-btn:hover { background-color: #2f855a; }
+        
+        /* 调整：为导出按钮设置样式，并确保文字为白色 */
+        #export-btn {
+            background-color: var(--success-color);
+            color: white; /* 需求1：确保文字是白色 */
+        }
+        #export-btn:hover {
+            background-color: #2f855a;
+        }
         
         .history-table { width: 100%; border-collapse: collapse; text-align: left; table-layout: fixed; }
         .history-table th, .history-table td { padding: 12px; border-bottom: 1px solid var(--border-color); vertical-align: middle; word-wrap: break-word; }
@@ -120,77 +127,38 @@
         .history-table tr:hover { background-color: #f7fafc; }
         .history-table td:last-child { text-align: center; }
 
-        /* --- 新增：移动端响应式样式 (屏幕宽度小于768px时生效) --- */
         @media (max-width: 768px) {
-            body {
-                padding: 10px; /* 减少页面边距 */
-            }
-            .container {
-                padding: 15px; /* 减少容器内边距 */
-            }
-            h1 {
-                font-size: 1.8em;
-            }
-            h2 {
-                font-size: 1.5em;
-            }
-            fieldset {
-                padding: 15px;
-            }
-            /* 让添加轮次的按钮在必要时占满整行 */
-            .round-adder-inputs .btn {
-                width: 100%;
-                margin-top: 5px;
-            }
+            body { padding: 10px; }
+            .container { padding: 15px; }
+            h1 { font-size: 1.8em; }
+            h2 { font-size: 1.5em; }
+            fieldset { padding: 15px; }
+            .round-adder-inputs .btn { width: 100%; margin-top: 5px; }
 
-            /* --- 核心优化：将表格转换为卡片式布局 --- */
-            .history-table {
-                border: 0;
-                table-layout: auto; /* 重置table-layout */
-            }
-            .history-table thead {
-                display: none; /* 隐藏桌面版的表头 */
-            }
+            .history-table { border: 0; table-layout: auto; }
+            .history-table thead { display: none; }
             .history-table tr {
-                display: block;
-                margin-bottom: 15px;
-                border: 1px solid var(--border-color);
-                border-radius: 8px;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-                padding: 10px;
+                display: block; margin-bottom: 15px; border: 1px solid var(--border-color);
+                border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 10px;
             }
             .history-table td {
-                display: flex; /* 使用flex布局实现标签和内容对齐 */
-                justify-content: space-between;/* 左右对齐 */
-                align-items: center;
-                padding: 8px 5px;
-                border-bottom: 1px solid #f0f0f0;
-                text-align: right; /* 内容靠右 */
+                display: flex; justify-content: space-between; align-items: center;
+                padding: 8px 5px; border-bottom: 1px solid #f0f0f0; text-align: right;
             }
-            .history-table td:last-child {
-                border-bottom: 0;
-            }
-            /* 使用::before伪元素创建标签 */
+            .history-table td:last-child { border-bottom: 0; }
             .history-table td::before {
-                content: attr(data-label); /* 读取td的data-label属性作为内容 */
-                font-weight: 600;
-                color: var(--primary-color);
-                text-align: left; /* 标签靠左 */
-                padding-right: 10px;
+                content: attr(data-label); font-weight: 600; color: var(--primary-color);
+                text-align: left; padding-right: 10px;
             }
-            .history-table td:last-child {
-                justify-content: flex-end; /* 让删除按钮靠右 */
-            }
-            .history-table td:last-child::before {
-                display: none; /* 最后一个单元格（操作按钮）不需要标签 */
-            }
+            .history-table td:last-child { justify-content: flex-end; }
+            .history-table td:last-child::before { display: none; }
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>移近推远训练记录</h1>
+        <h1>移近推远训练</h1>
 
         <details class="explanation-details">
             <summary class="explanation-summary">什么是移近推远？（点击查看）</summary>
@@ -206,75 +174,44 @@
 
         <form id="record-form">
             <fieldset>
-                <legend>训练基数</legend>
+                <legend>训练基准</legend>
                 <div class="form-grid">
-                    <div class="form-group">
-                        <label for="flipper-diopter">反转拍</label>
-                        <select id="flipper-diopter"><option value="1.00">±1.00 D</option><option value="1.50">±1.50 D</option><option value="2.00" selected>±2.00 D</option><option value="2.50">±2.50 D</option></select>
-                    </div>
-                    <div class="form-group">
-                        <label for="acuity-chart">视标卡</label>
-                        <select id="acuity-chart"><option value="20/50">20/50</option><option value="20/40" selected>20/40</option><option value="20/30">20/30</option><option value="20/25">20/25</option><option value="20/20">20/20</option></select>
-                    </div>
+                    <div class="form-group"><label for="flipper-diopter">反转拍</label><select id="flipper-diopter"><option value="1.00">±1.00 D</option><option value="1.50">±1.50 D</option><option value="2.00" selected>±2.00 D</option><option value="2.50">±2.50 D</option></select></div>
+                    <div class="form-group"><label for="acuity-chart">视标卡</label><select id="acuity-chart"><option value="20/50">20/50</option><option value="20/40" selected>20/40</option><option value="20/30">20/30</option><option value="20/25">20/25</option><option value="20/20">20/20</option></select></div>
                 </div>
             </fieldset>
-
             <fieldset>
                 <legend>记录</legend>
                 <div class="form-grid">
-                    <div class="form-group">
-                        <label for="record-date">日期</label>
-                        <input type="date" id="record-date" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="practice-duration">时长</label>
-                        <input type="text" id="practice-duration" placeholder="例如: 15分钟">
-                    </div>
-                     <div class="form-group">
-                        <label for="practice-reps">次数 <span class="helper-text">(一轮/次=远~近~远)</span></label>
-                        <input type="number" id="practice-reps" placeholder="例如: 10次">
-                    </div>
+                    <div class="form-group"><label for="record-date">日期</label><input type="date" id="record-date" required></div>
+                    <div class="form-group"><label for="practice-duration">时长</label><input type="text" id="practice-duration" placeholder="例如: 15分钟"></div>
+                    <div class="form-group"><label for="practice-reps">次数 <span class="helper-text">(一轮/次=远~近~远)</span></label><input type="number" id="practice-reps" placeholder="例如: 10次"></div>
                 </div>
             </fieldset>
-
             <fieldset>
                 <legend>推远距离cm</legend>
                 <div class="round-adder">
                     <div id="round-adder-header" class="round-adder-header">第 1 轮</div>
                     <div class="round-adder-inputs">
-                        <div class="form-group">
-                            <label for="round-far1-input">远1</label>
-                            <input type="number" id="round-far1-input" placeholder="输入推远距离">
-                        </div>
-                        <div class="form-group">
-                            <label for="round-far2-input">远2</label>
-                            <input type="number" id="round-far2-input" placeholder="输入推远距离">
-                        </div>
+                        <div class="form-group"><label for="round-far1-input">远1</label><input type="number" id="round-far1-input" placeholder="输入推远距离"></div>
+                        <div class="form-group"><label for="round-far2-input">远2</label><input type="number" id="round-far2-input" placeholder="输入推远距离"></div>
                         <button type="button" id="add-round-btn" class="btn btn-secondary">添加</button>
                     </div>
                 </div>
                 <ul id="rounds-list"></ul>
             </fieldset>
-
             <button type="submit" class="btn btn-primary">保存</button>
         </form>
 
         <div class="history-section">
             <div class="history-header">
-                <h2>历史记录</h2>
+                <h2>历史</h2>
+                <!-- 恢复为单个导出按钮 -->
                 <button id="export-btn" class="btn">导出记录</button>
             </div>
             <table class="history-table">
                 <thead>
-                    <tr>
-                        <th>日期</th>
-                        <th>反转拍</th>
-                        <th>视标卡</th>
-                        <th>时长</th>
-                        <th>次数</th>
-                        <th>推远距离 (cm)</th>
-                        <th>操作</th>
-                    </tr>
+                    <tr><th>日期</th><th>反转拍</th><th>视标卡</th><th>时长</th><th>次数</th><th>推远距离 (cm)</th><th>操作</th></tr>
                 </thead>
                 <tbody id="history-table-body"></tbody>
             </table>
@@ -300,10 +237,7 @@
             roundsList.innerHTML = '';
             currentRounds.forEach((round, index) => {
                 const li = document.createElement('li');
-                li.innerHTML = `
-                    <span><strong>第${round.round}轮:</strong> 远1: ${round.far1}cm, 远2: ${round.far2}cm</span>
-                    <button type="button" class="btn btn-danger" data-index="${index}">×</button>
-                `;
+                li.innerHTML = `<span><strong>第${round.round}轮:</strong> 远1: ${round.far1}cm, 远2: ${round.far2}cm</span><button type="button" class="btn btn-danger" data-index="${index}">×</button>`;
                 roundsList.appendChild(li);
             });
             roundAdderHeader.textContent = `第 ${currentRounds.length + 1} 轮`;
@@ -312,23 +246,10 @@
         const renderHistory = () => {
             historyTableBody.innerHTML = '';
             const sortedRecords = [...records].sort((a, b) => new Date(b.date) - new Date(a.date));
-
             sortedRecords.forEach(record => {
                 const tr = document.createElement('tr');
-                const distancesStr = record.distances
-                    .map(r => `R${r.round}(${r.far1}, ${r.far2})`)
-                    .join('; ');
-
-                // --- 优化：为每个<td>添加data-label属性，用于移动端显示 ---
-                tr.innerHTML = `
-                    <td data-label="日期">${record.date}</td>
-                    <td data-label="反转拍">±${record.diopter} D</td>
-                    <td data-label="视标卡">${record.chart}</td>
-                    <td data-label="时长">${record.duration || 'N/A'}</td>
-                    <td data-label="次数">${record.reps || 'N/A'}</td>
-                    <td data-label="推远距离">${distancesStr}</td>
-                    <td><button class="btn btn-danger delete-btn" data-id="${record.id}">删除</button></td>
-                `;
+                const distancesStr = record.distances.map(r => `R${r.round}(${r.far1}, ${r.far2})`).join('; ');
+                tr.innerHTML = `<td data-label="日期">${record.date}</td><td data-label="反转拍">±${record.diopter} D</td><td data-label="视标卡">${record.chart}</td><td data-label="时长">${record.duration || 'N/A'}</td><td data-label="次数">${record.reps || 'N/A'}</td><td data-label="推远距离">${distancesStr}</td><td><button class="btn btn-danger delete-btn" data-id="${record.id}">删除</button></td>`;
                 historyTableBody.appendChild(tr);
             });
         };
@@ -340,15 +261,12 @@
         const addRound = () => {
             const far1 = parseFloat(roundFar1Input.value);
             const far2 = parseFloat(roundFar2Input.value);
-
             if (isNaN(far1) || isNaN(far2)) {
                 alert('请输入有效的“远1”和“远2”距离数值。');
                 return;
             }
-
             const roundNumber = currentRounds.length + 1;
             currentRounds.push({ round: roundNumber, far1: far1, far2: far2 });
-            
             renderCurrentRounds();
             roundFar1Input.value = '';
             roundFar2Input.value = '';
@@ -395,20 +313,15 @@
             if (e.target.tagName === 'BUTTON') {
                 const index = parseInt(e.target.dataset.index, 10);
                 currentRounds.splice(index, 1);
-                currentRounds.forEach((round, i) => {
-                    round.round = i + 1;
-                });
+                currentRounds.forEach((round, i) => { round.round = i + 1; });
                 renderCurrentRounds();
             }
         };
 
         const exportToCSV = () => {
-            if (records.length === 0) {
-                alert('没有历史记录可导出。');
-                return;
-            }
+            if (records.length === 0) { alert('没有历史记录可导出。'); return; }
             const escapeCSV = (str) => `"${(str || '').replace(/"/g, '""')}"`;
-            let csvContent = '\uFEFF"日期","反转拍度数(D)","视标卡","练习时长","练习次数","推远距���详情"\n';
+            let csvContent = '\uFEFF"日期","反转拍度数(D)","视标卡","练习时长","练习次数","推远距离详情"\n';
             const sortedRecords = [...records].sort((a, b) => new Date(a.date) - new Date(b.date));
             sortedRecords.forEach(record => {
                 const distancesStr = record.distances.map(r => `R${r.round}(${r.far1}, ${r.far2})`).join('; ');
@@ -426,12 +339,7 @@
         };
 
         addRoundBtn.addEventListener('click', addRound);
-        roundFar2Input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                addRound();
-            }
-        });
+        roundFar2Input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); addRound(); } });
         roundsList.addEventListener('click', handleRoundsListClick);
         form.addEventListener('submit', handleFormSubmit);
         historyTableBody.addEventListener('click', handleHistoryTableClick);
