@@ -304,11 +304,11 @@
     <div id="report-card-wrapper">
         <div id="report-card-template">
             <div class="report-header">
-                <h2 id="report-title">眼健康检查报告</h2>
+                <h2 id="report-title">检查数据</h2>
                 <p>日期: <span id="report-date"></span> | 机构: <span id="report-institution"></span></p>
             </div>
             <div class="report-section">
-                <h3>核心屈光数据</h3>
+                <h3>屈光数据</h3>
                 <div class="report-grid">
                     <div class="report-item"><span class="report-item-label">裸眼视力 (OD/OS)</span> <span class="report-item-value" id="report-va"></span></div>
                     <div class="report-item"><span class="report-item-label">矫正视力 (OD/OS)</span> <span class="report-item-value" id="report-cva"></span></div>
@@ -319,12 +319,10 @@
                 </div>
             </div>
             <div class="report-section">
-                <h3>关键生物学参数</h3>
+                <h3>生物测量数据</h3>
                 <div class="report-grid">
-                    <div class="report-item"><span class="report-item-label">眼轴 (AL) OD/OS</span> <span class="report-item-value" id="report-al"></span></div>
-                    <div class="report-item"><span class="report-item-label">角膜曲率 (K) OD</span> <span class="report-item-value" id="report-k-od"></span></div>
-                    <div class="report-item"><span class="report-item-label">角膜曲率 (K) OS</span> <span class="report-item-value" id="report-k-os"></span></div>
-                    <div class="report-item"><span class="report-item-label">前房深度 (AD) OD/OS</span> <span class="report-item-value" id="report-ad"></span></div>
+                    <div class="report-item"><span class="report-item-label">眼轴 (AL) OD/OS</span> <span class="report-item-value" id="report-al"></span></div>  
+                    <div class="report-item"><span class="report-item-label">角膜曲率 (K) OD/OS</span> <span class="report-item-value" id="report-k-od"></span></div>
                 </div>
             </div>
             <div class="report-footer">
@@ -472,7 +470,7 @@
             try {
                 const canvas = await html2canvas(reportCard, { scale: 2, useCORS: true });
                 const link = document.createElement('a');
-                link.download = `眼健康报告-${getInputValue('exam-date') || new Date().toISOString().slice(0,10)}.png`;
+                link.download = `检查报告-${getInputValue('exam-date') || new Date().toISOString().slice(0,10)}.png`;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
             } catch (error) {
