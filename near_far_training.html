@@ -20,6 +20,7 @@
             color: var(--secondary-color);
             margin: 0;
             padding: 20px;
+            -webkit-text-size-adjust: 100%; /* 防止iOS横屏时字体自动放大 */
         }
         .container {
             max-width: 800px;
@@ -35,7 +36,6 @@
             margin-bottom: 25px;
         }
         
-        /* --- 新增：说明区域样式 --- */
         .explanation-details {
             border: 1px dashed var(--border-color);
             border-radius: 8px;
@@ -48,12 +48,10 @@
             color: var(--primary-color);
             cursor: pointer;
             outline: none;
-            list-style: none; /* 隐藏默认三角 */
+            list-style: none;
         }
-        .explanation-summary::-webkit-details-marker { display: none; } /* 兼容Chrome/Safari */
-        .explanation-summary:hover {
-            background-color: #eef2f7;
-        }
+        .explanation-summary::-webkit-details-marker { display: none; }
+        .explanation-summary:hover { background-color: #eef2f7; }
         .explanation-content {
             padding: 0 20px 20px 20px;
             border-top: 1px solid var(--border-color);
@@ -69,128 +67,124 @@
             line-height: 1.7;
             margin: 0 0 15px 0;
         }
-        /* --- 结束：新增样式 --- */
 
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        fieldset {
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 20px;
-        }
-        legend {
-            font-weight: 600;
-            font-size: 1.1em;
-            color: var(--primary-color);
-            padding: 0 10px;
-        }
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-        }
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-        .form-group label {
-            margin-bottom: 6px;
-            font-weight: 500;
-        }
-        .helper-text {
-            font-size: 0.8em;
-            color: #718096;
-            font-weight: normal;
-        }
+        form { display: flex; flex-direction: column; gap: 20px; }
+        fieldset { border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; }
+        legend { font-weight: 600; font-size: 1.1em; color: var(--primary-color); padding: 0 10px; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { margin-bottom: 6px; font-weight: 500; }
+        .helper-text { font-size: 0.8em; color: #718096; font-weight: normal; }
         .form-group input, .form-group select {
             padding: 10px;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 1em;
+        border-radius: 6px;
+            font-size: 16px; /* 优化：设置为16px可防止在iOS上输入时自动缩放 */
         }
         
-        .round-adder {
-            border: 1px solid var(--border-color);
-            padding: 15px;
-            border-radius: 6px;
-            background-color: #f7fafc;
-        }
-        .round-adder-header {
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .round-adder-inputs {
-            display: flex;
-            gap: 10px;
-            align-items: flex-end;
-        }
-        .round-adder-inputs .form-group {
-            flex-grow: 1;
-        }
+        .round-adder { border: 1px solid var(--border-color); padding: 15px; border-radius: 6px; background-color: #f7fafc; }
+        .round-adder-header { font-weight: bold; margin-bottom: 10px; }
+        .round-adder-inputs { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; /* 优化：允许换行 */ }
+        .round-adder-inputs .form-group { flex-grow: 1; }
         
         .btn {
-            padding: 10px 15px;
+            padding: 12px 15px; /* 优化：增加垂直内边距，方便点击 */
             border: none;
             border-radius: 6px;
-            font-size: 1em;
+            font-size: 16px; /* 优化：统一字体大小 */
             font-weight: 600;
             cursor: pointer;
             transition: background-color 0.2s;
             white-space: nowrap;
+            -webkit-appearance: none; /* 优化：移除iOS默认按钮样式 */
         }
         .btn-primary { background-color: var(--primary-color); color: white; }
         .btn-primary:hover { background-color: #1a365d; }
         .btn-secondary { background-color: var(--success-color); color: white; }
         .btn-secondary:hover { background-color: #2f855a; }
-        .btn-danger { background-color: var(--danger-color); color: white; font-size: 0.8em; padding: 2px 6px; }
+        .btn-danger { background-color: var(--danger-color); color: white; font-size: 0.8em; padding: 4px 8px; }
 
-        #rounds-list {
-            list-style-type: none;
-            padding: 0;
-            margin-top: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        #rounds-list li {
-            background-color: #edf2f7;
-            padding: 8px 12px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
+        #rounds-list { list-style-type: none; padding: 0; margin-top: 15px; display: flex; flex-direction: column; gap: 10px; }
+        #rounds-list li { background-color: #edf2f7; padding: 10px 12px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; }
 
         .history-section { margin-top: 40px; }
-        .history-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
+        .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
         #export-btn { background-color: var(--success-color); }
         #export-btn:hover { background-color: #2f855a; }
         
-        .history-table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            table-layout: fixed;
-        }
-        .history-table th, .history-table td {
-            padding: 12px;
-            border-bottom: 1px solid var(--border-color);
-            vertical-align: middle;
-            word-wrap: break-word;
-        }
+        .history-table { width: 100%; border-collapse: collapse; text-align: left; table-layout: fixed; }
+        .history-table th, .history-table td { padding: 12px; border-bottom: 1px solid var(--border-color); vertical-align: middle; word-wrap: break-word; }
         .history-table th { font-weight: 600; }
         .history-table th:nth-child(6) { width: 30%; }
         .history-table tr:last-child td { border-bottom: none; }
         .history-table tr:hover { background-color: #f7fafc; }
         .history-table td:last-child { text-align: center; }
+
+        /* --- 新增：移动端响应式样式 (屏幕宽度小于768px时生效) --- */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px; /* 减少页面边距 */
+            }
+            .container {
+                padding: 15px; /* 减少容器内边距 */
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            h2 {
+                font-size: 1.5em;
+            }
+            fieldset {
+                padding: 15px;
+            }
+            /* 让添加轮次的按钮在必要时占满整行 */
+            .round-adder-inputs .btn {
+                width: 100%;
+                margin-top: 5px;
+            }
+
+            /* --- 核心优化：将表格转换为卡片式布局 --- */
+            .history-table {
+                border: 0;
+                table-layout: auto; /* 重置table-layout */
+            }
+            .history-table thead {
+                display: none; /* 隐藏桌面版的表头 */
+            }
+            .history-table tr {
+                display: block;
+                margin-bottom: 15px;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                padding: 10px;
+            }
+            .history-table td {
+                display: flex; /* 使用flex布局实现标签和内容对齐 */
+                justify-content: space-between;/* 左右对齐 */
+                align-items: center;
+                padding: 8px 5px;
+                border-bottom: 1px solid #f0f0f0;
+                text-align: right; /* 内容靠右 */
+            }
+            .history-table td:last-child {
+                border-bottom: 0;
+            }
+            /* 使用::before伪元素创建标签 */
+            .history-table td::before {
+                content: attr(data-label); /* 读取td的data-label属性作为内容 */
+                font-weight: 600;
+                color: var(--primary-color);
+                text-align: left; /* 标签靠左 */
+                padding-right: 10px;
+            }
+            .history-table td:last-child {
+                justify-content: flex-end; /* 让删除按钮靠右 */
+            }
+            .history-table td:last-child::before {
+                display: none; /* 最后一个单元格（操作按钮）不需要标签 */
+            }
+        }
     </style>
 </head>
 <body>
@@ -198,25 +192,17 @@
     <div class="container">
         <h1>移近推远训练记录</h1>
 
-        <!-- --- 新增：可折叠的说明区域 --- -->
         <details class="explanation-details">
             <summary class="explanation-summary">什么是移近推远？（点击查看）</summary>
             <div class="explanation-content">
                 <h3>正镜推远 (Plus Lens Push-away)</h3>
-                <p>
-                    使用反转拍的正镜片（放大镜效果），将视标卡从距离眼睛40cm的位置开始，缓慢向远处推移至60-70cm。随着距离增加，视标逐渐模糊，当视标刚刚模糊时停留片刻，尝试努力看清，若仍能看清则继续推远，直至完全模糊。此过程旨在放松睫状肌，缓解调节疲劳，模拟眼睛看远的状态。
-                </p>
+                <p>使用反转拍的正镜片（放大镜效果），将视标卡从距离眼睛40cm的位置开始，缓慢向远处推移至60-70cm。随着距离增加，视标逐渐模糊，当视标刚刚模糊时停留片刻，尝试努力看清，若仍能看清则继续推远，直至完全模糊。此过程旨在放松睫状肌，缓解调节疲劳，模拟眼睛看远的状态。</p>
                 <h3>负镜移近 (Minus Lens Pull-in)</h3>
-                <p>
-                    切换为反转拍的负镜片（缩小镜效果），将视标卡从40cm处逐渐向眼睛移近，保持视标清晰，直至距离眼睛15-20cm左右（具体距离可根据个体耐受程度调整）。这一过程通过增加调节刺激，锻炼睫状肌的力量，提升眼睛的调节幅度。
-                </p>
+                <p>切换为反转拍的负镜片（缩小镜效果），将视标卡从40cm处逐渐向眼睛移近，保持视标清晰，直至距离眼睛15-20cm左右（具体距离可根据个体耐受程度调整）。这一过程通过增加调节刺激，锻炼睫状肌的力量，提升眼睛的调节幅度。</p>
                 <h3>目的与原理</h3>
-                <p>
-                    通过交替进行“移近”（增强调节力）和“推远”（放松调节）的动作，模拟眼睛在看近与看远之间的调节切换，帮助改善眼睛的调节功能，增强睫状肌的灵活性和力量，从而预防或缓解近视进展，尤其适用于调节幅度不足、调节灵敏度差等问题。
-                </p>
+                <p>通过交替进行“移近”（增强调节力）和“推远”（放松调节）的动作，模拟眼睛在看近与看远之间的调节切换，帮助改善眼睛的调节功能，增强睫状肌的灵活性和力量，从而预防或缓解近视进展，尤其适用于调节幅度不足、调节灵敏度差等问题。</p>
             </div>
         </details>
-        <!-- --- 结束：新增区域 --- -->
 
         <form id="record-form">
             <fieldset>
@@ -224,22 +210,11 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="flipper-diopter">反转拍</label>
-                        <select id="flipper-diopter">
-                            <option value="1.00">±1.00 D</option>
-                            <option value="1.50">±1.50 D</option>
-                            <option value="2.00" selected>±2.00 D</option>
-                            <option value="2.50">±2.50 D</option>
-                        </select>
+                        <select id="flipper-diopter"><option value="1.00">±1.00 D</option><option value="1.50">±1.50 D</option><option value="2.00" selected>±2.00 D</option><option value="2.50">±2.50 D</option></select>
                     </div>
                     <div class="form-group">
                         <label for="acuity-chart">视标卡</label>
-                        <select id="acuity-chart">
-                            <option value="20/50">20/50</option>
-                            <option value="20/40" selected>20/40</option>
-                            <option value="20/30">20/30</option>
-                            <option value="20/25">20/25</option>
-                            <option value="20/20">20/20</option>
-                        </select>
+                        <select id="acuity-chart"><option value="20/50">20/50</option><option value="20/40" selected>20/40</option><option value="20/30">20/30</option><option value="20/25">20/25</option><option value="20/20">20/20</option></select>
                     </div>
                 </div>
             </fieldset>
@@ -275,7 +250,7 @@
                             <label for="round-far2-input">远2</label>
                             <input type="number" id="round-far2-input" placeholder="输入推远距离">
                         </div>
-                <button type="button" id="add-round-btn" class="btn btn-secondary">添加</button>
+                        <button type="button" id="add-round-btn" class="btn btn-secondary">添加</button>
                     </div>
                 </div>
                 <ul id="rounds-list"></ul>
@@ -308,7 +283,6 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // --- DOM元素获取 ---
         const form = document.getElementById('record-form');
         const recordDateInput = document.getElementById('record-date');
         const addRoundBtn = document.getElementById('add-round-btn');
@@ -319,11 +293,8 @@
         const historyTableBody = document.getElementById('history-table-body');
         const exportBtn = document.getElementById('export-btn');
 
-        // --- 状态管理 ---
         let records = JSON.parse(localStorage.getItem('pushUpRecordsV2')) || [];
         let currentRounds = [];
-
-        // --- 核心功能函数 ---
 
         const renderCurrentRounds = () => {
             roundsList.innerHTML = '';
@@ -348,13 +319,14 @@
                     .map(r => `R${r.round}(${r.far1}, ${r.far2})`)
                     .join('; ');
 
+                // --- 优化：为每个<td>添加data-label属性，用于移动端显示 ---
                 tr.innerHTML = `
-                    <td>${record.date}</td>
-                    <td>±${record.diopter} D</td>
-                    <td>${record.chart}</td>
-                    <td>${record.duration || 'N/A'}</td>
-                    <td>${record.reps || 'N/A'}</td>
-                    <td>${distancesStr}</td>
+                    <td data-label="日期">${record.date}</td>
+                    <td data-label="反转拍">±${record.diopter} D</td>
+                    <td data-label="视标卡">${record.chart}</td>
+                    <td data-label="时长">${record.duration || 'N/A'}</td>
+                    <td data-label="次数">${record.reps || 'N/A'}</td>
+                    <td data-label="推远距离">${distancesStr}</td>
                     <td><button class="btn btn-danger delete-btn" data-id="${record.id}">删除</button></td>
                 `;
                 historyTableBody.appendChild(tr);
@@ -436,20 +408,11 @@
                 return;
             }
             const escapeCSV = (str) => `"${(str || '').replace(/"/g, '""')}"`;
-            let csvContent = '\uFEFF"日期","反转拍度数(D)","视标卡","练习时长","练习次数","推远距离详情"\n';
+            let csvContent = '\uFEFF"日期","反转拍度数(D)","视标卡","练习时长","练习次数","推远距���详情"\n';
             const sortedRecords = [...records].sort((a, b) => new Date(a.date) - new Date(b.date));
             sortedRecords.forEach(record => {
-                const distancesStr = record.distances
-                    .map(r => `R${r.round}(${r.far1}, ${r.far2})`)
-                    .join('; ');
-                const row = [
-                    escapeCSV(record.date),
-                    escapeCSV(`±${record.diopter}`),
-                    escapeCSV(record.chart),
-                    escapeCSV(record.duration),
-                    escapeCSV(record.reps),
-                    escapeCSV(distancesStr)
-                ].join(',');
+                const distancesStr = record.distances.map(r => `R${r.round}(${r.far1}, ${r.far2})`).join('; ');
+                const row = [ escapeCSV(record.date), escapeCSV(`±${record.diopter}`), escapeCSV(record.chart), escapeCSV(record.duration), escapeCSV(record.reps), escapeCSV(distancesStr) ].join(',');
                 csvContent += row + '\n';
             });
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -462,7 +425,6 @@
             document.body.removeChild(link);
         };
 
-        // --- 事件监听器 ---
         addRoundBtn.addEventListener('click', addRound);
         roundFar2Input.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
@@ -475,7 +437,6 @@
         historyTableBody.addEventListener('click', handleHistoryTableClick);
         exportBtn.addEventListener('click', exportToCSV);
 
-        // --- 页面初始化 ---
         recordDateInput.value = new Date().toISOString().split('T')[0];
         renderHistory();
         renderCurrentRounds();
