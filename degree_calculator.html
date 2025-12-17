@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>屈光度数测算</title>
-    <!-- ▼▼▼ 第1步：引入 html2canvas 库 ▼▼▼ -->
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     
     <style>
@@ -30,165 +29,110 @@
             margin-top: 20px;
             margin-bottom: 20px;
         }
-        h1 {
-            text-align: center;
-            color: #1a73e8;
-            margin-top: 0;
-            margin-bottom: 10px;
+        /* ▼▼▼ 新增/修改：顶部导航样式 ▼▼▼ */
+        .header-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap; /* 响应式布局 */
+            gap: 10px; /* 元素间距 */
         }
+        .header-nav h1 {
+            flex-grow: 1; /* 标题占据剩余空间 */
+            text-align: center;
+            margin: 0;
+            color: #1a73e8;
+            font-size: 1.8em;
+        }
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
         .description {
             text-align: center;
             color: #5f6368;
             margin-bottom: 25px;
             font-size: 14px;
         }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .radio-group label {
-            display: inline-block;
-            margin-right: 20px;
-            font-weight: normal;
-        }
-        label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #3c4043;
-        }
+        .form-group { margin-bottom: 20px; }
+        .radio-group label { display: inline-block; margin-right: 20px; font-weight: normal; }
+        label { display: block; font-weight: 600; margin-bottom: 8px; color: #3c4043; }
         input[type="number"] {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 16px;
-            transition: border-color 0.3s;
+            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px;
+            box-sizing: border-box; font-size: 16px; transition: border-color 0.3s;
         }
         input[type="number"]:focus {
-            border-color: #1a73e8;
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+            border-color: #1a73e8; outline: none; box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
         }
-        .ad-inputs {
-            display: flex;
-            gap: 15px;
+        .ad-inputs { display: flex; gap: 15px; }
+        .ad-inputs .form-group { flex: 1; }
+        
+        button, .btn {
+            padding: 10px 15px; /* 调整按钮大小 */
+            border: none; border-radius: 6px; font-size: 16px; /* 调整字体大小 */
+            font-weight: bold; cursor: pointer; transition: all 0.2s;
+            text-decoration: none; display: inline-block; text-align: center;
+            box-sizing: border-box;
         }
-        .ad-inputs .form-group {
-            flex: 1;
-        }
-        button {
-            width: 100%;
-            padding: 15px;
-            background-color: #1a73e8;
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.1s;
-            margin-top: 10px;
-        }
-        button:hover {
-            background-color: #185abc;
-        }
-        button:active {
-            transform: scale(0.98);
-        }
+        button[type="submit"] { width: 100%; background-color: #1a73e8; color: #fff; margin-top: 10px; }
+        button[type="submit"]:hover { background-color: #185abc; }
+        button:active { transform: scale(0.98); }
+
         .result-container {
-            margin-top: 30px;
-            padding: 20px;
-            background-color: #f0f5ff;
-            border: 1px solid #adc6ff;
-            border-radius: 8px;
-            text-align: center;
-            display: none;
+            margin-top: 30px; padding: 20px; background-color: #f0f5ff;
+            border: 1px solid #adc6ff; border-radius: 8px; text-align: center; display: none;
         }
-        .results-wrapper {
-            display: flex;
-            justify-content: space-around;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        .result-item {
-            flex: 1;
-            padding: 15px;
-            background-color: #fff;
-            border-radius: 6px;
-            border: 1px solid #d9d9d9;
-        }
-        .result-item-title {
-            font-size: 14px;
-            color: #5f6368;
-            margin: 0 0 10px 0;
-        }
-        .result-item-value {
-            font-size: 28px;
-            font-weight: bold;
-            color: #1a73e8;
-        }
+        .results-wrapper { display: flex; justify-content: space-around; gap: 20px; margin-bottom: 20px; }
+        .result-item { flex: 1; padding: 15px; background-color: #fff; border-radius: 6px; border: 1px solid #d9d9d9; }
+        .result-item-title { font-size: 14px; color: #5f6368; margin: 0 0 10px 0; }
+        .result-item-value { font-size: 28px; font-weight: bold; color: #1a73e8; }
         .result-note {
-            font-size: 13px;
-            color: #d46b08;
-            background-color: #fffbe6;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #ffe58f;
+            font-size: 13px; color: #d46b08; background-color: #fffbe6;
+            padding: 10px; border-radius: 4px; border: 1px solid #ffe58f;
         }
         .disclaimer {
-            margin-top: 30px;
-            padding: 15px;
-            background-color: #fff1f0;
-            border: 1px solid #ffccc7;
-            border-radius: 8px;
-            font-size: 13px;
-            color: #cf1322;
-            text-align: center;
+            margin-top: 30px; padding: 15px; background-color: #fff1f0;
+            border: 1px solid #ffccc7; border-radius: 8px; font-size: 13px;
+            color: #cf1322; text-align: center;
         }
         
         .btn-secondary {
-            background-color: #f0f2f5;
-            color: #595959;
-            font-weight: normal;
+            background-color: #e2e8f0; /* 浅灰色，与check_data.html的返回按钮一致 */
+            color: #595959; font-weight: normal;
         }
-        .btn-secondary:hover {
-            background-color: #e6e8eb;
-        }
-        .btn-share {
-            background-color: #28a745;
-            font-size: 16px;
-        }
-        .btn-share:hover {
-            background-color: #218838;
-        }
-        /* ▼▼▼ 新增：按钮加载状态样式 ▼▼▼ */
-        .btn-loading {
-            background-color: #b0b0b0 !important;
-            cursor: not-allowed;
+        .btn-secondary:hover { background-color: #cbd5e0; }
+        .btn-share { background-color: #28a745; color: white; } /* 绿色分享按钮 */
+        .btn-share:hover { background-color: #218838; }
+        .btn-loading { background-color: #b0b0b0 !important; cursor: not-allowed; }
+
+        @media (max-width: 768px) {
+            .header-nav { flex-direction: column; align-items: stretch; }
+            .header-nav h1 { text-align: left; margin-bottom: 10px; }
+            .header-actions { justify-content: stretch; }
+            .header-actions .btn { flex-grow: 1; }
         }
     </style>
 </head>
 <body>
 
     <div class="container" id="captureArea">
-        <h1>屈光度数测算</h1>
+        <!-- ▼▼▼ 修改：调整标题和按钮布局 ▼▼▼ -->
+        <div class="header-nav">
+            <h1>屈光度数测算</h1>
+            <div class="header-actions">
+                <button id="shareBtn" class="btn btn-share">分享</button>
+                <a href="javascript:window.history.back()" class="btn btn-secondary">返回</a>
+            </div>
+        </div>
         <p class="description">使用盼兮老师公式</p>
         
         <form id="myopiaForm">
-            <!-- 表单内容未变 -->
-            <div class="form-group">
-                <label for="al">眼轴长度(AL) mm</label>
-                <input type="number" id="al" step="0.01" placeholder="例如: 24.5" required>
-            </div>
-            <div class="form-group">
-                <label for="k1">角膜曲率(K1)</label>
-                <input type="number" id="k1" step="0.01" placeholder="例如: 44.0" required>
-            </div>
-            <div class="form-group">
-                <label for="lt">晶体厚度(LT) mm</label>
-                <input type="number" id="lt" step="0.01" placeholder="例如: 3.5" required>
-            </div>
+            <div class="form-group"><label for="al">眼轴长度(AL) mm</label><input type="number" id="al" step="0.01" placeholder="例如: 24.5" required></div>
+            <div class="form-group"><label for="k1">角膜曲率(K1)</label><input type="number" id="k1" step="0.01" placeholder="例如: 44.0" required></div>
+            <div class="form-group"><label for="lt">晶体厚度(LT) mm</label><input type="number" id="lt" step="0.01" placeholder="例如: 3.5" required></div>
             <div class="form-group">
                 <label>前房深度(AD) mm</label>
                 <div class="radio-group">
@@ -197,8 +141,7 @@
                 </div>
             </div>
             <div id="ad_direct_container" class="form-group">
-                <label for="ad">前房深度(AD) mm</label>
-                <input type="number" id="ad" step="0.01" placeholder="例如: 3.2">
+                <label for="ad">前房深度(AD) mm</label><input type="number" id="ad" step="0.01" placeholder="例如: 3.2">
             </div>
             <div id="ad_calculated_container" style="display: none;">
                 <div class="ad-inputs">
@@ -211,21 +154,15 @@
 
         <div class="result-container" id="resultContainer">
             <div class="results-wrapper">
-                <div class="result-item">
-                    <p class="result-item-title">结果1 (眼轴基准 24.0)</p>
-                    <p class="result-item-value" id="result1"></p>
-                </div>
-                <div class="result-item">
-                    <p class="result-item-title">结果2 (眼轴基准 23.5)</p>
-                    <p class="result-item-value" id="result2"></p>
-                </div>
+                <div class="result-item"><p class="result-item-title">结果1 (眼轴基准 24.0)</p><p class="result-item-value" id="result1"></p></div>
+                <div class="result-item"><p class="result-item-title">结果2 (眼轴基准 23.5)</p><p class="result-item-value" id="result2"></p></div>
             </div>
             <p class="result-note"><strong>参考说明：</strong>以上结果为理论估算，仅供参考，波动范围25~75度。</p>
-            <button id="shareBtn" class="btn-share">分享结果</button>
+            <!-- 分享按钮已移至顶部 -->
         </div>
 
         <div class="disclaimer"><strong>重要提示：</strong> 盼兮老师公式(23.5-AL)*250+(43-K1)*100-(3.1-AD)*150+(3.6-LT)*150的理论估算值，+为远储 -为近视度数。仅供参考，配镜请咨询专业验光师。</div>
-        <button id="backBtn" class="btn-secondary">返回</button>
+        <!-- 原来的返回按钮已移除 -->
     </div>
 
     <script>
@@ -235,10 +172,8 @@
             const result1Element = document.getElementById('result1');
             const result2Element = document.getElementById('result2');
             const shareBtn = document.getElementById('shareBtn');
-            const backBtn = document.getElementById('backBtn');
-            const captureArea = document.getElementById('captureArea'); // 要截图的区域
+            const captureArea = document.getElementById('captureArea');
 
-            // ... (表单切换逻辑未变)
             const adOptions = document.querySelectorAll('input[name="ad_option"]');
             const adDirectContainer = document.getElementById('ad_direct_container');
             const adCalculatedContainer = document.getElementById('ad_calculated_container');
@@ -260,21 +195,13 @@
             adOptions.forEach(option => option.addEventListener('change', toggleADInputs));
             toggleADInputs();
 
-            // ▼▼▼ 第2步：重写分享处理函数 ▼▼▼
             async function handleShareAsImage() {
                 const originalBtnText = shareBtn.textContent;
                 shareBtn.textContent = '生成图片中...';
                 shareBtn.disabled = true;
                 shareBtn.classList.add('btn-loading');
-
                 try {
-                    // 使用 html2canvas 截图
-                    const canvas = await html2canvas(captureArea, {
-                        useCORS: true, // 允许加载跨域图片（如有）
-                        scale: 2,      // 提高分辨率，防止模糊
-                    });
-
-                    // 方案A: 如果浏览器支持图片分享 (主要在移动端)
+                    const canvas = await html2canvas(captureArea, { useCORS: true, scale: 2 });
                     if (navigator.share && navigator.canShare) {
                         canvas.toBlob(async (blob) => {
                             const file = new File([blob], '屈光度数测算结果.png', { type: 'image/png' });
@@ -286,26 +213,22 @@
                             if (navigator.canShare(shareData)) {
                                 await navigator.share(shareData);
                             } else {
-                                // 如果不能分享文件，则降级为下载
                                 downloadImage(canvas);
                             }
                         }, 'image/png');
                     } else {
-                        // 方案B: 浏览器不支持分享，则直接下载图片 (主要在桌面端)
                         downloadImage(canvas);
                     }
                 } catch (error) {
                     console.error('生成或分享图片失败:', error);
                     alert('抱歉，生成图片失败，请稍后再试。');
                 } finally {
-                    // 恢复按钮状态
                     shareBtn.textContent = originalBtnText;
                     shareBtn.disabled = false;
                     shareBtn.classList.remove('btn-loading');
                 }
             }
 
-            // 下载图片的辅助函数
             function downloadImage(canvas) {
                 const imageURL = canvas.toDataURL('image/png');
                 const link = document.createElement('a');
@@ -316,10 +239,8 @@
                 document.body.removeChild(link);
             }
 
-            // --- 事件监听 ---
             form.addEventListener('submit', function(event) {
                 event.preventDefault();
-                // ... (计算逻辑未变)
                 const al = parseFloat(document.getElementById('al').value);
                 const k1 = parseFloat(document.getElementById('k1').value);
                 const lt = parseFloat(document.getElementById('lt').value);
@@ -343,11 +264,8 @@
             });
 
             shareBtn.addEventListener('click', handleShareAsImage);
-            backBtn.addEventListener('click', () => { window.history.back(); });
+            // 返回按钮现在是<a>标签，不需要JS事件监听
         });
     </script>
-
 </body>
 </html>
-
-
