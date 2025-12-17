@@ -148,7 +148,7 @@
 
     <div class="container">
         <h1>屈光度数测算</h1>
-        <p class="description">根据眼部生物学参数估算屈光度，结果仅供参考。</p>
+        <p class="description">使用盼兮老师公式>sh>
         
         <form id="myopiaForm">
             <div class="form-group">
@@ -167,13 +167,13 @@
             </div>
 
             <div class="form-group">
-                <label>前房深度 (AD) 计算方式</label>
+                <label>前房深度 (AD) 选择</label>
                 <div class="radio-group">
                     <label>
                         <input type="radio" name="ad_option" value="direct" checked> 直接输入 AD
                     </label>
                     <label>
-                        <input type="radio" name="ad_option" value="calculate"> 通过 ACD 和 CCT 计算
+                        <input type="radio" name="ad_option" value="calculate"> 计算公式 AD=ACD-CCT
                     </label>
                 </div>
             </div>
@@ -196,7 +196,7 @@
                 </div>
             </div>
 
-            <button type="submit">计算度数</button>
+            <button type="submit">计算</button>
         </form>
 
         <div class="result-container" id="resultContainer">
@@ -216,7 +216,7 @@
         </div>
 
         <div class="disclaimer">
-            <strong>重要提示：</strong>本工具的计算结果是基于盼兮老师公式(23.5-AL)*250+(43-K1)*100-(3.1-AD)*150+(3.6-LT)*150 的理论估算值，不能替代专业的眼科检查和验光。请务必咨询眼科医生或视光师以获得准确的诊断和配镜建议。
+            <strong>重要提示：</strong> 盼兮老师公式(23.5-AL)*250+(43-K1)*100-(3.1-AD)*150+(3.6-LT)*150的理论估算值，+为远储 -为近视度数。仅供参考，配镜请咨询专业验光师。
         </div>
     </div>
 
@@ -299,3 +299,4 @@
 </body>
 
 </html>
+
