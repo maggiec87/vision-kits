@@ -179,7 +179,7 @@
                 </div>
             </fieldset>
 
-            <!-- 修改后的“望远”区域 -->
+            <!-- ▼▼▼ HTML修正部分 ▼▼▼ -->
             <fieldset>
                 <legend>望远</legend>
                 <div class="fieldset-subsection">
@@ -217,8 +217,9 @@
                 <div class="fieldset-subsection">
                     <h3>6米电视</h3>
                     <div class="form-group">
-                        <label for="bedtime-gazing-duration">时长(分钟)</label>
-                        <input type="text" id="bedtime-gazing-duration" placeholder="例如: 10">
+                        <label for="tv-gazing-duration">时长(分钟)</label>
+                        <!-- ID已修改为唯一的 tv-gazing-duration -->
+                        <input type="text" id="tv-gazing-duration" placeholder="例如: 20">
                     </div>
                 </div>
                 
@@ -226,10 +227,12 @@
                     <h3>睡前</h3>
                     <div class="form-group">
                         <label for="bedtime-gazing-duration">时长(分钟)</label>
+                        <!-- ID保持为 bedtime-gazing-duration -->
                         <input type="text" id="bedtime-gazing-duration" placeholder="例如: 10">
                     </div>
                 </div>
             </fieldset>
+            <!-- ▲▲▲ HTML修正部分 ▲▲▲ -->
 
             <fieldset>
                 <legend>视功能</legend>
@@ -271,7 +274,6 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // --- DOM元素获取 ---
         const form = document.getElementById('record-form');
         const recordDateInput = document.getElementById('record-date');
         const historyTableBody = document.getElementById('history-table-body');
@@ -280,13 +282,11 @@
         const deskTasksList = document.getElementById('desk-tasks-list');
         const visionFunctionGroup = document.getElementById('vision-function-group');
 
-        // --- 状态与配置 ---
-        // 使用V3版本键名以避免与旧数据结构冲突
-        let records = JSON.parse(localStorage.getItem('myopiaPreventionRecordsV3')) || [];
+        // 使用V4版本键名以避免与旧数据结构冲突
+        let records = JSON.parse(localStorage.getItem('myopiaPreventionRecordsV4')) || [];
         let currentDeskTasks = [];
         const visionFunctionOptions = ['晶体操', '反转拍', '聚散球', '红绿矢量图', '移近推远', '其他训练'];
 
-        // --- 动态UI生成 ---
         const createVisionFunctionUI = () => {
             visionFunctionGroup.innerHTML = '';
             visionFunctionOptions.forEach(name => {
@@ -303,7 +303,6 @@
             });
         };
 
-        // --- 核心功能函数 ---
         const renderDeskTasks = () => {
             deskTasksList.innerHTML = '';
             currentDeskTasks.forEach((task, index) => {
@@ -316,6 +315,7 @@
             });
         };
 
+        // ▼▼▼ JS修正：更新历史记录显示逻辑 ▼▼▼
         const renderHistory = () => {
             historyTableBody.innerHTML = '';
             const sortedRecords = [...records].sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -325,16 +325,19 @@
                 
                 const sunlightStr = `时长: ${record.sunlight.duration || 'N/A'} min<br>地点: ${record.sunlight.location || 'N/A'}`;
                 
-                // 生成望远列的HTML
                 let gazingStr = '';
                 if (record.gazing.desk && (record.gazing.desk.device !== '无' || record.gazing.desk.tasks.length > 0)) {
                     const deskTasksStr = record.gazing.desk.tasks.map(t => `${t.name}(${t.duration || 'N/A'} min)`).join(', ') || '无任务';
                     gazingStr += `<strong>读写台:</strong><br>设备: ${record.gazing.desk.device}<br>任务: ${deskTasksStr}<br>`;
                 }
+                // 新增：显示6米电视时长
+                if (record.gazing.tv && record.gazing.tv.duration) {
+                    gazingStr += `<strong>6米电视:</strong> ${record.gazing.tv.duration} min<br>`;
+                }
                 if (record.gazing.bedtime && record.gazing.bedtime.duration) {
                     gazingStr += `<strong>睡前:</strong> ${record.gazing.bedtime.duration} min`;
                 }
-                if (!gazingStr) gazingStr = '无';
+                if (!gazingStr.trim()) gazingStr = '无';
 
                 const functionsStr = record.visionFunctions.map(f => `<strong>${f.name}:</strong> ${f.details || '已完成'}`).join('<br>') || '无';
                 const notesStr = record.otherNotes || '无';
@@ -352,14 +355,12 @@
         };
 
         const saveRecords = () => {
-            localStorage.setItem('myopiaPreventionRecordsV3', JSON.stringify(records));
+            localStorage.setItem('myopiaPreventionRecordsV4', JSON.stringify(records));
         };
 
         const resetDynamicForms = () => {
-            // 重置读写台任务
             currentDeskTasks = [];
             renderDeskTasks();
-            // 重置视功能训练
             visionFunctionGroup.querySelectorAll('.vision-function-item').forEach(item => {
                 item.querySelector('input[type="checkbox"]').checked = false;
                 const detailsInput = item.querySelector('.details-input');
@@ -368,10 +369,10 @@
             });
         };
         
+        // ▼▼▼ JS修正：更新数据保存逻辑 ▼▼▼
         const handleFormSubmit = (e) => {
             e.preventDefault();
             
-            // 收集视功能训练数据
             const visionFunctionsData = [];
             visionFunctionGroup.querySelectorAll('.vision-function-item').forEach(item => {
                 const checkbox = item.querySelector('input[type="checkbox"]');
@@ -383,7 +384,6 @@
                 }
             });
 
-            // 创建新的数据结构
             const newRecord = {
                 id: Date.now(),
                 date: recordDateInput.value,
@@ -396,6 +396,10 @@
                         device: document.getElementById('desk-device').value,
                         tasks: [...currentDeskTasks]
                     },
+                    // 新增：保存6米电视时长
+                    tv: {
+                        duration: document.getElementById('tv-gazing-duration').value.trim()
+                    },
                     bedtime: {
                         duration: document.getElementById('bedtime-gazing-duration').value.trim()
                     }
@@ -407,7 +411,7 @@
             const existingRecordIndex = records.findIndex(rec => rec.date === newRecord.date);
             if (existingRecordIndex > -1) {
                 if (confirm('今天已经有记录了，是否要覆盖它？')) {
-                    newRecord.id = records[existingRecordIndex].id; // 保持ID不变
+                    newRecord.id = records[existingRecordIndex].id;
                     records[existingRecordIndex] = newRecord;
                 } else {
                     return;
@@ -424,23 +428,49 @@
             alert('记录保存成功！');
         };
 
+        // ▼▼▼ JS修正：更新CSV导出逻辑（核心请求）▼▼▼
         const exportToCSV = () => {
             if (records.length === 0) { alert('没有历史记录可导出。'); return; }
             const escapeCSV = (str) => `"${(str || '').replace(/"/g, '""')}"`;
-            // 更新CSV表头
-            let csvContent = '\uFEFF"日期","阳光时长(min)","阳光地点","望远(睡前)时长(min)","望远(读写台)设备","望远(读写台)任务","视功能训练","其他记录"\n';
+            
+            let csvContent = '\uFEFF"日期","阳光","望远","视功能","其他记录"\n';
+            
             const sortedRecords = [...records].sort((a, b) => new Date(a.date) - new Date(b.date));
             
             sortedRecords.forEach(record => {
-                const deskTasksStr = record.gazing.desk.tasks.map(t => `${t.name}(${t.duration})`).join('; ');
-                const visionFuncsStr = record.visionFunctions.map(f => `${f.name}(${f.details || 'Y'})`).join('; ');
+                // 合并阳光数据
+                const sunlightParts = [];
+                if (record.sunlight.duration) sunlightParts.push(`时长:${record.sunlight.duration}min`);
+                if (record.sunlight.location) sunlightParts.push(`地点:${record.sunlight.location}`);
+                const sunlightStr = sunlightParts.join(', ');
+
+                // 合并望远数据
+                const gazingParts = [];
+                if (record.gazing.desk && (record.gazing.desk.device !== '无' || record.gazing.desk.tasks.length > 0)) {
+                    const deskTasksStr = record.gazing.desk.tasks.map(t => `${t.name}(${t.duration}min)`).join(', ');
+                    let deskPart = `读写台[设备:${record.gazing.desk.device}`;
+                    if (deskTasksStr) {
+                        deskPart += `, 任务:${deskTasksStr}`;
+                    }
+                    deskPart += ']';
+                    gazingParts.push(deskPart);
+                }
+                // 新增：将6米电视时长添加到导出字符串中
+                if (record.gazing.tv && record.gazing.tv.duration) {
+                    gazingParts.push(`6米电视[时长:${record.gazing.tv.duration}min]`);
+                }
+                if (record.gazing.bedtime && record.gazing.bedtime.duration) {
+                    gazingParts.push(`睡前[时长:${record.gazing.bedtime.duration}min]`);
+                }
+                const gazingStr = gazingParts.join('; ');
+
+                // 合并视功能数据
+                const visionFuncsStr = record.visionFunctions.map(f => `${f.name}(${f.details || '已完成'})`).join('; ');
+
                 const row = [
                     escapeCSV(record.date),
-                    escapeCSV(record.sunlight.duration),
-                    escapeCSV(record.sunlight.location),
-                    escapeCSV(record.gazing.bedtime.duration),
-                    escapeCSV(record.gazing.desk.device),
-                    escapeCSV(deskTasksStr),
+                    escapeCSV(sunlightStr),
+                    escapeCSV(gazingStr),
                     escapeCSV(visionFuncsStr),
                     escapeCSV(record.otherNotes)
                 ].join(',');
@@ -456,7 +486,7 @@
             document.body.removeChild(link);
         };
 
-        // --- 事件监听器 ---
+        // --- 事件监听器 (无变化) ---
         form.addEventListener('submit', handleFormSubmit);
         historyTableBody.addEventListener('click', (e) => {
             if (e.target.classList.contains('delete-btn')) {
