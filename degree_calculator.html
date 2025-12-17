@@ -85,6 +85,7 @@
             font-weight: bold;
             cursor: pointer;
             transition: background-color 0.3s, transform 0.1s;
+            margin-top: 10px; /* Added margin for spacing */
         }
         button:hover {
             background-color: #185abc;
@@ -142,17 +143,36 @@
             color: #cf1322;
             text-align: center;
         }
+        
+        /* ▼▼▼ 新增按钮样式 ▼▼▼ */
+        .btn-secondary {
+            background-color: #f0f2f5;
+            color: #595959;
+            font-weight: normal;
+        }
+        .btn-secondary:hover {
+            background-color: #e6e8eb;
+        }
+        .btn-share {
+            background-color: #28a745; /* Green color for share */
+            font-size: 16px;
+        }
+        .btn-share:hover {
+            background-color: #218838;
+        }
+        /* ▲▲▲ 新增按钮样式 ▲▲▲ */
+
     </style>
 </head>
 <body>
 
     <div class="container">
         <h1>屈光度数测算</h1>
-        <p class="description">使用盼兮老师公式>sh>
+        <p class="description">使用盼兮老师公式</p>
         
         <form id="myopiaForm">
             <div class="form-group">
-                <label for="al">眼轴长度 (AL) - 单位: mm</label>
+                <label for="al">眼轴长度 (AL) 单位mm</label>
                 <input type="number" id="al" step="0.01" placeholder="例如: 24.5" required>
             </div>
 
@@ -162,12 +182,12 @@
             </div>
 
             <div class="form-group">
-                <label for="lt">晶体厚度 (LT) - 单位: mm</label>
+                <label for="lt">晶体厚度 (LT) 单位mm</label>
                 <input type="number" id="lt" step="0.01" placeholder="例如: 3.5" required>
             </div>
 
             <div class="form-group">
-                <label>前房深度 (AD) 选择</label>
+                <label>前房深度 (AD):</label>
                 <div class="radio-group">
                     <label>
                         <input type="radio" name="ad_option" value="direct" checked> 直接输入 AD
@@ -179,7 +199,7 @@
             </div>
 
             <div id="ad_direct_container" class="form-group">
-                <label for="ad">前房深度 (AD) - 单位: mm</label>
+                <label for="ad">前房深度 (AD) 单位mm</label>
                 <input type="number" id="ad" step="0.01" placeholder="例如: 3.2">
             </div>
 
@@ -213,15 +233,21 @@
             <p class="result-note">
                 <strong>参考说明：</strong>以上结果为理论估算，仅供参考，波动范围25~75度。
             </p>
+            <!-- ▼▼▼ 新增分享按钮 ▼▼▼ -->
+            <button id="shareBtn" class="btn-share">分享</button>
         </div>
 
         <div class="disclaimer">
             <strong>重要提示：</strong> 盼兮老师公式(23.5-AL)*250+(43-K1)*100-(3.1-AD)*150+(3.6-LT)*150的理论估算值，+为远储 -为近视度数。仅供参考，配镜请咨询专业验光师。
         </div>
+
+        <!-- ▼▼▼ 新增返回按钮 ▼▼▼ -->
+        <button id="backBtn" class="btn-secondary">返回</button>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // --- DOM Element Selection ---
             const form = document.getElementById('myopiaForm');
             const adOptions = document.querySelectorAll('input[name="ad_option"]');
             const adDirectContainer = document.getElementById('ad_direct_container');
@@ -229,7 +255,10 @@
             const resultContainer = document.getElementById('resultContainer');
             const result1Element = document.getElementById('result1');
             const result2Element = document.getElementById('result2');
+            const shareBtn = document.getElementById('shareBtn');
+            const backBtn = document.getElementById('backBtn');
 
+            // --- Functions ---
             function toggleADInputs() {
                 if (document.querySelector('input[name="ad_option"]:checked').value === 'direct') {
                     adDirectContainer.style.display = 'block';
@@ -246,6 +275,55 @@
                 }
             }
 
+            // ▼▼▼ 新增分享处理函数 ▼▼▼
+            async function handleShare() {
+                const al = document.getElementById('al').value;
+                const k1 = document.getElementById('k1').value;
+                const lt = document.getElementById('lt').value;
+                const result1 = result1Element.textContent;
+                const result2 = result2Element.textContent;
+
+                const shareText = `屈光度数测算结果 (盼兮公式):\n` +
+                                  `------------------------\n` +
+                                  `输入参数:\n` +
+                                  `· 眼轴 (AL): ${al} mm\n` +
+                                  `· 角膜曲率 (K1): ${k1}\n` +
+                                  `· 晶体厚度 (LT): ${lt} mm\n` +
+                                  `------------------------\n` +
+                                  `测算结果:\n` +
+                                  `· 结果1 (基准24.0): ${result1}\n` +
+                                  `· 结果2 (基准23.5): ${result2}\n` +
+                                  `------------------------\n` +
+                                  `* 提示：结果为理论估算，仅供参考。`;
+
+                if (navigator.share) {
+                    // 使用 Web Share API (移动端优先)
+                    try {
+                        await navigator.share({
+                            title: '屈光度数测算结果',
+                            text: shareText,
+                        });
+                        console.log('内容分享成功!');
+                    } catch (err) {
+                        console.error('分享失败或取消:', err);
+                    }
+                } else {
+                    // 降级为复制到剪贴板 (桌面端)
+                    try {
+                        await navigator.clipboard.writeText(shareText);
+                        const originalText = shareBtn.textContent;
+                        shareBtn.textContent = '已复制到剪贴板!';
+                        setTimeout(() => {
+                            shareBtn.textContent = originalText;
+                        }, 2000);
+                    } catch (err) {
+                        alert('复制失败，您的浏览器可能不支持此功能。');
+                        console.error('复制到剪贴板失败:', err);
+                    }
+                }
+            }
+
+            // --- Event Listeners ---
             adOptions.forEach(option => {
                 option.addEventListener('change', toggleADInputs);
             });
@@ -277,26 +355,25 @@
                     return;
                 }
 
-                // --- Calculate both results ---
                 const commonPart = (43 - k1) * 100 - (3.1 - ad) * 150 + (3.6 - lt) * 150;
-                
-                // Result 1: Base 24.0
                 const degree1 = (24.0 - al) * 250 + commonPart;
-                
-                // Result 2: Base 23.5
                 const degree2 = (23.5 - al) * 250 + commonPart;
                 
-                // Display results
                 result1Element.textContent = `${Math.round(degree1)} 度`;
                 result2Element.textContent = `${Math.round(degree2)} 度`;
                 resultContainer.style.display = 'block';
             });
 
+            // ▼▼▼ 新增按钮的事件监听 ▼▼▼
+            shareBtn.addEventListener('click', handleShare);
+            backBtn.addEventListener('click', () => {
+                window.history.back();
+            });
+
+            // --- Initialisation ---
             toggleADInputs();
         });
     </script>
 
 </body>
-
 </html>
-
