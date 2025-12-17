@@ -8,6 +8,7 @@
         :root {
             --primary-color: #00796b; /* 护眼绿 */
             --secondary-color: #4a5568; /* 灰 */
+            --info-color: #3182ce; /* 蓝色，用于分享按钮 */
             --background-color: #f4f5f7;
             --card-bg-color: #ffffff;
             --border-color: #e2e8f0;
@@ -31,12 +32,29 @@
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            position: relative; /* 为了返回按钮定位 */
         }
+        
+        /* ▼▼▼ 新增：返回按钮样式 ▼▼▼ */
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 25px;
+            font-size: 16px;
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .back-link:hover {
+            color: var(--primary-color);
+        }
+        
         h1, h2 {
             color: var(--primary-color);
             text-align: center;
             margin-bottom: 25px;
         }
+        h1 { margin-top: 30px; } /* 为返回按钮留出空间 */
 
         form { display: flex; flex-direction: column; gap: 25px; }
         fieldset {
@@ -51,7 +69,6 @@
             color: var(--primary-color);
             padding: 0 10px;
         }
-        /* 子区域标题 */
         .fieldset-subsection h3 {
             font-size: 1em;
             color: var(--secondary-color);
@@ -60,10 +77,7 @@
             margin-top: 0;
             margin-bottom: 15px;
         }
-        .fieldset-subsection + .fieldset-subsection {
-            margin-top: 25px;
-        }
-
+        .fieldset-subsection + .fieldset-subsection { margin-top: 25px; }
         .form-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -81,15 +95,11 @@
             box-sizing: border-box;
         }
         textarea { resize: vertical; min-height: 80px; }
-
-        /* 动态任务添加器 */
         .task-adder { border: 1px solid var(--border-color); padding: 15px; border-radius: 6px; background-color: #fdfdff; }
         .task-adder-inputs { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
         .task-adder-inputs .form-group { flex: 1; min-width: 150px; }
         #desk-tasks-list { list-style-type: none; padding: 0; margin-top: 15px; display: flex; flex-direction: column; gap: 10px; }
         #desk-tasks-list li { background-color: #edf2f7; padding: 8px 12px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; }
-
-        /* 带备注的复选框组 */
         .vision-function-group { display: flex; flex-direction: column; gap: 15px; }
         .vision-function-item { background-color: var(--input-bg-color); padding: 12px; border-radius: 6px; }
         .vision-function-item .main-label { display: flex; align-items: center; cursor: pointer; }
@@ -112,7 +122,11 @@
         .btn-secondary { background-color: var(--success-color); color: white; }
         .btn-secondary:hover { background-color: #2f855a; }
         .btn-danger { background-color: var(--danger-color); color: white; font-size: 0.8em; padding: 4px 8px; }
-
+        
+        /* ▼▼▼ 新增：分享按钮样式 ▼▼▼ */
+        .btn-info { background-color: var(--info-color); color: white; font-size: 0.8em; padding: 4px 8px; }
+        .btn-info:hover { background-color: #2b6cb0; }
+        
         .history-section { margin-top: 40px; }
         .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
         #export-btn { background-color: var(--success-color); color: white; }
@@ -122,7 +136,15 @@
         .history-table th { font-weight: 600; background-color: #f8f9fa; }
         .history-table tr:last-child td { border-bottom: none; }
         .history-table tr:hover { background-color: #f1f3f5; }
-        .history-table td:last-child { text-align: center; vertical-align: middle;}
+
+        /* ▼▼▼ 修改：操作列样式 ▼▼▼ */
+        .history-table td.actions-cell {
+            text-align: right;
+            vertical-align: middle;
+            display: flex; /* 使用flex布局 */
+            gap: 8px; /* 按钮间距 */
+            justify-content: flex-end; /* 靠右对齐 */
+        }
 
         @media (max-width: 768px) {
             body { padding: 10px; }
@@ -131,7 +153,6 @@
             h2 { font-size: 1.4em; }
             fieldset { padding: 15px; }
             .task-adder-inputs .btn { width: 100%; margin-top: 5px; }
-
             .history-table { border: 0; }
             .history-table thead { display: none; }
             .history-table tr {
@@ -142,21 +163,26 @@
                 display: flex; justify-content: space-between; align-items: flex-start;
                 padding: 10px 5px; border-bottom: 1px solid #f0f0f0; text-align: right;
             }
-            .history-table td:last-child { border-bottom: 0; align-items: center; justify-content: flex-end; }
+            .history-table td:last-child { border-bottom: 0; }
+            .history-table td.actions-cell { justify-content: flex-end; } /* 移动端按钮靠右 */
             .history-table td::before {
                 content: attr(data-label); font-weight: 600; color: var(--primary-color);
                 text-align: left; padding-right: 10px; white-space: nowrap; flex-shrink: 0;
             }
-            .history-table td:last-child::before { display: none; }
+            .history-table td.actions-cell::before { display: none; }
         }
     </style>
 </head>
 <body>
 
     <div class="container">
+        <!-- ▼▼▼ 新增：返回按钮 ▼▼▼ -->
+        <a href="javascript:window.history.back()" class="back-link">&laquo; 返回</a>
+
         <h1>防控每日记</h1>
 
         <form id="record-form">
+            <!-- 表单内容未变 -->
             <fieldset>
                 <legend></legend>
                 <div class="form-group">
@@ -164,90 +190,38 @@
                     <input type="date" id="record-date" required>
                 </div>
             </fieldset>
-
             <fieldset>
                 <legend>阳光</legend>
                 <div class="form-grid">
-                    <div class="form-group">
-                        <label for="sunlight-duration">时长(分钟)</label>
-                        <input type="text" id="sunlight-duration" placeholder="例如:120">
-                    </div>
-                    <div class="form-group">
-                        <label for="sunlight-location">地点</label>
-                        <input type="text" id="sunlight-location" placeholder="例如:阳台,公园">
-                    </div>
+                    <div class="form-group"><label for="sunlight-duration">时长(分钟)</label><input type="text" id="sunlight-duration" placeholder="例如:120"></div>
+                    <div class="form-group"><label for="sunlight-location">地点</label><input type="text" id="sunlight-location" placeholder="例如:阳台,公园"></div>
                 </div>
             </fieldset>
-
-            <!-- ▼▼▼ HTML修正部分 ▼▼▼ -->
             <fieldset>
                 <legend>望远</legend>
                 <div class="fieldset-subsection">
                     <h3>读写台</h3>
-                    <div class="form-group">
-                        <label for="desk-device">设备</label>
-                        <select id="desk-device">
-                            <option value="无">无</option>
-                            <option value="视多星二代">视多星二代</option>
-                            <option value="安目佳">安目佳</option>
-                            <option value="耐德视">耐德视</option>
-                        </select>
-                    </div>
-                    <div class="task-adder">
-                        <div class="task-adder-inputs">
-                            <div class="form-group">
-                                <label for="desk-task-select">任务</label>
-                                <select id="desk-task-select">
-                                    <option value="作业">作业</option>
-                                    <option value="阅读">阅读</option>
-                                    <option value="平板">平板</option>
-                                    <option value="其他">其他</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="desk-task-duration">时长(分钟)</label>
-                                <input type="text" id="desk-task-duration" placeholder="例如: 45">
-                            </div>
-                            <button type="button" id="add-desk-task-btn" class="btn btn-secondary">添加</button>
-                        </div>
-                    </div>
+                    <div class="form-group"><label for="desk-device">设备</label><select id="desk-device"><option value="无">无</option><option value="视多星二代">视多星二代</option><option value="安目佳">安目佳</option><option value="耐德视">耐德视</option></select></div>
+                    <div class="task-adder"><div class="task-adder-inputs"><div class="form-group"><label for="desk-task-select">任务</label><select id="desk-task-select"><option value="作业">作业</option><option value="阅读">阅读</option><option value="平板">平板</option><option value="其他">其他</option></select></div><div class="form-group"><label for="desk-task-duration">时长(分钟)</label><input type="text" id="desk-task-duration" placeholder="例如: 45"></div><button type="button" id="add-desk-task-btn" class="btn btn-secondary">添加</button></div></div>
                     <ul id="desk-tasks-list"></ul>
                 </div>
-
                 <div class="fieldset-subsection">
                     <h3>6米电视</h3>
-                    <div class="form-group">
-                        <label for="tv-gazing-duration">时长(分钟)</label>
-                        <!-- ID已修改为唯一的 tv-gazing-duration -->
-                        <input type="text" id="tv-gazing-duration" placeholder="例如: 20">
-                    </div>
+                    <div class="form-group"><label for="tv-gazing-duration">时长(分钟)</label><input type="text" id="tv-gazing-duration" placeholder="例如: 20"></div>
                 </div>
-                
                 <div class="fieldset-subsection">
                     <h3>睡前</h3>
-                    <div class="form-group">
-                        <label for="bedtime-gazing-duration">时长(分钟)</label>
-                        <!-- ID保持为 bedtime-gazing-duration -->
-                        <input type="text" id="bedtime-gazing-duration" placeholder="例如: 10">
-                    </div>
+                    <div class="form-group"><label for="bedtime-gazing-duration">时长(分钟)</label><input type="text" id="bedtime-gazing-duration" placeholder="例如: 10"></div>
                 </div>
             </fieldset>
-            <!-- ▲▲▲ HTML修正部分 ▲▲▲ -->
-
             <fieldset>
                 <legend>视功能</legend>
-                <div class="vision-function-group" id="vision-function-group">
-                    <!-- JS会动态生成内容 -->
-                </div>
+                <div class="vision-function-group" id="vision-function-group"></div>
             </fieldset>
-            
             <fieldset>
                 <legend>其他</legend>
-                <div class="form-group">
-                    <textarea id="other-notes" placeholder="记录今天其他特别的事项，如眼部感受、是否使用眼药水等。"></textarea>
-                </div>
+                <div class="form-group"><textarea id="other-notes" placeholder="记录今天其他特别的事项，如眼部感受、是否使用眼药水等。"></textarea></div>
             </fieldset>
-
             <button type="submit" class="btn btn-primary">保存</button>
         </form>
 
@@ -282,82 +256,64 @@
         const deskTasksList = document.getElementById('desk-tasks-list');
         const visionFunctionGroup = document.getElementById('vision-function-group');
 
-        // 使用V4版本键名以避免与旧数据结构冲突
         let records = JSON.parse(localStorage.getItem('myopiaPreventionRecordsV4')) || [];
         let currentDeskTasks = [];
         const visionFunctionOptions = ['晶体操', '反转拍', '聚散球', '红绿矢量图', '移近推远', '其他训练'];
 
+        // ... (createVisionFunctionUI, renderDeskTasks 函数未变)
         const createVisionFunctionUI = () => {
             visionFunctionGroup.innerHTML = '';
             visionFunctionOptions.forEach(name => {
                 const itemDiv = document.createElement('div');
                 itemDiv.className = 'vision-function-item';
-                itemDiv.innerHTML = `
-                    <label class="main-label">
-                        <input type="checkbox" name="vision-function" value="${name}">
-                        <span>${name}</span>
-                    </label>
-                    <input type="text" class="details-input hidden" placeholder="填写详情 (如: ±2.0D 15次)">
-                `;
+                itemDiv.innerHTML = `<label class="main-label"><input type="checkbox" name="vision-function" value="${name}"><span>${name}</span></label><input type="text" class="details-input hidden" placeholder="填写详情 (如: ±2.0D 15次)">`;
                 visionFunctionGroup.appendChild(itemDiv);
             });
         };
-
         const renderDeskTasks = () => {
             deskTasksList.innerHTML = '';
             currentDeskTasks.forEach((task, index) => {
                 const li = document.createElement('li');
-                li.innerHTML = `
-                    <span><strong>${task.name}:</strong> ${task.duration} min</span>
-                    <button type="button" class="btn btn-danger" data-index="${index}">×</button>
-                `;
+                li.innerHTML = `<span><strong>${task.name}:</strong> ${task.duration} min</span><button type="button" class="btn btn-danger" data-index="${index}">×</button>`;
                 deskTasksList.appendChild(li);
             });
         };
 
-        // ▼▼▼ JS修正：更新历史记录显示逻辑 ▼▼▼
         const renderHistory = () => {
             historyTableBody.innerHTML = '';
             const sortedRecords = [...records].sort((a, b) => new Date(b.date) - new Date(a.date));
 
             sortedRecords.forEach(record => {
                 const tr = document.createElement('tr');
-                
                 const sunlightStr = `时长: ${record.sunlight.duration || 'N/A'} min<br>地点: ${record.sunlight.location || 'N/A'}`;
-                
                 let gazingStr = '';
                 if (record.gazing.desk && (record.gazing.desk.device !== '无' || record.gazing.desk.tasks.length > 0)) {
                     const deskTasksStr = record.gazing.desk.tasks.map(t => `${t.name}(${t.duration || 'N/A'} min)`).join(', ') || '无任务';
                     gazingStr += `<strong>读写台:</strong><br>设备: ${record.gazing.desk.device}<br>任务: ${deskTasksStr}<br>`;
                 }
-                // 新增：显示6米电视时长
-                if (record.gazing.tv && record.gazing.tv.duration) {
-                    gazingStr += `<strong>6米电视:</strong> ${record.gazing.tv.duration} min<br>`;
-                }
-                if (record.gazing.bedtime && record.gazing.bedtime.duration) {
-                    gazingStr += `<strong>睡前:</strong> ${record.gazing.bedtime.duration} min`;
-                }
+                if (record.gazing.tv && record.gazing.tv.duration) { gazingStr += `<strong>6米电视:</strong> ${record.gazing.tv.duration} min<br>`; }
+                if (record.gazing.bedtime && record.gazing.bedtime.duration) { gazingStr += `<strong>睡前:</strong> ${record.gazing.bedtime.duration} min`; }
                 if (!gazingStr.trim()) gazingStr = '无';
-
                 const functionsStr = record.visionFunctions.map(f => `<strong>${f.name}:</strong> ${f.details || '已完成'}`).join('<br>') || '无';
                 const notesStr = record.otherNotes || '无';
 
+                // ▼▼▼ 修改：更新表格行HTML，增加分享按钮 ▼▼▼
                 tr.innerHTML = `
                     <td data-label="日期">${record.date}</td>
                     <td data-label="阳光">${sunlightStr}</td>
                     <td data-label="望远">${gazingStr}</td>
                     <td data-label="视功能">${functionsStr}</td>
                     <td data-label="其他">${notesStr}</td>
-                    <td><button class="btn btn-danger delete-btn" data-id="${record.id}">删除</button></td>
+                    <td class="actions-cell">
+                        <button class="btn btn-info share-btn" data-id="${record.id}">分享</button>
+                        <button class="btn btn-danger delete-btn" data-id="${record.id}">删除</button>
+                    </td>
                 `;
                 historyTableBody.appendChild(tr);
             });
         };
 
-        const saveRecords = () => {
-            localStorage.setItem('myopiaPreventionRecordsV4', JSON.stringify(records));
-        };
-
+        const saveRecords = () => { localStorage.setItem('myopiaPreventionRecordsV4', JSON.stringify(records)); };
         const resetDynamicForms = () => {
             currentDeskTasks = [];
             renderDeskTasks();
@@ -368,155 +324,152 @@
                 detailsInput.classList.add('hidden');
             });
         };
-        
-        // ▼▼▼ JS修正：更新数据保存逻辑 ▼▼▼
         const handleFormSubmit = (e) => {
             e.preventDefault();
-            
             const visionFunctionsData = [];
             visionFunctionGroup.querySelectorAll('.vision-function-item').forEach(item => {
                 const checkbox = item.querySelector('input[type="checkbox"]');
                 if (checkbox.checked) {
-                    visionFunctionsData.push({
-                        name: checkbox.value,
-                        details: item.querySelector('.details-input').value.trim()
-                    });
+                    visionFunctionsData.push({ name: checkbox.value, details: item.querySelector('.details-input').value.trim() });
                 }
             });
-
             const newRecord = {
-                id: Date.now(),
-                date: recordDateInput.value,
-                sunlight: {
-                    duration: document.getElementById('sunlight-duration').value.trim(),
-                    location: document.getElementById('sunlight-location').value.trim()
-                },
+                id: Date.now(), date: recordDateInput.value,
+                sunlight: { duration: document.getElementById('sunlight-duration').value.trim(), location: document.getElementById('sunlight-location').value.trim() },
                 gazing: {
-                    desk: {
-                        device: document.getElementById('desk-device').value,
-                        tasks: [...currentDeskTasks]
-                    },
-                    // 新增：保存6米电视时长
-                    tv: {
-                        duration: document.getElementById('tv-gazing-duration').value.trim()
-                    },
-                    bedtime: {
-                        duration: document.getElementById('bedtime-gazing-duration').value.trim()
-                    }
+                    desk: { device: document.getElementById('desk-device').value, tasks: [...currentDeskTasks] },
+                    tv: { duration: document.getElementById('tv-gazing-duration').value.trim() },
+                    bedtime: { duration: document.getElementById('bedtime-gazing-duration').value.trim() }
                 },
-                visionFunctions: visionFunctionsData,
-                otherNotes: document.getElementById('other-notes').value.trim()
+                visionFunctions: visionFunctionsData, otherNotes: document.getElementById('other-notes').value.trim()
             };
-
             const existingRecordIndex = records.findIndex(rec => rec.date === newRecord.date);
             if (existingRecordIndex > -1) {
                 if (confirm('今天已经有记录了，是否要覆盖它？')) {
                     newRecord.id = records[existingRecordIndex].id;
                     records[existingRecordIndex] = newRecord;
-                } else {
-                    return;
-                }
-            } else {
-                records.push(newRecord);
-            }
-
-            saveRecords();
-            renderHistory();
-            form.reset();
-            resetDynamicForms();
+                } else { return; }
+            } else { records.push(newRecord); }
+            saveRecords(); renderHistory(); form.reset(); resetDynamicForms();
             recordDateInput.value = new Date().toISOString().split('T')[0];
             alert('记录保存成功！');
         };
-
-        // ▼▼▼ JS修正：更新CSV导出逻辑（核心请求）▼▼▼
         const exportToCSV = () => {
             if (records.length === 0) { alert('没有历史记录可导出。'); return; }
             const escapeCSV = (str) => `"${(str || '').replace(/"/g, '""')}"`;
-            
             let csvContent = '\uFEFF"日期","阳光","望远","视功能","其他记录"\n';
-            
             const sortedRecords = [...records].sort((a, b) => new Date(a.date) - new Date(b.date));
-            
             sortedRecords.forEach(record => {
-                // 合并阳光数据
                 const sunlightParts = [];
                 if (record.sunlight.duration) sunlightParts.push(`时长:${record.sunlight.duration}min`);
                 if (record.sunlight.location) sunlightParts.push(`地点:${record.sunlight.location}`);
                 const sunlightStr = sunlightParts.join(', ');
-
-                // 合并望远数据
                 const gazingParts = [];
                 if (record.gazing.desk && (record.gazing.desk.device !== '无' || record.gazing.desk.tasks.length > 0)) {
                     const deskTasksStr = record.gazing.desk.tasks.map(t => `${t.name}(${t.duration}min)`).join(', ');
                     let deskPart = `读写台[设备:${record.gazing.desk.device}`;
-                    if (deskTasksStr) {
-                        deskPart += `, 任务:${deskTasksStr}`;
-                    }
+                    if (deskTasksStr) { deskPart += `, 任务:${deskTasksStr}`; }
                     deskPart += ']';
                     gazingParts.push(deskPart);
                 }
-                // 新增：将6米电视时长添加到导出字符串中
-                if (record.gazing.tv && record.gazing.tv.duration) {
-                    gazingParts.push(`6米电视[时长:${record.gazing.tv.duration}min]`);
-                }
-                if (record.gazing.bedtime && record.gazing.bedtime.duration) {
-                    gazingParts.push(`睡前[时长:${record.gazing.bedtime.duration}min]`);
-                }
+                if (record.gazing.tv && record.gazing.tv.duration) { gazingParts.push(`6米电视[时长:${record.gazing.tv.duration}min]`); }
+                if (record.gazing.bedtime && record.gazing.bedtime.duration) { gazingParts.push(`睡前[时长:${record.gazing.bedtime.duration}min]`); }
                 const gazingStr = gazingParts.join('; ');
-
-                // 合并视功能数据
                 const visionFuncsStr = record.visionFunctions.map(f => `${f.name}(${f.details || '已完成'})`).join('; ');
-
-                const row = [
-                    escapeCSV(record.date),
-                    escapeCSV(sunlightStr),
-                    escapeCSV(gazingStr),
-                    escapeCSV(visionFuncsStr),
-                    escapeCSV(record.otherNotes)
-                ].join(',');
+                const row = [escapeCSV(record.date), escapeCSV(sunlightStr), escapeCSV(gazingStr), escapeCSV(visionFuncsStr), escapeCSV(record.otherNotes)].join(',');
                 csvContent += row + '\n';
             });
-
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             link.setAttribute('href', URL.createObjectURL(blob));
             link.setAttribute('download', `近视防控打卡记录-${new Date().toISOString().slice(0,10)}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
         };
 
-        // --- 事件监听器 (无变化) ---
+        // ▼▼▼ 新增：分享处理函数 ▼▼▼
+        const handleShare = async (recordId) => {
+            const record = records.find(r => r.id === recordId);
+            if (!record) return;
+
+            // 1. 生成分享文本
+            let shareText = `【防控每日记 - ${record.date}】\n\n`;
+            
+            if (record.sunlight.duration || record.sunlight.location) {
+                shareText += `☀️ 阳光: 时长${record.sunlight.duration || '0'}分钟, 地点: ${record.sunlight.location || '未填写'}\n`;
+            }
+            
+            const gazingParts = [];
+            if (record.gazing.desk && (record.gazing.desk.device !== '无' || record.gazing.desk.tasks.length > 0)) {
+                const deskTasksStr = record.gazing.desk.tasks.map(t => `${t.name}(${t.duration}min)`).join(', ');
+                gazingParts.push(`读写台(设备:${record.gazing.desk.device}, 任务:${deskTasksStr || '无'})`);
+            }
+            if (record.gazing.tv && record.gazing.tv.duration) { gazingParts.push(`6米电视(${record.gazing.tv.duration}min)`); }
+            if (record.gazing.bedtime && record.gazing.bedtime.duration) { gazingParts.push(`睡前(${record.gazing.bedtime.duration}min)`); }
+            if (gazingParts.length > 0) {
+                shareText += `🔭 望远: ${gazingParts.join('; ')}\n`;
+            }
+
+            if (record.visionFunctions.length > 0) {
+                const funcsStr = record.visionFunctions.map(f => `${f.name}(${f.details || '完成'})`).join(', ');
+                shareText += `👁️ 视功能: ${funcsStr}\n`;
+            }
+
+            if (record.otherNotes) {
+                shareText += `📝 其他: ${record.otherNotes}\n`;
+            }
+
+            // 2. 附加推广链接 (核心需求)
+            const pageUrl = window.location.origin + window.location.pathname;
+            shareText += `\n----------\n你也来试试这个好用的近视防控记录工具吧！\n${pageUrl}`;
+
+            // 3. 调用分享API或复制到剪贴板
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: `我的防控记录 - ${record.date}`,
+                        text: shareText,
+                    });
+                } catch (err) {
+                    console.error('分享失败或取消:', err);
+                }
+            } else {
+                try {
+                    await navigator.clipboard.writeText(shareText);
+                    alert('记录内容已复制到剪贴板，请手动粘贴分享！');
+                } catch (err) {
+                    alert('复制失败，您的浏览器可能不支持此功能。');
+                }
+            }
+        };
+
+        // --- 事件监听器 ---
         form.addEventListener('submit', handleFormSubmit);
         historyTableBody.addEventListener('click', (e) => {
-            if (e.target.classList.contains('delete-btn')) {
+            const target = e.target.closest('button');
+            if (!target) return;
+
+            const recordId = parseInt(target.dataset.id, 10);
+            if (target.classList.contains('delete-btn')) {
                 if (confirm('确定要删除这条记录吗？该操作不可撤销。')) {
-                    const recordId = parseInt(e.target.dataset.id, 10);
                     records = records.filter(record => record.id !== recordId);
                     saveRecords();
                     renderHistory();
                 }
+            } else if (target.classList.contains('share-btn')) {
+                // ▼▼▼ 新增：调用分享处理函数 ▼▼▼
+                handleShare(recordId);
             }
         });
         exportBtn.addEventListener('click', exportToCSV);
-
         addDeskTaskBtn.addEventListener('click', () => {
             const taskSelect = document.getElementById('desk-task-select');
             const durationInput = document.getElementById('desk-task-duration');
-            if (!durationInput.value.trim()) {
-                alert('请输入任务时长！');
-                durationInput.focus();
-                return;
-            }
-            currentDeskTasks.push({
-                name: taskSelect.value,
-                duration: durationInput.value.trim()
-            });
+            if (!durationInput.value.trim()) { alert('请输入任务时长！'); durationInput.focus(); return; }
+            currentDeskTasks.push({ name: taskSelect.value, duration: durationInput.value.trim() });
             renderDeskTasks();
             durationInput.value = '';
             taskSelect.focus();
         });
-
         deskTasksList.addEventListener('click', (e) => {
             if (e.target.classList.contains('btn-danger')) {
                 const index = parseInt(e.target.dataset.index, 10);
@@ -524,14 +477,11 @@
                 renderDeskTasks();
             }
         });
-
         visionFunctionGroup.addEventListener('change', (e) => {
             if (e.target.type === 'checkbox') {
                 const detailsInput = e.target.closest('.vision-function-item').querySelector('.details-input');
                 detailsInput.classList.toggle('hidden', !e.target.checked);
-                if(e.target.checked) {
-                    detailsInput.focus();
-                }
+                if(e.target.checked) { detailsInput.focus(); }
             }
         });
 
