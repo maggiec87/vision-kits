@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>屈光度数测算</title>
+    <!-- ▼▼▼ 第1步：引入 html2canvas 库 ▼▼▼ -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -11,7 +14,7 @@
             color: #333;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Align to top */
+            align-items: flex-start;
             min-height: 100vh;
             margin: 0;
             padding: 20px;
@@ -85,7 +88,7 @@
             font-weight: bold;
             cursor: pointer;
             transition: background-color 0.3s, transform 0.1s;
-            margin-top: 10px; /* Added margin for spacing */
+            margin-top: 10px;
         }
         button:hover {
             background-color: #185abc;
@@ -100,7 +103,7 @@
             border: 1px solid #adc6ff;
             border-radius: 8px;
             text-align: center;
-            display: none; /* Initially hidden */
+            display: none;
         }
         .results-wrapper {
             display: flex;
@@ -144,7 +147,6 @@
             text-align: center;
         }
         
-        /* ▼▼▼ 新增按钮样式 ▼▼▼ */
         .btn-secondary {
             background-color: #f0f2f5;
             color: #595959;
@@ -154,68 +156,56 @@
             background-color: #e6e8eb;
         }
         .btn-share {
-            background-color: #28a745; /* Green color for share */
+            background-color: #28a745;
             font-size: 16px;
         }
         .btn-share:hover {
             background-color: #218838;
         }
-        /* ▲▲▲ 新增按钮样式 ▲▲▲ */
-
+        /* ▼▼▼ 新增：按钮加载状态样式 ▼▼▼ */
+        .btn-loading {
+            background-color: #b0b0b0 !important;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <div class="container" id="captureArea">
         <h1>屈光度数测算</h1>
         <p class="description">使用盼兮老师公式</p>
         
         <form id="myopiaForm">
+            <!-- 表单内容未变 -->
             <div class="form-group">
-                <label for="al">眼轴长度 (AL) 单位mm</label>
+                <label for="al">眼轴长度 (AL) - 单位: mm</label>
                 <input type="number" id="al" step="0.01" placeholder="例如: 24.5" required>
             </div>
-
             <div class="form-group">
                 <label for="k1">角膜曲率 (K1)</label>
                 <input type="number" id="k1" step="0.01" placeholder="例如: 44.0" required>
             </div>
-
             <div class="form-group">
-                <label for="lt">晶体厚度 (LT) 单位mm</label>
+                <label for="lt">晶体厚度 (LT) - 单位: mm</label>
                 <input type="number" id="lt" step="0.01" placeholder="例如: 3.5" required>
             </div>
-
             <div class="form-group">
-                <label>前房深度 (AD):</label>
+                <label>前房深度 (AD) 选择</label>
                 <div class="radio-group">
-                    <label>
-                        <input type="radio" name="ad_option" value="direct" checked> 直接输入 AD
-                    </label>
-                    <label>
-                        <input type="radio" name="ad_option" value="calculate"> 计算公式 AD=ACD-CCT
-                    </label>
+                    <label><input type="radio" name="ad_option" value="direct" checked> 直接输入 AD</label>
+                    <label><input type="radio" name="ad_option" value="calculate"> 计算公式 AD=ACD-CCT</label>
                 </div>
             </div>
-
             <div id="ad_direct_container" class="form-group">
-                <label for="ad">前房深度 (AD) 单位mm</label>
+                <label for="ad">前房深度 (AD) - 单位: mm</label>
                 <input type="number" id="ad" step="0.01" placeholder="例如: 3.2">
             </div>
-
             <div id="ad_calculated_container" style="display: none;">
                 <div class="ad-inputs">
-                    <div class="form-group">
-                        <label for="acd">前房深度 (ACD)</label>
-                        <input type="number" id="acd" step="0.01" placeholder="例如: 3.75">
-                    </div>
-                    <div class="form-group">
-                        <label for="cct">角膜厚度 (CCT)</label>
-                        <input type="number" id="cct" step="0.01" placeholder="例如: 0.55">
-                    </div>
+                    <div class="form-group"><label for="acd">前房深度 (ACD)</label><input type="number" id="acd" step="0.01" placeholder="例如: 3.75"></div>
+                    <div class="form-group"><label for="cct">角膜厚度 (CCT)</label><input type="number" id="cct" step="0.01" placeholder="例如: 0.55"></div>
                 </div>
             </div>
-
             <button type="submit">计算</button>
         </form>
 
@@ -230,35 +220,28 @@
                     <p class="result-item-value" id="result2"></p>
                 </div>
             </div>
-            <p class="result-note">
-                <strong>参考说明：</strong>以上结果为理论估算，仅供参考，波动范围25~75度。
-            </p>
-            <!-- ▼▼▼ 新增分享按钮 ▼▼▼ -->
-            <button id="shareBtn" class="btn-share">分享</button>
+            <p class="result-note"><strong>参考说明：</strong>以上结果为理论估算，仅供参考，波动范围25~75度。</p>
+            <button id="shareBtn" class="btn-share">分享结果</button>
         </div>
 
-        <div class="disclaimer">
-            <strong>重要提示：</strong> 盼兮老师公式(23.5-AL)*250+(43-K1)*100-(3.1-AD)*150+(3.6-LT)*150的理论估算值，+为远储 -为近视度数。仅供参考，配镜请咨询专业验光师。
-        </div>
-
-        <!-- ▼▼▼ 新增返回按钮 ▼▼▼ -->
+        <div class="disclaimer"><strong>重要提示：</strong> 盼兮老师公式(23.5-AL)*250+(43-K1)*100-(3.1-AD)*150+(3.6-LT)*150的理论估算值，+为远储 -为近视度数。仅供参考，配镜请咨询专业验光师。</div>
         <button id="backBtn" class="btn-secondary">返回</button>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // --- DOM Element Selection ---
             const form = document.getElementById('myopiaForm');
-            const adOptions = document.querySelectorAll('input[name="ad_option"]');
-            const adDirectContainer = document.getElementById('ad_direct_container');
-            const adCalculatedContainer = document.getElementById('ad_calculated_container');
             const resultContainer = document.getElementById('resultContainer');
             const result1Element = document.getElementById('result1');
             const result2Element = document.getElementById('result2');
             const shareBtn = document.getElementById('shareBtn');
             const backBtn = document.getElementById('backBtn');
+            const captureArea = document.getElementById('captureArea'); // 要截图的区域
 
-            // --- Functions ---
+            // ... (表单切换逻辑未变)
+            const adOptions = document.querySelectorAll('input[name="ad_option"]');
+            const adDirectContainer = document.getElementById('ad_direct_container');
+            const adCalculatedContainer = document.getElementById('ad_calculated_container');
             function toggleADInputs() {
                 if (document.querySelector('input[name="ad_option"]:checked').value === 'direct') {
                     adDirectContainer.style.display = 'block';
@@ -274,104 +257,93 @@
                     document.getElementById('cct').required = true;
                 }
             }
+            adOptions.forEach(option => option.addEventListener('change', toggleADInputs));
+            toggleADInputs();
 
-            // ▼▼▼ 新增分享处理函数 ▼▼▼
-            async function handleShare() {
-                const al = document.getElementById('al').value;
-                const k1 = document.getElementById('k1').value;
-                const lt = document.getElementById('lt').value;
-                const result1 = result1Element.textContent;
-                const result2 = result2Element.textContent;
+            // ▼▼▼ 第2步：重写分享处理函数 ▼▼▼
+            async function handleShareAsImage() {
+                const originalBtnText = shareBtn.textContent;
+                shareBtn.textContent = '生成图片中...';
+                shareBtn.disabled = true;
+                shareBtn.classList.add('btn-loading');
 
-                const shareText = `屈光度数测算结果 (盼兮公式):\n` +
-                                  `------------------------\n` +
-                                  `输入参数:\n` +
-                                  `· 眼轴 (AL): ${al} mm\n` +
-                                  `· 角膜曲率 (K1): ${k1}\n` +
-                                  `· 晶体厚度 (LT): ${lt} mm\n` +
-                                  `------------------------\n` +
-                                  `测算结果:\n` +
-                                  `· 结果1 (基准24.0): ${result1}\n` +
-                                  `· 结果2 (基准23.5): ${result2}\n` +
-                                  `------------------------\n` +
-                                  `* 提示：结果为理论估算，仅供参考。`;
+                try {
+                    // 使用 html2canvas 截图
+                    const canvas = await html2canvas(captureArea, {
+                        useCORS: true, // 允许加载跨域图片（如有）
+                        scale: 2,      // 提高分辨率，防止模糊
+                    });
 
-                if (navigator.share) {
-                    // 使用 Web Share API (移动端优先)
-                    try {
-                        await navigator.share({
-                            title: '屈光度数测算结果',
-                            text: shareText,
-                        });
-                        console.log('内容分享成功!');
-                    } catch (err) {
-                        console.error('分享失败或取消:', err);
+                    // 方案A: 如果浏览器支持图片分享 (主要在移动端)
+                    if (navigator.share && navigator.canShare) {
+                        canvas.toBlob(async (blob) => {
+                            const file = new File([blob], '屈光度数测算结果.png', { type: 'image/png' });
+                            const shareData = {
+                                files: [file],
+                                title: '屈光度数测算结果',
+                                text: '这是我的屈光度数测算结果，来自盼兮老师公式。',
+                            };
+                            if (navigator.canShare(shareData)) {
+                                await navigator.share(shareData);
+                            } else {
+                                // 如果不能分享文件，则降级为下载
+                                downloadImage(canvas);
+                            }
+                        }, 'image/png');
+                    } else {
+                        // 方案B: 浏览器不支持分享，则直接下载图片 (主要在桌面端)
+                        downloadImage(canvas);
                     }
-                } else {
-                    // 降级为复制到剪贴板 (桌面端)
-                    try {
-                        await navigator.clipboard.writeText(shareText);
-                        const originalText = shareBtn.textContent;
-                        shareBtn.textContent = '已复制到剪贴板!';
-                        setTimeout(() => {
-                            shareBtn.textContent = originalText;
-                        }, 2000);
-                    } catch (err) {
-                        alert('复制失败，您的浏览器可能不支持此功能。');
-                        console.error('复制到剪贴板失败:', err);
-                    }
+                } catch (error) {
+                    console.error('生成或分享图片失败:', error);
+                    alert('抱歉，生成图片失败，请稍后再试。');
+                } finally {
+                    // 恢复按钮状态
+                    shareBtn.textContent = originalBtnText;
+                    shareBtn.disabled = false;
+                    shareBtn.classList.remove('btn-loading');
                 }
             }
 
-            // --- Event Listeners ---
-            adOptions.forEach(option => {
-                option.addEventListener('change', toggleADInputs);
-            });
+            // 下载图片的辅助函数
+            function downloadImage(canvas) {
+                const imageURL = canvas.toDataURL('image/png');
+                const link = document.createElement('a');
+                link.href = imageURL;
+                link.download = '屈光度数测算结果.png';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
 
+            // --- 事件监听 ---
             form.addEventListener('submit', function(event) {
                 event.preventDefault();
-
+                // ... (计算逻辑未变)
                 const al = parseFloat(document.getElementById('al').value);
                 const k1 = parseFloat(document.getElementById('k1').value);
                 const lt = parseFloat(document.getElementById('lt').value);
-                
                 let ad;
                 const adOption = document.querySelector('input[name="ad_option"]:checked').value;
-
                 if (adOption === 'direct') {
                     ad = parseFloat(document.getElementById('ad').value);
                 } else {
                     const acd = parseFloat(document.getElementById('acd').value);
                     const cct = parseFloat(document.getElementById('cct').value);
-                    if (isNaN(acd) || isNaN(cct)) {
-                        alert('请输入有效的ACD和CCT值！');
-                        return;
-                    }
+                    if (isNaN(acd) || isNaN(cct)) { return alert('请输入有效的ACD和CCT值！'); }
                     ad = acd - cct;
                 }
-
-                if (isNaN(al) || isNaN(k1) || isNaN(lt) || isNaN(ad)) {
-                    alert('请输入所有必填项的有效数字！');
-                    return;
-                }
-
+                if (isNaN(al) || isNaN(k1) || isNaN(lt) || isNaN(ad)) { return alert('请输入所有必填项的有效数字！'); }
                 const commonPart = (43 - k1) * 100 - (3.1 - ad) * 150 + (3.6 - lt) * 150;
                 const degree1 = (24.0 - al) * 250 + commonPart;
                 const degree2 = (23.5 - al) * 250 + commonPart;
-                
                 result1Element.textContent = `${Math.round(degree1)} 度`;
                 result2Element.textContent = `${Math.round(degree2)} 度`;
                 resultContainer.style.display = 'block';
             });
 
-            // ▼▼▼ 新增按钮的事件监听 ▼▼▼
-            shareBtn.addEventListener('click', handleShare);
-            backBtn.addEventListener('click', () => {
-                window.history.back();
-            });
-
-            // --- Initialisation ---
-            toggleADInputs();
+            shareBtn.addEventListener('click', handleShareAsImage);
+            backBtn.addEventListener('click', () => { window.history.back(); });
         });
     </script>
 
