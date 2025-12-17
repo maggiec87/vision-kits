@@ -198,14 +198,14 @@
                 element.classList.remove('result-positive', 'result-negative');
 
                 if (roundedDegree > 0) {
-                    element.textContent = `远储 ${roundedDegree} 度`;
+                    element.textContent = `远储 ${roundedDegree} D`;
                     element.classList.add('result-positive'); // 应用绿色样式
                 } else if (roundedDegree < 0) {
                     // 取绝对值显示
-                    element.textContent = `近视 ${Math.abs(roundedDegree)} 度`;
+                    element.textContent = `近视 ${Math.abs(roundedDegree)} D`;
                     element.classList.add('result-negative'); // 应用红色样式
                 } else {
-                    element.textContent = `正视 0 度`;
+                    element.textContent = `正视 0 D`;
                     // 无需添加特定颜色样式，使用默认颜色
                 }
             }
@@ -240,3 +240,4 @@
     </script>
 </body>
 </html>
+
