@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>检查记录</title>
-    <!-- 仅引入 html2canvas 用于生成图片 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- ▼▼▼ 修改：删除了不再需要的 html2canvas 脚本 ▼▼▼ -->
     <style>
         :root {
             --primary-color: #00796b;
@@ -65,11 +64,12 @@
         .btn-sm { padding: 5px 10px; font-size: 12px; border-radius: 6px; }
         .btn-primary { background-color: var(--primary-color); color: white; width: 100%; margin-top: 20px; }
         .btn-primary:hover { background-color: #005a4f; }
-        .btn-secondary { background-color: var(--secondary-color); color: white; }
+        .btn-secondary { background-color: #e2e8f0; color: #595959; }
+        .btn-secondary:hover { background-color: #cbd5e0; }
         .btn-info { background-color: var(--info-color); color: white; }
         .btn-danger { background-color: var(--danger-color); color: white; }
+        .btn-warning { background-color: var(--warning-color); color: white; }
         .btn-calc { background-color: var(--warning-color); color: white; }
-        .btn-share { background-color: var(--info-color); color: white; }
 
         form { display: flex; flex-direction: column; gap: 30px; }
         fieldset {
@@ -130,40 +130,6 @@
         .detail-item span:first-child { font-weight: 600; color: var(--secondary-color); margin-right: 10px; }
         .detail-item span:last-child { text-align: right; flex-grow: 1; word-break: break-all; }
 
-        /* Report Card for PNG Export - Hidden by default */
-        #report-card-wrapper {
-            position: absolute;
-            left: -9999px;
-            top: -9999px;
-            padding: 20px;
-            background-color: #f0f0f0;
-        }
-        #report-card-template {
-            width: 800px;
-            padding: 30px;
-            background: white;
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            font-family: sans-serif;
-            color: #333;
-        }
-        .report-header { text-align: center; margin-bottom: 25px; }
-        .report-header h2 { color: var(--primary-color); margin: 0; }
-        .report-header p { margin: 5px 0 0; color: #666; }
-        .report-section { margin-bottom: 20px; }
-        .report-section h3 {
-            font-size: 1.2em;
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 5px;
-            margin-bottom: 15px;
-        }
-        .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px 30px; }
-        .report-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #eee; }
-        .report-item-label { font-weight: bold; }
-        .report-item-value { color: #555; }
-        .report-footer { text-align: center; margin-top: 30px; font-size: 0.8em; color: #999; }
-
         @media (max-width: 768px) {
             body { padding: 10px; }
             .container { padding: 20px 15px; }
@@ -201,8 +167,8 @@
         <div class="header-nav">
             <h1>检查记录</h1>
             <div class="header-actions">
-                <button id="share-png-btn" class="btn btn-share">分享数据</button>
-                <a href="index.html" class="btn btn-secondary">返回</a>
+                <!-- ▼▼▼ 修改：删除分享按钮，并更新返回链接 ▼▼▼ -->
+                <a href="https://maggiec87.github.io/vision-kits/" class="btn btn-secondary">返回</a>
             </div>
         </div>
 
@@ -292,7 +258,7 @@
 
         <!-- 历史 -->
         <div class="history-section">
-            <div class="history-header"><h2>历史</h2><button id="export-btn" class="btn">导出记录</button></div>
+            <div class="history-header"><h2>记录</h2><button id="export-btn" class="btn">导出</button></div>
             <table class="history-table"><thead><tr><th>日期</th><th>机构</th><th>眼轴(OD/OS)</th><th>综合验光(OD/OS)</th><th class="actions-cell">操作</th></tr></thead><tbody id="history-table-body"></tbody></table>
         </div>
     </div>
@@ -300,48 +266,19 @@
     <!-- 详情弹窗 -->
     <div id="details-modal" class="modal"><div class="modal-content"><div class="modal-header"><h3 id="modal-title">检查详情</h3><span class="close-btn">&times;</span></div><div id="modal-body"></div></div></div>
     
-    <!-- Hidden Report Card for PNG generation -->
-    <div id="report-card-wrapper">
-        <div id="report-card-template">
-            <div class="report-header">
-                <h2 id="report-title">检查数据</h2>
-                <p>日期: <span id="report-date"></span> | 机构: <span id="report-institution"></span></p>
-            </div>
-            <div class="report-section">
-                <h3>屈光数据</h3>
-                <div class="report-grid">
-                    <div class="report-item"><span class="report-item-label">裸眼视力 (OD/OS)</span> <span class="report-item-value" id="report-va"></span></div>
-                    <div class="report-item"><span class="report-item-label">矫正视力 (OD/OS)</span> <span class="report-item-value" id="report-cva"></span></div>
-                    <div class="report-item"><span class="report-item-label">电脑验光 (OD)</span> <span class="report-item-value" id="report-ar-od"></span></div>
-                    <div class="report-item"><span class="report-item-label">电脑验光 (OS)</span> <span class="report-item-value" id="report-ar-os"></span></div>
-                    <div class="report-item"><span class="report-item-label">综合验光 (OD)</span> <span class="report-item-value" id="report-sr-od"></span></div>
-                    <div class="report-item"><span class="report-item-label">综合验光 (OS)</span> <span class="report-item-value" id="report-sr-os"></span></div>
-                </div>
-            </div>
-            <div class="report-section">
-                <h3>生物测量数据</h3>
-                <div class="report-grid">
-                    <div class="report-item"><span class="report-item-label">眼轴 (AL) OD/OS</span> <span class="report-item-value" id="report-al"></span></div>  
-                    <div class="report-item"><span class="report-item-label">角膜曲率 (K) OD/OS</span> <span class="report-item-value" id="report-k-od"></span></div>
-                </div>
-            </div>
-            <div class="report-footer">
-                <p>本报告数据仅供参考。</p>
-            </div>
-        </div>
-    </div>
+    <!-- ▼▼▼ 修改：删除了用于生成PNG的隐藏模板 ▼▼▼ -->
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         // --- Element Selectors ---
         const form = document.getElementById('exam-form');
+        const submitBtn = form.querySelector('button[type="submit"]'); // ▼▼▼ 新增：获取提交按钮
         const historyTableBody = document.getElementById('history-table-body');
         const exportBtn = document.getElementById('export-btn');
         const modal = document.getElementById('details-modal');
         const modalTitle = document.getElementById('modal-title');
         const modalBody = document.getElementById('modal-body');
         const closeModalBtn = document.querySelector('.close-btn');
-        const sharePngBtn = document.getElementById('share-png-btn');
         
         const calcAdBtn = document.getElementById('calc-ad-btn');
         const calcAddBtn = document.getElementById('calc-add-btn');
@@ -349,6 +286,7 @@
 
         const DB_KEY = 'eyeExamRecords_v5';
         let records = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+        let editingRecordId = null; // ▼▼▼ 新增：用于跟踪编辑状态
         const formInputs = Array.from(form.querySelectorAll('input, textarea, select'));
         
         // --- Utility Functions ---
@@ -356,7 +294,7 @@
         const getInputValue = (id) => document.getElementById(id).value;
         const setInputValue = (id, value) => {
             const el = document.getElementById(id);
-            if (el) el.value = value;
+            if (el) el.value = value || ''; // 确保空值被设为''
         };
         const formatRx = (s, c, a, placeholder = '-') => {
             if (!s && !c && !a) return placeholder;
@@ -377,6 +315,7 @@
                 const na = '无';
                 const odRx = formatRx(rec['sr-s-od'], rec['sr-c-od'], rec['sr-a-od']);
                 const osRx = formatRx(rec['sr-s-os'], rec['sr-c-os'], rec['sr-a-os']);
+                // ▼▼▼ 修改：增加“修改”按钮 ▼▼▼
                 tr.innerHTML = `
                     <td data-label="日期">${rec['exam-date'] || na}</td>
                     <td data-label="机构">${rec['exam-institution'] || na}</td>
@@ -384,6 +323,7 @@
                     <td data-label="综合验光">${odRx} / ${osRx}</td>
                     <td class="actions-cell">
                         <button class="btn btn-info details-btn" data-id="${rec.id}">详情</button>
+                        <button class="btn btn-warning edit-btn" data-id="${rec.id}">修改</button>
                         <button class="btn btn-danger delete-btn" data-id="${rec.id}">删除</button>
                     </td>
                 `;
@@ -391,16 +331,53 @@
             });
         };
 
-        const handleFormSubmit = (e) => {
-            e.preventDefault();
-            const newRecord = { id: Date.now() };
-            formInputs.forEach(input => { if (input.id) newRecord[input.id] = input.value; });
-            records.push(newRecord);
-            saveRecords();
-            renderHistory();
+        const resetFormAndState = () => {
             form.reset();
             setInputValue('exam-date', new Date().toISOString().split('T')[0]);
-            alert('检查记录已保存！');
+            editingRecordId = null;
+            submitBtn.textContent = '保存';
+        };
+
+        // ▼▼▼ 新增：将记录加载到表单中以供编辑的函数 ▼▼▼
+        const loadRecordIntoForm = (recordId) => {
+            const record = records.find(r => r.id == recordId);
+            if (!record) return;
+
+            editingRecordId = record.id;
+            formInputs.forEach(input => {
+                if (input.id) {
+                    setInputValue(input.id, record[input.id]);
+                }
+            });
+
+            submitBtn.textContent = '更新';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        // ▼▼▼ 修改：处理表单提交，区分创建和更新 ▼▼▼
+        const handleFormSubmit = (e) => {
+            e.preventDefault();
+            
+            const recordData = {};
+            formInputs.forEach(input => { if (input.id) recordData[input.id] = input.value; });
+
+            if (editingRecordId) {
+                // 更新模式
+                const recordIndex = records.findIndex(r => r.id === editingRecordId);
+                if (recordIndex > -1) {
+                    records[recordIndex] = { ...records[recordIndex], ...recordData };
+                    alert('检查记录已更新！');
+                }
+            } else {
+                // 创建模式
+                recordData.id = Date.now();
+                records.push(recordData);
+                alert('检查记录已保存！');
+            }
+            
+            saveRecords();
+            renderHistory();
+            resetFormAndState();
         };
         
         const showDetailsModal = (recordId) => {
@@ -447,46 +424,11 @@
             document.body.removeChild(link);
         };
 
-        // --- New Feature: Share as PNG ---
-        const shareAsPNG = async () => {
-            const reportCard = document.getElementById('report-card-template');
-            sharePngBtn.textContent = '正在生成...';
-            sharePngBtn.disabled = true;
-
-            // Populate report card from current form values
-            document.getElementById('report-date').textContent = getInputValue('exam-date') || 'N/A';
-            document.getElementById('report-institution').textContent = getInputValue('exam-institution') || 'N/A';
-            document.getElementById('report-va').textContent = `${getInputValue('va-od') || '-'} / ${getInputValue('va-os') || '-'}`;
-            document.getElementById('report-cva').textContent = `${getInputValue('cva-od') || '-'} / ${getInputValue('cva-os') || '-'}`;
-            document.getElementById('report-ar-od').textContent = formatRx(getInputValue('ar-s-od'), getInputValue('ar-c-od'), getInputValue('ar-a-od'));
-            document.getElementById('report-ar-os').textContent = formatRx(getInputValue('ar-s-os'), getInputValue('ar-c-os'), getInputValue('ar-a-os'));
-            document.getElementById('report-sr-od').textContent = formatRx(getInputValue('sr-s-od'), getInputValue('sr-c-od'), getInputValue('sr-a-od'));
-            document.getElementById('report-sr-os').textContent = formatRx(getInputValue('sr-s-os'), getInputValue('sr-c-os'), getInputValue('sr-a-os'));
-            document.getElementById('report-al').textContent = `${getInputValue('al-od') || '-'} / ${getInputValue('al-os') || '-'} mm`;
-            document.getElementById('report-k-od').textContent = `K1:${getInputValue('k1-od')||'-'} / K2:${getInputValue('k2-od')||'-'}`;
-            document.getElementById('report-k-os').textContent = `K1:${getInputValue('k1-os')||'-'} / K2:${getInputValue('k2-os')||'-'}`;
-            document.getElementById('report-ad').textContent = `${getInputValue('ad-od') || '-'} / ${getInputValue('ad-os') || '-'} mm`;
-
-            try {
-                const canvas = await html2canvas(reportCard, { scale: 2, useCORS: true });
-                const link = document.createElement('a');
-                link.download = `检查报告-${getInputValue('exam-date') || new Date().toISOString().slice(0,10)}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            } catch (error) {
-                console.error('Error generating PNG:', error);
-                alert('生成图片失败，请查看控制台获取更多信息。');
-            } finally {
-                sharePngBtn.textContent = '分享';
-                sharePngBtn.disabled = false;
-            }
-        };
-
         // --- Event Listeners ---
         form.addEventListener('submit', handleFormSubmit);
         exportBtn.addEventListener('click', exportToCSV);
-        sharePngBtn.addEventListener('click', shareAsPNG);
 
+        // ▼▼▼ 修改：更新事件委托，增加对“修改”按钮的监听 ▼▼▼
         historyTableBody.addEventListener('click', (e) => {
             const btn = e.target.closest('button');
             if (!btn) return;
@@ -499,6 +441,8 @@
                 }
             } else if (btn.classList.contains('details-btn')) {
                 showDetailsModal(id);
+            } else if (btn.classList.contains('edit-btn')) {
+                loadRecordIntoForm(id);
             }
         });
 
