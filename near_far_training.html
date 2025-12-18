@@ -13,7 +13,8 @@
             --border-color: #e2e8f0;
             --success-color: #38a169;
             --danger-color: #e53e3e;
-            --info-color: #3182ce; /* 蓝色，用于分享按钮 */
+            --info-color: #3182ce; /* 蓝色，用于详情按钮 */
+            --warning-color: #f0ad4e; /* 黄色，用于修改按钮 */
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -27,7 +28,6 @@
             max-width: 800px; margin: 0 auto; background-color: var(--card-bg-color);
             padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
-        /* ▼▼▼ 新增/修改：顶部导航样式 ▼▼▼ */
         .header-nav {
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 25px; flex-wrap: wrap; gap: 10px;
@@ -49,7 +49,7 @@
         .explanation-content h3 { color: var(--primary-color); margin-top: 20px; margin-bottom: 8px; font-size: 1.1em; }
         .explanation-content p { line-height: 1.7; margin: 0 0 15px 0; }
 
-        form { display: flex; flex-direction: column; gap: 20px; }
+        form { display: flex; flex-direction: column;gap: 20px; }
         fieldset { border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; }
         legend { font-weight: 600; font-size: 1.1em; color: var(--primary-color); padding: 0 10px; }
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
@@ -63,17 +63,19 @@
         .round-adder-inputs { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
         .round-adder-inputs .form-group { flex-grow: 1; }
         
-        .btn { padding: 10px 15px; /* 调整按钮大小 */ border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background-color 0.2s; white-space: nowrap; -webkit-appearance: none; text-decoration: none; }
+        .btn { padding: 10px 15px; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background-color 0.2s; white-space: nowrap; -webkit-appearance: none; text-decoration: none; }
+        .btn-sm { padding: 4px 8px; font-size: 0.8em; }
         .btn-primary { background-color: var(--primary-color); color: white; width: 100%; margin-top: 10px; }
         .btn-primary:hover { background-color: #1a365d; }
-        .btn-secondary { background-color: #e2e8f0; color: #595959; } /* 浅灰色，与check_data.html的返回按钮一致 */
+        .btn-secondary { background-color: #e2e8f0; color: #595959; }
         .btn-secondary:hover { background-color: #cbd5e0; }
-        .btn-danger { background-color: var(--danger-color); color: white; font-size: 0.8em; padding: 4px 8px; }
-        .btn-info { background-color: var(--info-color); color: white; font-size: 0.8em; padding: 4px 8px; }
-        .btn-info:hover { background-color: #2b6cb0; }
-
+        .btn-danger { background-color: var(--danger-color); color: white; }
+        .btn-info { background-color: var(--info-color); color: white; }
+        .btn-warning { background-color: var(--warning-color); color: white; }
+        
         .rounds-list { list-style-type: none; padding: 0; margin-top: 15px; display: flex; flex-direction: column; gap: 10px; }
         .rounds-list li { background-color: #edf2f7; padding: 10px 12px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; font-size: 0.9em;}
+        .rounds-list li button { font-size: 1em; padding: 4px 8px; } /* 统一删除按钮大小 */
 
         .history-section { margin-top: 40px; }
         .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
@@ -86,15 +88,38 @@
         .history-table th:nth-child(5) { width: 35%; }
         .history-table tr:last-child td { border-bottom: none; }
         .history-table tr:hover { background-color: #f7fafc; }
-        /* ▼▼▼ 修改：操作列样式，使其能容纳两个按钮 ▼▼▼ */
-        .history-table .actions-cell { text-align: right; display: flex; gap: 8px; justify-content: flex-end; }
+        .history-table .actions-cell { text-align: right; display: flex; gap: 8px; justify-content: flex-end; align-items: center; flex-wrap: wrap; }
+        .history-table .actions-cell .btn { padding: 5px 10px; font-size: 14px; }
         .history-distances { font-size: 0.9em; line-height: 1.5; }
+
+        /* ▼▼▼ 新增：弹窗样式 ▼▼▼ */
+        .modal {
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0;
+            width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5);
+            align-items: center; justify-content: center;
+        }
+        .modal-content {
+            background-color: #fff; margin: auto; padding: 20px; border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); width: 90%; max-width: 600px;
+            position: relative; max-height: 85vh; overflow-y: auto;
+    }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 20px; }
+        .modal-header h3 { margin: 0; font-size: 1.5em; color: var(--primary-color); }
+        .close-btn { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; border: none; background: none; }
+        .detail-group { margin-bottom: 20px; }
+        .detail-group h4 { margin: 0 0 10px 0; color: var(--primary-color); border-bottom: 1px solid var(--border-color); padding-bottom: 5px; font-size: 1.2em; }
+        .detail-item { display: flex; justify-content: space-between; padding: 8px 0; font-size: 1em; flex-wrap: wrap; border-bottom: 1px solid #f0f0f0; }
+        .detail-item:last-child { border-bottom: none; }
+        .detail-item span:first-child { font-weight: 600; color: var(--secondary-color); margin-right: 10px; }
+        .detail-item span:last-child { text-align: right; flex-grow: 1; word-break: break-all; }
+        .detail-rounds-list { list-style: none; padding-left: 15px; margin: 5px 0 0 0; }
+        .detail-rounds-list li { padding: 3px 0; }
 
         @media (max-width: 768px) {
             body { padding: 10px; }
             .container { padding: 15px; }
             .header-nav { flex-direction: column; align-items: stretch; }
-            .header-nav h1 { text-align: left; margin-bottom: 10px; }
+            .header-nav h1 { text-align: center; margin-bottom: 10px; }
             .header-actions { justify-content: stretch; }
             .header-actions .btn { flex-grow: 1; }
 
@@ -105,20 +130,20 @@
             .history-table tr { display: block; margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 10px; }
             .history-table td { display: flex; justify-content: space-between; align-items: center; padding: 8px 5px; border-bottom: 1px solid #f0f0f0; text-align: right; }
             .history-table td:last-child { border-bottom: 0; }
-            .history-table .actions-cell { justify-content: flex-end; } /* 移动端按钮靠右 */
+            .history-table .actions-cell { justify-content: flex-end; }
             .history-table td::before { content: attr(data-label); font-weight: 600; color: var(--primary-color); text-align: left; padding-right: 10px; }
             .history-table .actions-cell::before { display: none; }
+            .modal-content { width: 95%; max-height: 90vh; }
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- ▼▼▼ 新增：顶部导航和返回按钮 ▼▼▼ -->
         <div class="header-nav">
             <h1>移近推远视训</h1>
             <div class="header-actions">
-                <a href="javascript:window.history.back()" class="btn btn-secondary">返回</a>
+                <a href="https://maggiec87.github.io/vision-kits/" class="btn btn-secondary">返回</a>
             </div>
         </div>
 
@@ -138,14 +163,26 @@
         </form>
 
         <div class="history-section">
-            <div class="history-header"><h2>历史</h2><button id="export-btn" class="btn">导出记录</button></div>
+            <div class="history-header"><h2>记录</h2><button id="export-btn" class="btn">导出</button></div>
             <table class="history-table"><thead><tr><th>日期</th><th>反转拍</th><th>视标卡</th><th>时长</th><th>推远数据 (cm)</th><th>操作</th></tr></thead><tbody id="history-table-body"></tbody></table>
+        </div>
+    </div>
+
+    <!-- ▼▼▼ 新增：详情弹窗 ▼▼▼ -->
+    <div id="details-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">训练详情</h3>
+                <span class="close-btn">&times;</span>
+            </div>
+            <div id="modal-body"></div>
         </div>
     </div>
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         const form = document.getElementById('record-form');
+        const submitBtn = form.querySelector('button[type="submit"]');
         const recordDateInput = document.getElementById('record-date');
         const historyTableBody = document.getElementById('history-table-body');
         const exportBtn = document.getElementById('export-btn');
@@ -158,9 +195,16 @@
         const rightData2Input = document.getElementById('right-data2-input');
         const rightRoundsList = document.getElementById('right-rounds-list');
         
+        // ▼▼▼ 新增：弹窗元素选择器 ▼▼▼
+        const modal = document.getElementById('details-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalBody = document.getElementById('modal-body');
+        const closeModalBtn = document.querySelector('.close-btn');
+
         let records = JSON.parse(localStorage.getItem('pushUpRecordsV3')) || [];
         let currentLeftRounds = [];
         let currentRightRounds = [];
+        let editingRecordId = null;
 
         const renderRounds = (eye) => {
             const rounds = (eye === 'left') ? currentLeftRounds : currentRightRounds;
@@ -168,7 +212,7 @@
             listElement.innerHTML = '';
             rounds.forEach((round, index) => {
                 const li = document.createElement('li');
-                li.innerHTML = `<span><strong>第${round.round}轮:</strong> ${round.data1}, ${round.data2}</span><button type="button" class="btn btn-danger" data-eye="${eye}" data-index="${index}">×</button>`;
+                li.innerHTML = `<span><strong>第${round.round}轮:</strong> ${round.data1}, ${round.data2}</span><button type="button" class="btn btn-sm btn-danger" data-eye="${eye}" data-index="${index}">×</button>`;
                 listElement.appendChild(li);
             });
         };
@@ -182,7 +226,7 @@
                 const rightDistances = record.distances.right.map(r => `R${r.round}(${r.data1}, ${r.data2})`).join('; ') || '无记录';
                 const distancesHtml = `<div class="history-distances"><strong>左:</strong> ${leftDistances}<br><strong>右:</strong> ${rightDistances}</div>`;
                 
-                // ▼▼▼ 修改：在操作列增加分享按钮 ▼▼▼
+                // ▼▼▼ 修改：增加详情按钮，调整修改按钮样式 ▼▼▼
                 tr.innerHTML = `
                     <td data-label="日期">${record.date}</td>
                     <td data-label="反转拍">±${record.diopter} D</td>
@@ -190,7 +234,8 @@
                     <td data-label="时长">${record.duration || 'N/A'}</td>
                     <td data-label="推远数据">${distancesHtml}</td>
                     <td class="actions-cell">
-                        <button class="btn btn-info share-btn" data-id="${record.id}">分享</button>
+                        <button class="btn btn-info details-btn" data-id="${record.id}">详情</button>
+                        <button class="btn btn-warning edit-btn" data-id="${record.id}">修改</button>
                         <button class="btn btn-danger delete-btn" data-id="${record.id}">删除</button>
                     </td>`;
                 historyTableBody.appendChild(tr);
@@ -205,59 +250,105 @@
             const roundsArray = (eye === 'left') ? currentLeftRounds : currentRightRounds;
             const data1 = parseFloat(data1Input.value);
             const data2 = parseFloat(data2Input.value);
-            if (isNaN(data1) || isNaN(data2)) { alert('请输入有效的“数据1”和“数据2”数值。'); return; }
+            if (isNaN(data1) || isNaN(data2)) { alert('请输入有效的“远1”和“远2”数值。'); return; }
             const roundNumber = roundsArray.length + 1;
             roundsArray.push({ round: roundNumber, data1: data1, data2: data2 });
             renderRounds(eye);
             data1Input.value = ''; data2Input.value = ''; data1Input.focus();
         };
+
+        const resetFormAndState = () => {
+            form.reset();
+            currentLeftRounds = [];
+            currentRightRounds = [];
+            renderRounds('left');
+            renderRounds('right');
+            recordDateInput.value = new Date().toISOString().split('T')[0];
+            editingRecordId = null;
+            submitBtn.textContent = '保存';
+        };
+
+        const loadRecordIntoForm = (recordId) => {
+            const record = records.find(r => r.id == recordId);
+            if (!record) return;
+
+            editingRecordId = record.id;
+            document.getElementById('flipper-diopter').value = record.diopter;
+            document.getElementById('acuity-chart').value = record.chart;
+            recordDateInput.value = record.date;
+            document.getElementById('practice-duration').value = record.duration;
+
+            currentLeftRounds = JSON.parse(JSON.stringify(record.distances.left));
+            currentRightRounds = JSON.parse(JSON.stringify(record.distances.right));
+            renderRounds('left');
+            renderRounds('right');
+
+            submitBtn.textContent = '更新';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
         
         const handleFormSubmit = (e) => {
             e.preventDefault();
             if (currentLeftRounds.length === 0 && currentRightRounds.length === 0) { alert('请至少为一只眼睛添加一轮数据。'); return; }
-            const newRecord = {
-                id: Date.now(), date: recordDateInput.value,
+            
+            const recordData = {
                 diopter: document.getElementById('flipper-diopter').value,
                 chart: document.getElementById('acuity-chart').value,
+                date: recordDateInput.value,
                 duration: document.getElementById('practice-duration').value.trim(),
                 distances: { left: [...currentLeftRounds], right: [...currentRightRounds] }
             };
-            records.push(newRecord);
-            saveRecords(); renderHistory(); form.reset();
-            currentLeftRounds = []; currentRightRounds = [];
-            renderRounds('left'); renderRounds('right');
-            recordDateInput.value = new Date().toISOString().split('T')[0];
-            alert('记录保存成功！');
+
+            if (editingRecordId) {
+                const recordIndex = records.findIndex(r => r.id === editingRecordId);
+                if (recordIndex > -1) {
+                    records[recordIndex] = { ...records[recordIndex], ...recordData };
+                    alert('记录更新成功！');
+                }
+            } else {
+                recordData.id = Date.now();
+                records.push(recordData);
+                alert('记录保存成功！');
+            }
+            
+            saveRecords();
+            renderHistory();
+            resetFormAndState();
         };
 
-        // ▼▼▼ 新增：分享处理函数 ▼▼▼
-        const handleShare = async (recordId) => {
+        // ▼▼▼ 新增：显示详情弹窗的函数 ▼▼▼
+        const showDetailsModal = (recordId) => {
             const record = records.find(r => r.id == recordId);
             if (!record) return;
 
-            const leftStr = record.distances.left.map(r => `R${r.round}(${r.data1}, ${r.data2})`).join('; ') || '无';
-            const rightStr = record.distances.right.map(r => `R${r.round}(${r.data1}, ${r.data2})`).join('; ') || '无';
-
-            let shareText = `【移近推远训练记录 - ${record.date}】\n\n`;
-            shareText += `- 反转拍: ±${record.diopter} D\n`;
-            shareText += `- 视标卡: ${record.chart}\n`;
-            if (record.duration) shareText += `- 时长: ${record.duration}\n`;
-            shareText += `- 左眼数据: ${leftStr}\n`;
-            shareText += `- 右眼数据: ${rightStr}\n`;
+            modalTitle.textContent = `训练详情 - ${record.date}`;
             
-            const pageUrl = window.location.origin + window.location.pathname;
-            shareText += `\n----------\n你也来试试这个好用的视训记录工具吧！\n${pageUrl}`;
+            const leftRoundsHtml = record.distances.left.length > 0
+                ? record.distances.left.map(r => `<li>第${r.round}轮: ${r.data1}, ${r.data2}</li>`).join('')
+                : '<li>无记录</li>';
 
-            if (navigator.share) {
-                try {
-                    await navigator.share({ title: `我的移近推远训练记录 - ${record.date}`, text: shareText });
-                } catch (err) { console.error('分享失败或取消:', err); }
-            } else {
-                try {
-                    await navigator.clipboard.writeText(shareText);
-                    alert('记录内容已复制到剪贴板，请手动粘贴分享！');
-                } catch (err) { alert('复制失败，您的浏览器可能不支持此功能。'); }
-            }
+            const rightRoundsHtml = record.distances.right.length > 0
+                ? record.distances.right.map(r => `<li>第${r.round}轮: ${r.data1}, ${r.data2}</li>`).join('')
+                : '<li>无记录</li>';
+
+            modalBody.innerHTML = `
+                <div class="detail-group">
+                    <h4>训练信息</h4>
+                    <div class="detail-item"><span>日期:</span> <span>${record.date}</span></div>
+                    <div class="detail-item"><span>反转拍:</span> <span>±${record.diopter} D</span></div>
+                    <div class="detail-item"><span>视标卡:</span> <span>${record.chart}</span></div>
+                    <div class="detail-item"><span>时长:</span> <span>${record.duration || 'N/A'}</span></div>
+                </div>
+                <div class="detail-group">
+                    <h4>左眼推远数据 (cm)</h4>
+                    <ul class="detail-rounds-list">${leftRoundsHtml}</ul>
+                </div>
+                <div class="detail-group">
+                    <h4>右眼推远数据 (cm)</h4>
+                    <ul class="detail-rounds-list">${rightRoundsHtml}</ul>
+                </div>
+            `;
+            modal.style.display = 'flex';
         };
 
         const handleHistoryTableClick = (e) => {
@@ -271,8 +362,10 @@
                     saveRecords();
                     renderHistory();
                 }
-            } else if (target.classList.contains('share-btn')) {
-                handleShare(recordId);
+            } else if (target.classList.contains('edit-btn')) {
+                loadRecordIntoForm(recordId);
+            } else if (target.classList.contains('details-btn')) { // 新增：监听详情按钮
+                showDetailsModal(recordId);
             }
         };
         
@@ -305,6 +398,7 @@
             document.body.appendChild(link); link.click(); document.body.removeChild(link);
         };
 
+        // 事件监听
         addLeftRoundBtn.addEventListener('click', () => addRound('left'));
         addRightRoundBtn.addEventListener('click', () => addRound('right'));
         leftData2Input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); addRound('left'); } });
@@ -314,9 +408,16 @@
         form.addEventListener('submit', handleFormSubmit);
         historyTableBody.addEventListener('click', handleHistoryTableClick);
         exportBtn.addEventListener('click', exportToCSV);
+        
+        // ▼▼▼ 新增：弹窗关闭事件监听 ▼▼▼
+        closeModalBtn.addEventListener('click', () => modal.style.display = 'none');
+        window.addEventListener('click', (e) => { if (e.target == modal) modal.style.display = 'none'; });
 
+        // 初始化
         recordDateInput.value = new Date().toISOString().split('T')[0];
-        renderHistory(); renderRounds('left'); renderRounds('right');
+        renderHistory();
+        renderRounds('left');
+        renderRounds('right');
     });
     </script>
 </body>
