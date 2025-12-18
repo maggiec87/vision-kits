@@ -8,7 +8,7 @@
         :root {
             --primary-color: #00796b; /* 护眼绿 */
             --secondary-color: #4a5568; /* 灰 */
-            --info-color: #3182ce; /* 蓝色，用于分享按钮 */
+            --info-color: #3182ce; /* 蓝色 */
             --background-color: #f4f5f7;
             --card-bg-color: #ffffff;
             --border-color: #e2e8f0;
@@ -32,10 +32,8 @@
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            position: relative; /* 为了返回按钮定位 */
+            position: relative;
         }
-        
-        /* ▼▼▼ 修改：顶部导航样式，与check_data.html保持一致 ▼▼▼ */
         .header-nav {
             display: flex;
             justify-content: space-between;
@@ -56,13 +54,11 @@
             gap: 10px;
             flex-wrap: wrap;
         }
-
         h2 {
             color: var(--primary-color);
             text-align: center;
             margin-bottom: 25px;
         }
-        
         form { display: flex; flex-direction: column; gap: 25px; }
         fieldset {
             border: 1px solid var(--border-color);
@@ -112,9 +108,8 @@
         .vision-function-item .main-label { display: flex; align-items: center; cursor: pointer; }
         .vision-function-item input[type="checkbox"] { margin-right: 10px; width: 1.3em; height: 1.3em; flex-shrink: 0; }
         .vision-function-item .details-input { margin-top: 10px; }
-
         .btn {
-            padding: 10px 15px; /* 调整按钮大小 */
+            padding: 10px 15px;
             border: none;
             border-radius: 8px;
             font-size: 16px;
@@ -123,35 +118,30 @@
             transition: all 0.2s;
             -webkit-appearance: none;
             white-space: nowrap;
-            text-decoration: none; /* 确保链接按钮样式一致 */
+            text-decoration: none;
         }
         .btn-primary { background-color: var(--primary-color); color: white; width: 100%; }
         .btn-primary:hover { background-color: #005a4f; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        .btn-secondary { background-color: #e2e8f0; color: #595959; } /* 浅灰色，与check_data.html的返回按钮一致 */
+        .btn-secondary { background-color: #e2e8f0; color: #595959; }
         .btn-secondary:hover { background-color: #cbd5e0; }
         .btn-danger { background-color: var(--danger-color); color: white; font-size: 0.8em; padding: 4px 8px; }
-        
         .btn-info { background-color: var(--info-color); color: white; font-size: 0.8em; padding: 4px 8px; }
         .btn-info:hover { background-color: #2b6cb0; }
-        
         .history-section { margin-top: 40px; }
         .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
         #export-btn { background-color: var(--success-color); color: white; }
-        
         .history-table { width: 100%; border-collapse: collapse; text-align: left; }
         .history-table th, .history-table td { padding: 12px; border-bottom: 1px solid var(--border-color); vertical-align: top; word-wrap: break-word; }
         .history-table th { font-weight: 600; background-color: #f8f9fa; }
         .history-table tr:last-child td { border-bottom: none; }
         .history-table tr:hover { background-color: #f1f3f5; }
-
         .history-table td.actions-cell {
             text-align: right;
             vertical-align: middle;
-            display: flex; /* 使用flex布局 */
-            gap: 8px; /* 按钮间距 */
-            justify-content: flex-end; /* 靠右对齐 */
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
         }
-
         @media (max-width: 768px) {
             body { padding: 10px; }
             .container { padding: 20px 15px; }
@@ -159,7 +149,6 @@
             .header-nav h1 { text-align: left; margin-bottom: 10px; }
             .header-actions { justify-content: stretch; }
             .header-actions .btn { flex-grow: 1; }
-
             h2 { font-size: 1.4em; }
             fieldset { padding: 15px; }
             .task-adder-inputs .btn { width: 100%; margin-top: 5px; }
@@ -174,7 +163,7 @@
                 padding: 10px 5px; border-bottom: 1px solid #f0f0f0; text-align: right;
             }
             .history-table td:last-child { border-bottom: 0; }
-            .history-table td.actions-cell { justify-content: flex-end; } /* 移动端按钮靠右 */
+            .history-table td.actions-cell { justify-content: flex-end; }
             .history-table td::before {
                 content: attr(data-label); font-weight: 600; color: var(--primary-color);
                 text-align: left; padding-right: 10px; white-space: nowrap; flex-shrink: 0;
@@ -186,11 +175,11 @@
 <body>
 
     <div class="container">
-        <!-- ▼▼▼ 修改：顶部导航结构，与check_data.html保持一致 ▼▼▼ -->
         <div class="header-nav">
             <h1>防控每日记</h1>
             <div class="header-actions">
-                <a href="javascript:window.history.back()" class="btn btn-secondary">返回</a>
+                <!-- ▼▼▼ 修改：返回按钮链接到固定地址 ▼▼▼ -->
+                <a href="https://maggiec87.github.io/vision-kits/" class="btn btn-secondary">返回</a>
             </div>
         </div>
 
@@ -236,7 +225,7 @@
             </fieldset>
             <button type="submit" class="btn btn-primary">保存</button>
         </form>
-        <div class="history-section"><div class="history-header"><h2>记录</h2><button id="export-btn" class="btn">导出记录</button></div><table class="history-table"><thead><tr><th>日期</th><th>阳光</th><th>望远</th><th>视功能</th><th>其他</th><th>操作</th></tr></thead><tbody id="history-table-body"></tbody></table></div>
+        <div class="history-section"><div class="history-header"><h2>历史</h2><button id="export-btn" class="btn">导出</button></div><table class="history-table"><thead><tr><th>日期</th><th>阳光</th><th>望远</th><th>视功能</th><th>其他</th><th>操作</th></tr></thead><tbody id="history-table-body"></tbody></table></div>
     </div>
 
     <script>
@@ -248,9 +237,11 @@
         const addDeskTaskBtn = document.getElementById('add-desk-task-btn');
         const deskTasksList = document.getElementById('desk-tasks-list');
         const visionFunctionGroup = document.getElementById('vision-function-group');
+        const submitBtn = form.querySelector('button[type="submit"]');
 
         let records = JSON.parse(localStorage.getItem('myopiaPreventionRecordsV4')) || [];
         let currentDeskTasks = [];
+        let editingRecordId = null; // ▼▼▼ 新增：用于跟踪正在编辑的记录ID ▼▼▼
         const visionFunctionOptions = ['晶体操', '反转拍', '聚散球', '红绿矢量图', '移近推远', '其他训练'];
 
         const createVisionFunctionUI = () => {
@@ -287,11 +278,12 @@
                 if (!gazingStr.trim()) gazingStr = '无';
                 const functionsStr = record.visionFunctions.map(f => `<strong>${f.name}:</strong> ${f.details || '已完成'}`).join('<br>') || '无';
                 const notesStr = record.otherNotes || '无';
+                // ▼▼▼ 修改：将“分享”按钮改为“修改”按钮 ▼▼▼
                 tr.innerHTML = `
                     <td data-label="日期">${record.date}</td><td data-label="阳光">${sunlightStr}</td><td data-label="望远">${gazingStr}</td>
                     <td data-label="视功能">${functionsStr}</td><td data-label="其他">${notesStr}</td>
                     <td class="actions-cell">
-                        <button class="btn btn-info share-btn" data-id="${record.id}">分享</button>
+                        <button class="btn btn-secondary edit-btn" data-id="${record.id}">修改</button>
                         <button class="btn btn-danger delete-btn" data-id="${record.id}">删除</button>
                     </td>`;
                 historyTableBody.appendChild(tr);
@@ -299,14 +291,61 @@
         };
 
         const saveRecords = () => { localStorage.setItem('myopiaPreventionRecordsV4', JSON.stringify(records)); };
-        const resetDynamicForms = () => {
-            currentDeskTasks = []; renderDeskTasks();
+        const resetFormAndState = () => {
+            form.reset();
+            currentDeskTasks = [];
+            renderDeskTasks();
             visionFunctionGroup.querySelectorAll('.vision-function-item').forEach(item => {
                 item.querySelector('input[type="checkbox"]').checked = false;
                 const detailsInput = item.querySelector('.details-input');
                 detailsInput.value = ''; detailsInput.classList.add('hidden');
             });
+            recordDateInput.value = new Date().toISOString().split('T')[0];
+            editingRecordId = null; // 重置编辑ID
+            submitBtn.textContent = '保存'; // 恢复按钮文字
         };
+
+        // ▼▼▼ 新增：将记录加载到表单中以供编辑的函数 ▼▼▼
+        const loadRecordIntoForm = (recordId) => {
+            const record = records.find(r => r.id === recordId);
+            if (!record) return;
+
+            editingRecordId = record.id;
+
+            // 填充表单
+            recordDateInput.value = record.date;
+            document.getElementById('sunlight-duration').value = record.sunlight.duration;
+            document.getElementById('sunlight-location').value = record.sunlight.location;
+            document.getElementById('desk-device').value = record.gazing.desk.device;
+            document.getElementById('tv-gazing-duration').value = record.gazing.tv.duration;
+            document.getElementById('bedtime-gazing-duration').value = record.gazing.bedtime.duration;
+            document.getElementById('other-notes').value = record.otherNotes;
+
+            // 填充动态列表
+            currentDeskTasks = [...record.gazing.desk.tasks];
+            renderDeskTasks();
+
+            // 填充视功能
+            visionFunctionGroup.querySelectorAll('.vision-function-item').forEach(item => {
+                const checkbox = item.querySelector('input[type="checkbox"]');
+                const detailsInput = item.querySelector('.details-input');
+                const matchingFunc = record.visionFunctions.find(f => f.name === checkbox.value);
+                
+                if (matchingFunc) {
+                    checkbox.checked = true;
+                    detailsInput.value = matchingFunc.details || '';
+                    detailsInput.classList.remove('hidden');
+                } else {
+                    checkbox.checked = false;
+                    detailsInput.value = '';
+                    detailsInput.classList.add('hidden');
+                }
+            });
+
+            submitBtn.textContent = '更新'; // 更改按钮文字
+            window.scrollTo({ top: 0, behavior: 'smooth' }); // 滚动到页面顶部
+        };
+
         const handleFormSubmit = (e) => {
             e.preventDefault();
             const visionFunctionsData = [];
@@ -314,20 +353,42 @@
                 const checkbox = item.querySelector('input[type="checkbox"]');
                 if (checkbox.checked) { visionFunctionsData.push({ name: checkbox.value, details: item.querySelector('.details-input').value.trim() }); }
             });
-            const newRecord = {
-                id: Date.now(), date: recordDateInput.value,
+            
+            const recordData = {
+                date: recordDateInput.value,
                 sunlight: { duration: document.getElementById('sunlight-duration').value.trim(), location: document.getElementById('sunlight-location').value.trim() },
                 gazing: { desk: { device: document.getElementById('desk-device').value, tasks: [...currentDeskTasks] }, tv: { duration: document.getElementById('tv-gazing-duration').value.trim() }, bedtime: { duration: document.getElementById('bedtime-gazing-duration').value.trim() } },
                 visionFunctions: visionFunctionsData, otherNotes: document.getElementById('other-notes').value.trim()
             };
-            const existingRecordIndex = records.findIndex(rec => rec.date === newRecord.date);
-            if (existingRecordIndex > -1) {
-                if (confirm('今天已经有记录了，是否要覆盖它？')) { newRecord.id = records[existingRecordIndex].id; records[existingRecordIndex] = newRecord; } else { return; }
-            } else { records.push(newRecord); }
-            saveRecords(); renderHistory(); form.reset(); resetDynamicForms();
-            recordDateInput.value = new Date().toISOString().split('T')[0];
-            alert('记录保存成功！');
+
+            // ▼▼▼ 修改：根据是否在编辑模式来决定是更新还是创建 ▼▼▼
+            if (editingRecordId) {
+                // 更新模式
+                const recordIndex = records.findIndex(r => r.id === editingRecordId);
+                if (recordIndex > -1) {
+                    records[recordIndex] = { ...records[recordIndex], ...recordData };
+                    alert('记录更新成功！');
+                }
+            } else {
+                // 创建模式
+                const existingRecordIndex = records.findIndex(rec => rec.date === recordData.date);
+                if (existingRecordIndex > -1) {
+                    if (confirm('今天已经有记录了，是否要覆盖它？')) {
+                        recordData.id = records[existingRecordIndex].id;
+                        records[existingRecordIndex] = recordData;
+                    } else { return; }
+                } else {
+                    recordData.id = Date.now();
+                    records.push(recordData);
+                }
+                alert('记录保存成功！');
+            }
+
+            saveRecords();
+            renderHistory();
+            resetFormAndState();
         };
+
         const exportToCSV = () => {
             if (records.length === 0) { alert('没有历史记录可导出。'); return; }
             const escapeCSV = (str) => `"${(str || '').replace(/"/g, '""')}"`;
@@ -360,58 +421,6 @@
             document.body.appendChild(link); link.click(); document.body.removeChild(link);
         };
 
-        const handleShare = async (recordId) => {
-            const record = records.find(r => r.id === recordId);
-            if (!record) return;
-
-            let shareText = `【防控每日记 - ${record.date}】\n\n`;
-            
-            if (record.sunlight.duration || record.sunlight.location) {
-                shareText += `☀️ 阳光: 时长${record.sunlight.duration || '0'}分钟, 地点: ${record.sunlight.location || '未填写'}\n`;
-            }
-            
-            const gazingParts = [];
-            if (record.gazing.desk && (record.gazing.desk.device !== '无' || record.gazing.desk.tasks.length > 0)) {
-                const deskTasksStr = record.gazing.desk.tasks.map(t => `${t.name}(${t.duration}min)`).join(', ');
-                gazingParts.push(`读写台(设备:${record.gazing.desk.device}, 任务:${deskTasksStr || '无'})`);
-            }
-            if (record.gazing.tv && record.gazing.tv.duration) { gazingParts.push(`6米电视(${record.gazing.tv.duration}min)`); }
-            if (record.gazing.bedtime && record.gazing.bedtime.duration) { gazingParts.push(`睡前(${record.gazing.bedtime.duration}min)`); }
-            if (gazingParts.length > 0) {
-                shareText += `🔭 望远: ${gazingParts.join('; ')}\n`;
-            }
-
-            if (record.visionFunctions.length > 0) {
-                const funcsStr = record.visionFunctions.map(f => `${f.name}(${f.details || '完成'})`).join(', ');
-                shareText += `👁️ 视功能: ${funcsStr}\n`;
-            }
-
-            if (record.otherNotes) {
-                shareText += `📝 其他: ${record.otherNotes}\n`;
-            }
-
-            const pageUrl = window.location.origin + window.location.pathname;
-            shareText += `\n----------\n你也来试试这个好用的近视防控记录工具吧！\n${pageUrl}`;
-
-            if (navigator.share) {
-                try {
-                    await navigator.share({
-                        title: `我的防控记录 - ${record.date}`,
-                        text: shareText,
-                    });
-                } catch (err) {
-                    console.error('分享失败或取消:', err);
-                }
-            } else {
-                try {
-                    await navigator.clipboard.writeText(shareText);
-                    alert('记录内容已复制到剪贴板，请手动粘贴分享！');
-                } catch (err) {
-                    alert('复制失败，您的浏览器可能不支持此功能。');
-                }
-            }
-        };
-
         // --- 事件监听器 ---
         form.addEventListener('submit', handleFormSubmit);
         historyTableBody.addEventListener('click', (e) => {
@@ -425,8 +434,8 @@
                     saveRecords();
                     renderHistory();
                 }
-            } else if (target.classList.contains('share-btn')) {
-                handleShare(recordId);
+            } else if (target.classList.contains('edit-btn')) { // ▼▼▼ 修改：监听修改按钮
+                loadRecordIntoForm(recordId);
             }
         });
         exportBtn.addEventListener('click', exportToCSV);
