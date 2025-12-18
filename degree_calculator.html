@@ -88,9 +88,9 @@
         .result-item-title { font-size: 14px; color: #5f6368; margin: 0 0 10px 0; }
         .result-item-value { font-size: 28px; font-weight: bold; color: #1a73e8; } /* 默认蓝色 */
         
-        /* ▼▼▼ 新增：结果的颜色样式 ▼▼▼ */
-        .result-positive { color: #cf1322 !important; } /* 绿色，用于远储 */
-        .result-negative { color: #38a169 !important; } /* 红色，用于近视 */
+        /* ▼▼▼ 修正：CSS 注释与颜色匹配 ▼▼▼ */
+        .result-positive { color: #cf1322 !important; } /* 红色，用于远储 */
+        .result-negative { color: #38a169 !important; } /* 绿色，用于近视 */
 
         .result-note {
             font-size: 13px; color: #d46b08; background-color: #fffbe6;
@@ -122,7 +122,8 @@
         <div class="header-nav">
             <h1>屈光度数测算</h1>
             <div class="header-actions">
-                <a href="javascript:window.history.back()" class="btn btn-secondary">返回</a>
+                <!-- ▼▼▼ 修改：更新返回按钮的链接 ▼▼▼ -->
+                <a href="https://maggiec87.github.io/vision-kits/" class="btn btn-secondary">返回</a>
             </div>
         </div>
         <p class="description">使用盼兮老师公式</p>
@@ -144,7 +145,6 @@
             <div id="ad_calculated_container" style="display: none;">
                 <div class="ad-inputs">
                     <div class="form-group"><label for="acd">前房深度(ACD)</label><input type="number" id="acd" step="0.01" placeholder="例如: 3.75"></div>
-                    <!-- ▼▼▼ 修改：step 属性改为 0.001 ▼▼▼ -->
                     <div class="form-group"><label for="cct">角膜厚度(CCT)</label><input type="number" id="cct" step="0.001" placeholder="例如: 0.550"></div>
                 </div>
             </div>
@@ -190,23 +190,19 @@
             adOptions.forEach(option => option.addEventListener('change', toggleADInputs));
             toggleADInputs();
 
-            // ▼▼▼ 新增：格式化并显示结果的函数 ▼▼▼
             function formatAndDisplayResult(element, degree) {
                 const roundedDegree = Math.round(degree);
                 
-                // 先移除可能存在的旧样式
                 element.classList.remove('result-positive', 'result-negative');
 
                 if (roundedDegree > 0) {
                     element.textContent = `远储 ${roundedDegree} D`;
-                    element.classList.add('result-positive'); // 应用绿色样式
+                    element.classList.add('result-positive'); // 应用红色样式
                 } else if (roundedDegree < 0) {
-                    // 取绝对值显示
                     element.textContent = `近视 ${Math.abs(roundedDegree)} D`;
-                    element.classList.add('result-negative'); // 应用红色样式
+                    element.classList.add('result-negative'); // 应用绿色样式
                 } else {
                     element.textContent = `正视 0 D`;
-                    // 无需添加特定颜色样式，使用默认颜色
                 }
             }
 
@@ -227,10 +223,11 @@
                 }
                 if (isNaN(al) || isNaN(k1) || isNaN(lt) || isNaN(ad)) { return alert('请输入所有必填项的有效数字！'); }
                 const commonPart = (43 - k1) * 100 - (3.1 - ad) * 150 + (3.6 - lt) * 150;
-                const degree1 = (23.5 - al) * 250 + commonPart;
-                const degree2 = (24.0 - al) * 250 + commonPart;
                 
-                // ▼▼▼ 修改：使用新的函数来显示结果 ▼▼▼
+                // 计算逻辑与结果标题匹配
+                const degree1 = (23.5 - al) * 250 + commonPart; // 对应 "结果1 (眼轴基准 23.5)"
+                const degree2 = (24.0 - al) * 250 + commonPart; // 对应 "结果2 (眼轴基准 24.0)"
+                
                 formatAndDisplayResult(result1Element, degree1);
                 formatAndDisplayResult(result2Element, degree2);
                 
@@ -240,5 +237,3 @@
     </script>
 </body>
 </html>
-
-
