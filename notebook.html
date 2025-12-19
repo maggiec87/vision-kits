@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>防控笔记</title>
+    <style>
+        :root {
+            --primary-color: #00796b;
+            --secondary-color: #4a5568;
+            --background-color: #f4f5f7;
+            --card-bg-color: #ffffff;
+            --border-color: #e2e8f0;
+            --danger-color: #e53e3e;
+            --info-color: #3b82f6;
+            --warning-color: #f59e0b;
+            --success-color: #38a169;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--secondary-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container { max-width: 960px; margin: 0 auto; }
+        .header-nav { display: flex; justify-content: center; align-items: center; position: relative; margin-bottom: 25px; background-color: var(--card-bg-color); padding: 20px 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .header-nav h1 { margin: 0; color: var(--primary-color); font-size: 1.8em; }
+        .header-actions { position: absolute; right: 25px; top: 50%; transform: translateY(-50%); }
+        .card { background-color: var(--card-bg-color); padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        h2 { color: var(--primary-color); text-align: center; margin-top: 0; margin-bottom: 25px; }
+        .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .form-group { display: flex; flex-direction: column; }
+        .full-width { grid-column: 1 / -1; }
+        label { margin-bottom: 5px; font-size: 0.9em; color: #6b7280; font-weight: 600; }
+        input, select, textarea { padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 1em; width: 100%; box-sizing: border-box; background-color: #f8fafc; }
+        textarea { resize: vertical; min-height: 80px; }
+        .char-count { font-size: 0.8em; color: #6b7280; text-align: right; margin-top: 5px; }
+        .button-group { grid-column: 1 / -1; display: flex; gap: 10px; margin-top: 10px; }
+        .btn, button { padding: 10px 20px; border: none; border-radius: 6px; font-size: 1em; font-weight: 600; cursor: pointer; transition: background-color 0.3s; text-decoration: none; text-align: center; white-space: nowrap; }
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-primary:hover { background-color: #00695c; }
+        .btn-secondary { background-color: #6b7280; color: white; }
+        .btn-secondary:hover { background-color: #4a5568; }
+        .button-group button { flex-grow: 1; }
+
+        #knowledge-points-container { display: flex; flex-direction: column; gap: 15px; }
+        .point-input-group { display: flex; align-items: flex-start; gap: 10px; }
+        .point-input-group textarea { flex-grow: 1; }
+        .btn-remove-point { padding: 8px; font-size: 1.2em; line-height: 1; background-color: #fee2e2; color: var(--danger-color); border: 1px solid #fecaca; }
+        .btn-remove-point:hover { background-color: #fecaca; }
+        #add-point-btn { width: 100%; margin-top: 15px; background-color: #f0f9ff; color: var(--info-color); border: 2px dashed var(--info-color); font-weight: bold; }
+        #add-point-btn:hover { background-color: #e0f2fe; }
+        #add-point-btn:disabled { background-color: #f1f5f9; color: #94a3b8; border-color: #e2e8f0; cursor: not-allowed; }
+
+        .actions-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .export-buttons { display: flex; gap: 10px; }
+        .btn-export-excel { background-color: var(--success-color); color: white; }
+
+        #notes-list { margin-top: 20px; display: flex; flex-direction: column; gap: 20px; }
+        .note-card { background-color: #fdfdff; border: 1px solid var(--border-color); border-left: 5px solid var(--primary-color); border-radius: 8px; padding: 20px; }
+        .note-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px; }
+        .note-meta span { background-color: #eef2ff; color: #4338ca; padding: 4px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 500; margin-right: 8px; }
+        .note-meta .date { font-size: 0.9em; color: var(--secondary-color); }
+        .note-content-display { max-height: 120px; overflow: hidden; position: relative; }
+        .note-content-display::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 30px; background: linear-gradient(to top, white, transparent); }
+        .point-list { padding-left: 20px; margin: 0; }
+        .point-list li { margin-bottom: 8px; white-space: pre-wrap; word-wrap: break-word; }
+        .card-actions { margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--border-color); display: flex; gap: 10px; justify-content: flex-end; }
+        .card-actions .btn { padding: 6px 12px; font-size: 0.9em; }
+        .btn-details { background-color: var(--info-color); color: white; }
+        .btn-edit { background-color: var(--warning-color); color: white; }
+        .btn-delete { background-color: var(--danger-color); color: white; }
+
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
+        .modal-content { background-color: #fff; margin: auto; padding: 25px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); width: 90%; max-width: 600px; position: relative; max-height: 85vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 20px; }
+        .modal-header h3 { margin: 0; font-size: 1.5em; color: var(--primary-color); }
+        .close-btn { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; border: none; background: none; }
+        .detail-group { margin-bottom: 15px; }
+        .detail-item { display: flex; padding: 8px 0; font-size: 1em; flex-wrap: wrap; border-bottom: 1px solid #f0f0f0; }
+        .detail-item:last-child { border-bottom: none; }
+        .detail-item span:first-child { font-weight: 600; color: var(--secondary-color); margin-right: 10px; min-width: 80px; }
+        .detail-item span:last-child { flex-grow: 1; word-break: break-all; }
+        #modal-points-list { padding-left: 25px; }
+
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .header-nav { flex-direction: column; gap: 15px; padding: 15px; }
+            .header-nav h1 { text-align: center; }
+            .header-actions { position: static; transform: none; width: 100%; display: flex; }
+            .header-actions .btn { flex-grow: 1; }
+            .form-grid { grid-template-columns: 1fr; }
+            .export-buttons { flex-direction: column; width: 100%; }
+            .export-buttons .btn { flex-grow: 1; }
+            .modal-content { width: 95%; max-height: 90vh; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header-nav">
+            <h1>防控笔记📝</h1>
+            <div class="header-actions">
+                <a href="https://maggiec87.github.io/vision-kits/" class="btn btn-secondary">返回</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 id="form-title">添加新笔记</h2>
+            <form id="note-form">
+                <input type="hidden" id="edit-id">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="note-category">分类</label>
+                        <select id="note-category" required>
+                            <option value="配镜">配镜</option>
+                            <option value="望远">望远</option>
+                            <option value="视功能">视功能</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="note-source">来源</label>
+                        <input type="text" id="note-source" placeholder="如：xxx群, xxx公众号" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>笔记</label>
+                        <div id="knowledge-points-container"></div>
+                        <button type="button" id="add-point-btn">＋ 添加</button>
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button type="submit" id="submit-btn" class="btn-primary">保存</button>
+                    <button type="button" id="cancel-edit-btn" class="btn-secondary" style="display: none;">取消修改</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card">
+            <div class="actions-header">
+                <h2>笔记本</h2>
+                <div class="export-buttons">
+                    <button id="export-excel-btn" class="btn btn-export-excel">导出</button>
+                </div>
+            </div>
+            <div id="notes-list"></div>
+        </div>
+    </div>
+
+    <!-- 详情模态框 -->
+    <div id="details-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">笔记详情</h3>
+                <span class="close-btn">&times;</span>
+            </div>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const noteForm = document.getElementById('note-form');
+        const formTitle = document.getElementById('form-title');
+        const submitBtn = document.getElementById('submit-btn');
+        const cancelEditBtn = document.getElementById('cancel-edit-btn');
+        const editIdInput = document.getElementById('edit-id');
+        const notesList = document.getElementById('notes-list');
+        const exportExcelBtn = document.getElementById('export-excel-btn');
+        
+        const pointsContainer = document.getElementById('knowledge-points-container');
+        const addPointBtn = document.getElementById('add-point-btn');
+        const MAX_POINTS = 10;
+
+        const detailsModal = document.getElementById('details-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalBody = document.getElementById('modal-body');
+        const closeModalBtn = document.querySelector('.close-btn');
+
+        let notes = JSON.parse(localStorage.getItem('myopiaNotes')) || [];
+
+        const saveNotes = () => {
+            localStorage.setItem('myopiaNotes', JSON.stringify(notes));
+        };
+
+        const addPointInput = (value = '') => {
+            const pointCount = pointsContainer.children.length;
+            if (pointCount >= MAX_POINTS) return;
+
+            const group = document.createElement('div');
+            group.className = 'point-input-group';
+
+            const textarea = document.createElement('textarea');
+            textarea.className = 'knowledge-point-input';
+            textarea.placeholder = `笔记 ${pointCount + 1}`;
+            textarea.value = value;
+            textarea.maxLength = 300;
+            textarea.required = true;
+            group.appendChild(textarea);
+
+            if (pointCount > 0) {
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'btn btn-remove-point';
+                removeBtn.innerHTML = '&times;';
+                removeBtn.onclick = () => {
+                    group.remove();
+                    updateAddPointButtonState();
+                };
+                group.appendChild(removeBtn);
+            }
+            pointsContainer.appendChild(group);
+            updateAddPointButtonState();
+        };
+
+        const updateAddPointButtonState = () => {
+            addPointBtn.disabled = pointsContainer.children.length >= MAX_POINTS;
+        };
+
+        addPointBtn.addEventListener('click', () => addPointInput());
+
+        const renderNotes = () => {
+            notesList.innerHTML = '';
+            if (notes.length === 0) {
+                notesList.innerHTML = '<p style="text-align: center;">还没有任何笔记，快来添加第一条吧！</p>';
+                return;
+            }
+            const sortedNotes = [...notes].sort((a, b) => b.id - a.id);
+            sortedNotes.forEach(note => {
+                const card = document.createElement('div');
+                card.className = 'note-card';
+
+                let pointsHtml = '';
+                if (Array.isArray(note.content)) {
+                    pointsHtml = note.content.map(point => `<li>${point}</li>`).join('');
+                } else { 
+                    pointsHtml = `<li>${note.content}</li>`;
+                }
+
+                card.innerHTML = `
+                    <div class="note-header">
+                        <div class="note-meta">
+                            <span>${note.category}</span>
+                            <span>${note.source}</span>
+                        </div>
+                        <div class="note-meta"><span class="date">${note.date}</span></div>
+                    </div>
+                    <div class="note-content-display"><ol class="point-list">${pointsHtml}</ol></div>
+                    <div class="card-actions">
+                        <button class="btn btn-details" data-id="${note.id}">详情</button>
+                        <button class="btn btn-edit" data-id="${note.id}">修改</button>
+                        <button class="btn btn-delete" data-id="${note.id}">删除</button>
+                    </div>`;
+                notesList.appendChild(card);
+            });
+        };
+
+        const resetForm = () => {
+            noteForm.reset();
+            editIdInput.value = '';
+            formTitle.textContent = '添加新笔记';
+            submitBtn.textContent = '保存';
+            cancelEditBtn.style.display = 'none';
+            pointsContainer.innerHTML = '';
+            addPointInput();
+        };
+
+        const showDetailsModal = (noteId) => {
+            const note = notes.find(n => n.id === noteId);
+            if (!note) return;
+
+            modalTitle.textContent = `笔记详情`;
+            let pointsListHtml = '';
+            if (Array.isArray(note.content)) {
+                pointsListHtml = note.content.map(point => `<li>${point}</li>`).join('');
+            } else {
+                pointsListHtml = `<li>${note.content}</li>`;
+            }
+
+            modalBody.innerHTML = `
+                <div class="detail-group">
+                    <div class="detail-item"><span>分类:</span> <span>${note.category}</span></div>
+                    <div class="detail-item"><span>来源:</span> <span>${note.source}</span></div>
+                    <div class="detail-item"><span>日期:</span> <span>${note.date}</span></div>
+                </div>
+                <div class="detail-group">
+                    <h4>笔记</h4>
+                    <ol id="modal-points-list">${pointsListHtml}</ol>
+                </div>`;
+            detailsModal.style.display = 'flex';
+        };
+
+        noteForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const contentInputs = pointsContainer.querySelectorAll('.knowledge-point-input');
+            const contentArray = Array.from(contentInputs).map(input => input.value.trim()).filter(content => content);
+
+            if (contentArray.length === 0) {
+                alert('请至少填写一条笔记内容！');
+                return;
+            }
+
+            const noteData = {
+                category: document.getElementById('note-category').value,
+                source: document.getElementById('note-source').value.trim(),
+                content: contentArray,
+            };
+
+            const editId = editIdInput.value;
+            if (editId) {
+                const noteIndex = notes.findIndex(n => n.id == editId);
+                if (noteIndex > -1) {
+                    notes[noteIndex] = { ...notes[noteIndex], ...noteData };
+                }
+            } else {
+                noteData.id = Date.now();
+                noteData.date = new Date().toLocaleDateString('zh-CN');
+                notes.push(noteData);
+            }
+            saveNotes();
+            renderNotes();
+            resetForm();
+        });
+
+        cancelEditBtn.addEventListener('click', resetForm);
+
+        notesList.addEventListener('click', (e) => {
+            const button = e.target.closest('button');
+            if (!button || !button.dataset.id) return;
+            const id = parseInt(button.dataset.id, 10);
+
+            if (button.classList.contains('btn-delete')) {
+                if (confirm('确定要删除这条笔记吗？')) {
+                    notes = notes.filter(note => note.id !== id);
+                    saveNotes();
+                    renderNotes();
+                }
+            } else if (button.classList.contains('btn-edit')) {
+                const noteToEdit = notes.find(note => note.id === id);
+                if (noteToEdit) {
+                    formTitle.textContent = '修改笔记';
+                    submitBtn.textContent = '更新笔记';
+                    cancelEditBtn.style.display = 'inline-block';
+                    editIdInput.value = id;
+                    document.getElementById('note-category').value = noteToEdit.category;
+                    document.getElementById('note-source').value = noteToEdit.source;
+                    pointsContainer.innerHTML = '';
+                    
+                    if (Array.isArray(noteToEdit.content)) {
+                        noteToEdit.content.forEach(point => addPointInput(point));
+                    } else {
+                        addPointInput(noteToEdit.content);
+                    }
+                    
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            } else if (button.classList.contains('btn-details')) {
+                showDetailsModal(id);
+            }
+        });
+
+        const triggerDownload = (blob, filename) => {
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        };
+
+        const escapeCSV = (str) => {
+            if (str === null || str === undefined) return '""';
+            str = String(str);
+            if (str.search(/("|,|\n)/g) >= 0) {
+                str = str.replace(/"/g, '""');
+                return `"${str}"`;
+            }
+            return str;
+        };
+
+        exportExcelBtn.addEventListener('click', () => {
+            if (notes.length === 0) { alert('没有笔记可以导出。'); return; }
+            let csvContent = '\uFEFF"日期","分类","来源","笔记内容"\n';
+            const sortedNotes = [...notes].sort((a, b) => a.id - b.id);
+            sortedNotes.forEach(note => {
+                let contentStr = '';
+                if (Array.isArray(note.content)) {
+                    contentStr = note.content.map((p, i) => `${i + 1}. ${p}`).join('\n');
+                } else {
+                    contentStr = note.content;
+                }
+                const row = [
+                    escapeCSV(note.date),
+                    escapeCSV(note.category),
+                    escapeCSV(note.source),
+                    escapeCSV(contentStr)
+                ].join(',');
+                csvContent += row + '\n';
+            });
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const timestamp = new Date().toISOString().slice(0, 10);
+            triggerDownload(blob, `防控笔记_${timestamp}.csv`);
+        });
+
+        closeModalBtn.addEventListener('click', () => { detailsModal.style.display = 'none'; });
+        window.addEventListener('click', (e) => { if (e.target == detailsModal) { detailsModal.style.display = 'none'; } });
+
+        renderNotes();
+        resetForm();
+    });
+    </script>
+
+</body>
+</html>
