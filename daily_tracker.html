@@ -144,7 +144,6 @@
         .history-table .actions-cell .btn { padding: 5px 10px; font-size: 14px; }
         #desk-tasks-list .btn-danger { font-size: 0.8em; padding: 4px 8px; }
         
-        /* ▼▼▼ 新增：弹窗样式 ▼▼▼ */
         .modal {
             display: none; position: fixed; z-index: 1000; left: 0; top: 0;
             width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5);
@@ -228,6 +227,8 @@
                 <div class="fieldset-subsection">
                     <h3>读写台</h3>
                     <div class="form-group"><label for="desk-device">设备</label><select id="desk-device"><option value="无">无</option><option value="视多星二代">视多星二代</option><option value="安目佳">安目佳</option><option value="耐德视">耐德视</option></select></div>
+                    <!-- ▼▼▼ 新增：拉远距离输入框 ▼▼▼ -->
+                    <div class="form-group"><label for="desk-far-distance">拉远距离m</label><input type="text" id="desk-far-distance" placeholder="例如: 3m，4m,5m,6m"></div>
                     <div class="task-adder"><div class="task-adder-inputs"><div class="form-group"><label for="desk-task-select">任务</label><select id="desk-task-select"><option value="作业">作业</option><option value="阅读">阅读</option><option value="平板">平板</option><option value="其他">其他</option></select></div><div class="form-group"><label for="desk-task-duration">时长(分钟)</label><input type="text" id="desk-task-duration" placeholder="例如: 45"></div><button type="button" id="add-desk-task-btn" class="btn btn-secondary">添加</button></div></div>
                     <ul id="desk-tasks-list"></ul>
                 </div>
@@ -253,7 +254,6 @@
         <div class="history-section"><div class="history-header"><h2>记录</h2><button id="export-btn" class="btn">导出</button></div><table class="history-table"><thead><tr><th>日期</th><th>阳光</th><th>望远</th><th>视功能</th><th>其他</th><th>操作</th></tr></thead><tbody id="history-table-body"></tbody></table></div>
     </div>
 
-    <!-- ▼▼▼ 新增：详情弹窗HTML ▼▼▼ -->
     <div id="details-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -275,7 +275,6 @@
         const visionFunctionGroup = document.getElementById('vision-function-group');
         const submitBtn = form.querySelector('button[type="submit"]');
 
-        // ▼▼▼ 新增：弹窗元素获取 ▼▼▼
         const modal = document.getElementById('details-modal');
         const modalTitle = document.getElementById('modal-title');
         const modalBody = document.getElementById('modal-body');
@@ -311,9 +310,14 @@
                 const tr = document.createElement('tr');
                 const sunlightStr = `时长: ${record.sunlight.duration || 'N/A'} min<br>地点: ${record.sunlight.location || 'N/A'}`;
                 let gazingStr = '';
-                if (record.gazing.desk && (record.gazing.desk.device !== '无' || record.gazing.desk.tasks.length > 0)) {
+                if (record.gazing.desk) { // 检查desk对象是否存在
                     const deskTasksStr = record.gazing.desk.tasks.map(t => `${t.name}(${t.duration || 'N/A'} min)`).join(', ') || '无任务';
-                    gazingStr += `<strong>读写台:</strong><br>设备: ${record.gazing.desk.device}<br>任务: ${deskTasksStr}<br>`;
+                    gazingStr += `<strong>读写台:</strong><br>设备: ${record.gazing.desk.device}<br>`;
+                    // ▼▼▼ 修改：在历史记录中显示拉远距离 ▼▼▼
+                    if (record.gazing.desk.farDistance) {
+                        gazingStr += `拉远距离: ${record.gazing.desk.farDistance}<br>`;
+                    }
+                    gazingStr += `任务: ${deskTasksStr}<br>`;
                 }
                 if (record.gazing.tv && record.gazing.tv.duration) { gazingStr += `<strong>6米电视:</strong> ${record.gazing.tv.duration} min<br>`; }
                 if (record.gazing.bedtime && record.gazing.bedtime.duration) { gazingStr += `<strong>睡前:</strong> ${record.gazing.bedtime.duration} min`; }
@@ -321,7 +325,6 @@
                 const functionsStr = record.visionFunctions.map(f => `<strong>${f.name}:</strong> ${f.details || '已完成'}`).join('<br>') || '无';
                 const notesStr = record.otherNotes || '无';
                 
-                // ▼▼▼ 修改：增加“详情”按钮，调整“修改”按钮样式 ▼▼▼
                 tr.innerHTML = `
                     <td data-label="日期">${record.date}</td><td data-label="阳光">${sunlightStr}</td><td data-label="望远">${gazingStr}</td>
                     <td data-label="视功能">${functionsStr}</td><td data-label="其他">${notesStr}</td>
@@ -356,11 +359,22 @@
             recordDateInput.value = record.date;
             document.getElementById('sunlight-duration').value = record.sunlight.duration;
             document.getElementById('sunlight-location').value = record.sunlight.location;
-            document.getElementById('desk-device').value = record.gazing.desk.device;
+            
+            if (record.gazing.desk) { // 检查旧数据是否存在desk对象
+                document.getElementById('desk-device').value = record.gazing.desk.device;
+                // ▼▼▼ 修改：加载拉远距离到表单 ▼▼▼
+                document.getElementById('desk-far-distance').value = record.gazing.desk.farDistance || '';
+                currentDeskTasks = [...record.gazing.desk.tasks];
+            } else { // 兼容没有desk对象的旧数据
+                document.getElementById('desk-device').value = '无';
+                document.getElementById('desk-far-distance').value = '';
+                currentDeskTasks = [];
+            }
+            
             document.getElementById('tv-gazing-duration').value = record.gazing.tv.duration;
             document.getElementById('bedtime-gazing-duration').value = record.gazing.bedtime.duration;
             document.getElementById('other-notes').value = record.otherNotes;
-            currentDeskTasks = [...record.gazing.desk.tasks];
+            
             renderDeskTasks();
             visionFunctionGroup.querySelectorAll('.vision-function-item').forEach(item => {
                 const checkbox = item.querySelector('input[type="checkbox"]');
@@ -380,7 +394,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
-        // ▼▼▼ 新增：显示详情弹窗的函数 ▼▼▼
         const showDetailsModal = (recordId) => {
             const record = records.find(r => r.id === recordId);
             if (!record) return;
@@ -389,20 +402,22 @@
 
             let detailsHtml = '';
 
-            // 阳光
             detailsHtml += `<div class="detail-group"><h4>阳光</h4>
                 <div class="detail-item"><span>时长:</span> <span>${record.sunlight.duration || 'N/A'} 分钟</span></div>
                 <div class="detail-item"><span>地点:</span> <span>${record.sunlight.location || 'N/A'}</span></div>
             </div>`;
 
-            // 望远
             let gazingHtml = '';
-            if (record.gazing.desk && (record.gazing.desk.device !== '无' || record.gazing.desk.tasks.length > 0)) {
+            if (record.gazing.desk) {
                 const tasksHtml = record.gazing.desk.tasks.length > 0 
                     ? record.gazing.desk.tasks.map(t => `<li>${t.name}: ${t.duration} 分钟</li>`).join('')
                     : '<li>无任务</li>';
-                gazingHtml += `<div class="detail-item"><span>读写台设备:</span> <span>${record.gazing.desk.device}</span></div>
-                               <div class="detail-item"><span>读写台任务:</span> <ul class="detail-list">${tasksHtml}</ul></div>`;
+                gazingHtml += `<div class="detail-item"><span>读写台设备:</span> <span>${record.gazing.desk.device}</span></div>`;
+                // ▼▼▼ 修改：在详情弹窗中显示拉远距离 ▼▼▼
+                if (record.gazing.desk.farDistance) {
+                    gazingHtml += `<div class="detail-item"><span>拉远距离:</span> <span>${record.gazing.desk.farDistance}</span></div>`;
+                }
+                gazingHtml += `<div class="detail-item"><span>读写台任务:</span> <ul class="detail-list">${tasksHtml}</ul></div>`;
             }
             if (record.gazing.tv && record.gazing.tv.duration) {
                 gazingHtml += `<div class="detail-item"><span>6米电视:</span> <span>${record.gazing.tv.duration} 分钟</span></div>`;
@@ -414,13 +429,11 @@
                 detailsHtml += `<div class="detail-group"><h4>望远</h4>${gazingHtml}</div>`;
             }
 
-            // 视功能
             if (record.visionFunctions.length > 0) {
                 const functionsHtml = record.visionFunctions.map(f => `<div class="detail-item"><span>${f.name}:</span> <span>${f.details || '已完成'}</span></div>`).join('');
                 detailsHtml += `<div class="detail-group"><h4>视功能</h4>${functionsHtml}</div>`;
             }
 
-            // 其他
             detailsHtml += `<div class="detail-group"><h4>其他</h4>
                 <div class="detail-item"><span>备注:</span> <span>${record.otherNotes || '无'}</span></div>
             </div>`;
@@ -437,11 +450,21 @@
                 if (checkbox.checked) { visionFunctionsData.push({ name: checkbox.value, details: item.querySelector('.details-input').value.trim() }); }
             });
             
+            // ▼▼▼ 修改：保存时获取拉远距离的值 ▼▼▼
             const recordData = {
                 date: recordDateInput.value,
                 sunlight: { duration: document.getElementById('sunlight-duration').value.trim(), location: document.getElementById('sunlight-location').value.trim() },
-                gazing: { desk: { device: document.getElementById('desk-device').value, tasks: [...currentDeskTasks] }, tv: { duration: document.getElementById('tv-gazing-duration').value.trim() }, bedtime: { duration: document.getElementById('bedtime-gazing-duration').value.trim() } },
-                visionFunctions: visionFunctionsData, otherNotes: document.getElementById('other-notes').value.trim()
+                gazing: { 
+                    desk: { 
+                        device: document.getElementById('desk-device').value, 
+                        farDistance: document.getElementById('desk-far-distance').value.trim(), // 获取新字段
+                        tasks: [...currentDeskTasks] 
+                    }, 
+                    tv: { duration: document.getElementById('tv-gazing-duration').value.trim() }, 
+                    bedtime: { duration: document.getElementById('bedtime-gazing-duration').value.trim() } 
+                },
+                visionFunctions: visionFunctionsData, 
+                otherNotes: document.getElementById('other-notes').value.trim()
             };
 
             if (editingRecordId) {
@@ -480,9 +503,13 @@
                 if (record.sunlight.location) sunlightParts.push(`地点:${record.sunlight.location}`);
                 const sunlightStr = sunlightParts.join(', ');
                 const gazingParts = [];
-                if (record.gazing.desk && (record.gazing.desk.device !== '无' || record.gazing.desk.tasks.length > 0)) {
+                if (record.gazing.desk) {
                     const deskTasksStr = record.gazing.desk.tasks.map(t => `${t.name}(${t.duration}min)`).join(', ');
                     let deskPart = `读写台[设备:${record.gazing.desk.device}`;
+                    // ▼▼▼ 修改：在导出CSV时加入拉远距离 ▼▼▼
+                    if (record.gazing.desk.farDistance) {
+                        deskPart += `, 拉远距离:${record.gazing.desk.farDistance}`;
+                    }
                     if (deskTasksStr) { deskPart += `, 任务:${deskTasksStr}`; }
                     deskPart += ']';
                     gazingParts.push(deskPart);
@@ -501,7 +528,6 @@
             document.body.appendChild(link); link.click(); document.body.removeChild(link);
         };
 
-        // --- 事件监听器 ---
         form.addEventListener('submit', handleFormSubmit);
         historyTableBody.addEventListener('click', (e) => {
             const target = e.target.closest('button');
@@ -516,7 +542,7 @@
                 }
             } else if (target.classList.contains('edit-btn')) {
                 loadRecordIntoForm(recordId);
-            } else if (target.classList.contains('details-btn')) { // ▼▼▼ 新增：监听详情按钮点击 ▼▼▼
+            } else if (target.classList.contains('details-btn')) {
                 showDetailsModal(recordId);
             }
         });
@@ -545,11 +571,9 @@
             }
         });
 
-        // ▼▼▼ 新增：弹窗关闭事件监听 ▼▼▼
         closeModalBtn.addEventListener('click', () => { modal.style.display = 'none'; });
         window.addEventListener('click', (e) => { if (e.target == modal) { modal.style.display = 'none'; } });
 
-        // --- 页面初始化 ---
         createVisionFunctionUI();
         recordDateInput.value = new Date().toISOString().split('T')[0];
         renderHistory();
