@@ -6,13 +6,16 @@
     <title>防控账单</title>
     <style>
         :root {
-            --primary-color: #00796b;
-            --secondary-color: #4a5568;
-            --background-color: #f4f5f7;
-            --card-bg-color: #ffffff;
-            --border-color: #e2e8f0;
-            --danger-color: #e53e3e;
-            --info-color: #3b82f6;
+            --primary-color: #00796b; /* 主题绿 */
+            --primary-color-dark: #00695c; /* 主题绿-悬停 */
+            --secondary-color: #4a5568; /* 次要文字颜色 */
+            --background-color: #f4f5f7; /* 页面背景 */
+            --card-bg-color: #ffffff; /* 卡片背景 */
+            --border-color: #e2e8f0; /* 边框颜色 */
+            --danger-color: #e53e3e; /* 危险/删除色 */
+            --info-color: #3b82f6; /* 信息/修改色 */
+            --view-color: #26a69a; /* 查看/详情色 */
+            --light-bg-color: #f8fafc; /* 浅背景色 */
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -26,12 +29,11 @@
             max-width: 800px;
             margin: 0 auto;
         }
-        /* ▼▼▼ 修改：修复标题居中问题的样式 ▼▼▼ */
         .header-nav {
             display: flex;
-            justify-content: center; /* 修改为 center 来居中标题 */
+            justify-content: center;
             align-items: center;
-            position: relative; /* 添加相对定位，为按钮定位做准备 */
+            position: relative;
             margin-bottom: 25px;
             background-color: var(--card-bg-color);
             padding: 20px 25px;
@@ -42,13 +44,12 @@
             margin: 0;
             color: var(--primary-color);
             font-size: 1.8em;
-            /* 移除了 flex-grow: 1 */
         }
         .header-actions {
-            position: absolute; /* 使用绝对定位将按钮移出文档流 */
-            right: 25px; /* 定位到右侧，25px与padding一致 */
+            position: absolute;
+            right: 25px;
             top: 50%;
-            transform: translateY(-50%); /* 垂直居中 */
+            transform: translateY(-50%);
         }
         .card {
             background-color: var(--card-bg-color);
@@ -98,12 +99,12 @@
         
         .btn, button {
             padding: 10px 20px;
-            border: none;
+            border: 1px solid transparent; /* 统一添加透明边框，防止悬停时跳动 */
             border-radius: 6px;
             font-size: 1em;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, border-color 0.3s, color 0.3s;
             text-decoration: none;
             text-align: center;
             white-space: nowrap;
@@ -114,24 +115,32 @@
         .btn-primary {
             background-color: var(--primary-color);
             color: white;
+            border-color: var(--primary-color);
         }
         .btn-primary:hover {
-            background-color: #00695c;
+            background-color: var(--primary-color-dark);
+            border-color: var(--primary-color-dark);
         }
+        
+        /* ▼▼▼ 1. 返回键颜色调浅 ▼▼▼ */
         .btn-secondary {
-            background-color: #6b7280;
-            color: white;
+            background-color: var(--light-bg-color);
+            color: var(--secondary-color);
+            border: 1px solid var(--border-color);
         }
         .btn-secondary:hover {
-            background-color: #4a5568;
+            background-color: #e2e8f0;
         }
-        .btn-danger, .btn-edit {
+
+        /* ▼▼▼ 3. 为详情、修改、删除按钮设置通用样式 ▼▼▼ */
+        .btn-view, .btn-edit, .btn-danger {
             padding: 5px 10px;
             font-size: 0.9em;
-            margin-right: 5px;
+            color: white;
         }
-        .btn-danger { background-color: var(--danger-color); color: white; }
-        .btn-edit { background-color: var(--info-color); color: white; }
+        .btn-view { background-color: var(--view-color); }
+        .btn-edit { background-color: var(--info-color); }
+        .btn-danger { background-color: var(--danger-color); }
 
         .cost-table {
             width: 100%;
@@ -139,16 +148,24 @@
             margin-top: 20px;
         }
         .cost-table thead {
-            background-color: #f8fafc;
+            background-color: var(--light-bg-color);
         }
         .cost-table th, .cost-table td {
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid var(--border-color);
+            vertical-align: middle; /* 垂直居中单元格内容 */
         }
         .actions-cell {
             white-space: nowrap;
         }
+        /* ▼▼▼ 3. 修改和删除紧凑排列的容器样式 ▼▼▼ */
+        .action-buttons {
+            display: flex;
+            gap: 6px; /* 按钮之间的间距 */
+            align-items: center;
+        }
+
         .summary-section {
             display: flex;
             justify-content: space-between;
@@ -162,11 +179,79 @@
             font-weight: bold;
             color: var(--primary-color);
         }
+        
+        /* ▼▼▼ 2. 导出键底色用绿色 ▼▼▼ */
         .btn-export {
-            background-color: #1d4ed8;
+            background-color: var(--primary-color);
             color: white;
             padding: 8px 15px;
             font-size: 0.9em;
+        }
+        .btn-export:hover {
+            background-color: var(--primary-color-dark);
+        }
+
+        /* ▼▼▼ 3. 详情模态框样式 ▼▼▼ */
+        .modal {
+            display: none; /* 默认隐藏 */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5); /* 半透明黑色背景 */
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: var(--card-bg-color);
+            margin: auto;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 450px;
+            position: relative;
+            animation: fadeIn 0.3s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .modal-close {
+            color: #aaa;
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .modal-close:hover,
+        .modal-close:focus {
+            color: #333;
+        }
+        .modal-header {
+            text-align: center;
+            color: var(--primary-color);
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+        .modal-body p {
+            font-size: 1.1em;
+            margin: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        .modal-body p:last-child {
+            border-bottom: none;
+        }
+        .modal-body strong {
+            color: var(--secondary-color);
+            display: inline-block;
+            width: 80px; /* 对齐标签 */
         }
         
         /* 手机适配优化 */
@@ -174,22 +259,21 @@
             body { padding: 10px; }
             
             .header-nav {
-                flex-direction: column; /* 垂直排列 */
-                gap: 15px; /* 增加标题和按钮的间距 */
+                flex-direction: column;
+                gap: 15px;
                 padding: 15px;
             }
             .header-nav h1 {
                 text-align: center;
             }
-            /* ▼▼▼ 修改：适配手机端的按钮样式 ▼▼▼ */
             .header-actions {
-                position: static; /* 恢复正常文档流 */
-                transform: none; /* 移除transform */
-                width: 100%; /* 占满整行 */
+                position: static;
+                transform: none;
+                width: 100%;
                 display: flex;
             }
             .header-actions .btn {
-                flex-grow: 1; /* 让按钮填满容器 */
+                flex-grow: 1;
             }
             
             .card { padding: 20px; }
@@ -224,6 +308,7 @@
             }
             .actions-cell { justify-content: flex-end; }
             .actions-cell::before { margin-right: auto; }
+            .action-buttons { justify-content: flex-end; }
         }
     </style>
 </head>
@@ -256,7 +341,7 @@
                 </div>
                 <div class="button-group">
                     <button type="submit" id="submit-btn" class="btn-primary">添加</button>
-                    <button type="button" id="cancel-edit-btn" class="btn-secondary" style="display: none;">取消修改</button>
+                    <button type="button" id="cancel-edit-btn" class="btn-secondary" style="display: none;">取消</button>
                 </div>
             </form>
         </div>
@@ -283,7 +368,17 @@
                 </div>
             </div>
         </div>
-        
+    </div>
+
+    <!-- ▼▼▼ 3. 详情模态框 HTML 结构 ▼▼▼ -->
+    <div id="details-modal" class="modal">
+        <div class="modal-content">
+            <span id="modal-close-btn" class="modal-close">&times;</span>
+            <div class="modal-header">账单详情</div>
+            <div id="modal-body-content" class="modal-body">
+                <!-- Details will be populated by JavaScript -->
+            </div>
+        </div>
     </div>
 
     <script>
@@ -298,6 +393,11 @@
             const submitBtn = document.getElementById('submit-btn');
             const cancelEditBtn = document.getElementById('cancel-edit-btn');
             const exportCsvBtn = document.getElementById('export-csv-btn');
+
+            // ▼▼▼ 3. 获取模态框相关元素 ▼▼▼
+            const detailsModal = document.getElementById('details-modal');
+            const modalCloseBtn = document.getElementById('modal-close-btn');
+            const modalBodyContent = document.getElementById('modal-body-content');
 
             let costs = JSON.parse(localStorage.getItem('myopiaCosts')) || [];
             let editIndex = null;
@@ -315,15 +415,19 @@
                     costList.innerHTML = '<tr><td colspan="4" style="text-align:center; display:table-cell;">暂无记录</td></tr>';
                 } else {
                     sortedCosts.forEach((cost) => {
-                        const originalIndex = costs.findIndex(c => c.name === cost.name && c.amount === cost.amount && c.date === cost.date);
+                        const originalIndex = costs.findIndex(c => c.id === cost.id);
                         const row = document.createElement('tr');
+                        // ▼▼▼ 3. 更新行内操作按钮，增加详情并用div包裹 ▼▼▼
                         row.innerHTML = `
                             <td data-label="项目">${cost.name}</td>
                             <td data-label="金额 (元)">${parseFloat(cost.amount).toFixed(2)}</td>
                             <td data-label="日期">${cost.date}</td>
                             <td data-label="操作" class="actions-cell">
-                                <button class="btn btn-edit" data-index="${originalIndex}">修改</button>
-                                <button class="btn btn-danger" data-index="${originalIndex}">删除</button>
+                                <div class="action-buttons">
+                                    <button class="btn btn-view" data-index="${originalIndex}">详情</button>
+                                    <button class="btn btn-edit" data-index="${originalIndex}">修改</button>
+                                    <button class="btn btn-danger" data-index="${originalIndex}">删除</button>
+                                </div>
                             </td>
                         `;
                         costList.appendChild(row);
@@ -344,22 +448,25 @@
 
             costForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                const newCost = {
-                    name: itemNameInput.value.trim(),
-                    amount: itemAmountInput.value,
-                    date: itemDateInput.value,
-                };
-
-                if (newCost.name && newCost.amount && newCost.date) {
-                    if (editIndex !== null) {
-                        costs[editIndex] = newCost;
-                    } else {
-                        costs.push(newCost);
-                    }
-                    saveCosts();
-                    renderCosts();
-                    resetForm();
+                
+                if (editIndex !== null) {
+                    // 更新现有记录
+                    costs[editIndex].name = itemNameInput.value.trim();
+                    costs[editIndex].amount = itemAmountInput.value;
+                    costs[editIndex].date = itemDateInput.value;
+                } else {
+                    // 添加新记录，并给一个唯一ID
+                    const newCost = {
+                        id: Date.now(), // 使用时间戳作为简单唯一ID
+                        name: itemNameInput.value.trim(),
+                        amount: itemAmountInput.value,
+                        date: itemDateInput.value,
+                    };
+                    costs.push(newCost);
                 }
+                saveCosts();
+                renderCosts();
+                resetForm();
             });
 
             costList.addEventListener('click', (e) => {
@@ -383,14 +490,34 @@
                     itemDateInput.value = costToEdit.date;
 
                     formTitle.textContent = '修改账单记录';
-                    submitBtn.textContent = '更新记录';
+                    submitBtn.textContent = '更新';
                     cancelEditBtn.style.display = 'block';
                     window.scrollTo({ top: 0, behavior: 'smooth' });
+                } 
+                // ▼▼▼ 3. 增加详情按钮的点击事件处理 ▼▼▼
+                else if (target.classList.contains('btn-view')) {
+                    const costToShow = costs[index];
+                    modalBodyContent.innerHTML = `
+                        <p><strong>项目:</strong> ${costToShow.name}</p>
+                        <p><strong>金额:</strong> ${parseFloat(costToShow.amount).toFixed(2)} 元</p>
+                        <p><strong>日期:</strong> ${costToShow.date}</p>
+                    `;
+                    detailsModal.style.display = 'flex';
                 }
             });
 
             cancelEditBtn.addEventListener('click', () => {
                 resetForm();
+            });
+
+            // ▼▼▼ 3. 关闭模态框的事件监听 ▼▼▼
+            modalCloseBtn.addEventListener('click', () => {
+                detailsModal.style.display = 'none';
+            });
+            window.addEventListener('click', (e) => {
+                if (e.target == detailsModal) {
+                    detailsModal.style.display = 'none';
+                }
             });
 
             exportCsvBtn.addEventListener('click', () => {
@@ -400,7 +527,6 @@
                 }
 
                 let csvContent = "\uFEFF项目,金额(元),日期\n";
-                // 导出时也按日期排序
                 const sortedForExport = [...costs].sort((a, b) => new Date(a.date) - new Date(b.date));
                 sortedForExport.forEach(cost => {
                     const name = `"${cost.name.replace(/"/g, '""')}"`;
@@ -418,11 +544,18 @@
                 document.body.removeChild(link);
             });
 
+            // 为了让修改和删除更可靠，为现有数据添加ID（如果它们还没有）
+            costs.forEach(cost => {
+                if (!cost.id) {
+                    cost.id = Date.now() + Math.random(); // 确保唯一性
+                }
+            });
+            saveCosts();
+
             resetForm();
             renderCosts();
         });
     </script>
 
 </body>
-
 </html>
