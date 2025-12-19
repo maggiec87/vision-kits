@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>防控成本记录</title>
+    <title>防控账单</title>
     <style>
         :root {
             --primary-color: #00796b;
@@ -231,7 +231,7 @@
 
     <div class="container">
         <div class="header-nav">
-            <h1>防控钱钱</h1>
+            <h1>防控账单</h1>
             <div class="header-actions">
                 <a href="https://maggiec87.github.io/vision-kits/" class="btn btn-secondary">返回</a>
             </div>
@@ -243,7 +243,7 @@
                 <div class="form-grid">
                     <div class="form-group full-width">
                         <label for="item-name">项目</label>
-                        <input type="text" id="item-name" placeholder="如：OK镜、阿托品" required>
+                        <input type="text" id="item-name" placeholder="如:离焦镜、读写台、检查费等" required>
                     </div>
                     <div class="form-group">
                         <label for="item-amount">金额 (元)</label>
@@ -255,14 +255,14 @@
                     </div>
                 </div>
                 <div class="button-group">
-                    <button type="submit" id="submit-btn" class="btn-primary">添加记录</button>
+                    <button type="submit" id="submit-btn" class="btn-primary">添加</button>
                     <button type="button" id="cancel-edit-btn" class="btn-secondary" style="display: none;">取消修改</button>
                 </div>
             </form>
         </div>
 
         <div class="card">
-            <h2>花费</h2>
+            <h2>账单</h2>
             <table class="cost-table">
                 <thead>
                     <tr>
@@ -338,7 +338,7 @@
                 itemDateInput.valueAsDate = new Date();
                 editIndex = null;
                 formTitle.textContent = '新增';
-                submitBtn.textContent = '添加记录';
+                submitBtn.textContent = '添加';
                 cancelEditBtn.style.display = 'none';
             };
 
@@ -382,7 +382,7 @@
                     itemAmountInput.value = costToEdit.amount;
                     itemDateInput.value = costToEdit.date;
 
-                    formTitle.textContent = '修改花费记录';
+                    formTitle.textContent = '修改账单记录';
                     submitBtn.textContent = '更新记录';
                     cancelEditBtn.style.display = 'block';
                     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -424,4 +424,5 @@
     </script>
 
 </body>
+
 </html>
