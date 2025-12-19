@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>防控成本记录</title>
+    <style>
+        :root {
+            --primary-color: #00796b;
+            --secondary-color: #4a5568;
+            --background-color: #f4f5f7;
+            --card-bg-color: #ffffff;
+            --border-color: #e2e8f0;
+            --danger-color: #e53e3e;
+            --info-color: #3b82f6;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--secondary-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        /* ▼▼▼ 修改：修复标题居中问题的样式 ▼▼▼ */
+        .header-nav {
+            display: flex;
+            justify-content: center; /* 修改为 center 来居中标题 */
+            align-items: center;
+            position: relative; /* 添加相对定位，为按钮定位做准备 */
+            margin-bottom: 25px;
+            background-color: var(--card-bg-color);
+            padding: 20px 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .header-nav h1 {
+            margin: 0;
+            color: var(--primary-color);
+            font-size: 1.8em;
+            /* 移除了 flex-grow: 1 */
+        }
+        .header-actions {
+            position: absolute; /* 使用绝对定位将按钮移出文档流 */
+            right: 25px; /* 定位到右侧，25px与padding一致 */
+            top: 50%;
+            transform: translateY(-50%); /* 垂直居中 */
+        }
+        .card {
+            background-color: var(--card-bg-color);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: var(--primary-color);
+            text-align: center;
+        }
+        #form-title {
+            margin-bottom: 20px;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        label {
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            color: #6b7280;
+        }
+        input[type="text"], input[type="number"], input[type="date"] {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1em;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .button-group {
+            grid-column: 1 / -1;
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .btn, button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            text-align: center;
+            white-space: nowrap;
+        }
+        .button-group button {
+             flex-grow: 1;
+        }
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #00695c;
+        }
+        .btn-secondary {
+            background-color: #6b7280;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #4a5568;
+        }
+        .btn-danger, .btn-edit {
+            padding: 5px 10px;
+            font-size: 0.9em;
+            margin-right: 5px;
+        }
+        .btn-danger { background-color: var(--danger-color); color: white; }
+        .btn-edit { background-color: var(--info-color); color: white; }
+
+        .cost-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .cost-table thead {
+            background-color: #f8fafc;
+        }
+        .cost-table th, .cost-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .actions-cell {
+            white-space: nowrap;
+        }
+        .summary-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .total-section {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        .btn-export {
+            background-color: #1d4ed8;
+            color: white;
+            padding: 8px 15px;
+            font-size: 0.9em;
+        }
+        
+        /* 手机适配优化 */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            
+            .header-nav {
+                flex-direction: column; /* 垂直排列 */
+                gap: 15px; /* 增加标题和按钮的间距 */
+                padding: 15px;
+            }
+            .header-nav h1 {
+                text-align: center;
+            }
+            /* ▼▼▼ 修改：适配手机端的按钮样式 ▼▼▼ */
+            .header-actions {
+                position: static; /* 恢复正常文档流 */
+                transform: none; /* 移除transform */
+                width: 100%; /* 占满整行 */
+                display: flex;
+            }
+            .header-actions .btn {
+                flex-grow: 1; /* 让按钮填满容器 */
+            }
+            
+            .card { padding: 20px; }
+            .form-grid { grid-template-columns: 1fr; }
+            
+            .cost-table thead { display: none; }
+            .cost-table, .cost-table tbody, .cost-table tr, .cost-table td {
+                display: block;
+                width: 100%;
+            }
+            .cost-table tr {
+                margin-bottom: 15px;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                padding: 10px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            }
+            .cost-table td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 8px 0;
+                border: none;
+                text-align: right;
+            }
+            .cost-table td::before {
+                content: attr(data-label);
+                font-weight: bold;
+                text-align: left;
+                margin-right: 10px;
+                color: var(--secondary-color);
+            }
+            .actions-cell { justify-content: flex-end; }
+            .actions-cell::before { margin-right: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header-nav">
+            <h1>防控钱钱</h1>
+            <div class="header-actions">
+                <a href="https://maggiec87.github.io/vision-kits/" class="btn btn-secondary">返回</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 id="form-title">新增</h2>
+            <form id="cost-form">
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label for="item-name">项目</label>
+                        <input type="text" id="item-name" placeholder="如：OK镜、阿托品" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="item-amount">金额 (元)</label>
+                        <input type="number" id="item-amount" placeholder="如：8000" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="item-date">日期</label>
+                        <input type="date" id="item-date" required>
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button type="submit" id="submit-btn" class="btn-primary">添加记录</button>
+                    <button type="button" id="cancel-edit-btn" class="btn-secondary" style="display: none;">取消修改</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>花费</h2>
+            <table class="cost-table">
+                <thead>
+                    <tr>
+                        <th>项目</th>
+                        <th>金额 (元)</th>
+                        <th>日期</th>
+                        <th class="actions-cell">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="cost-list">
+                    <!-- Cost items will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+            <div class="summary-section">
+                <button id="export-csv-btn" class="btn btn-export">导出</button>
+                <div class="total-section">
+                    总计: <span id="total-amount">0.00</span> 元
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const costForm = document.getElementById('cost-form');
+            const costList = document.getElementById('cost-list');
+            const totalAmountEl = document.getElementById('total-amount');
+            const itemNameInput = document.getElementById('item-name');
+            const itemAmountInput = document.getElementById('item-amount');
+            const itemDateInput = document.getElementById('item-date');
+            const formTitle = document.getElementById('form-title');
+            const submitBtn = document.getElementById('submit-btn');
+            const cancelEditBtn = document.getElementById('cancel-edit-btn');
+            const exportCsvBtn = document.getElementById('export-csv-btn');
+
+            let costs = JSON.parse(localStorage.getItem('myopiaCosts')) || [];
+            let editIndex = null;
+
+            const saveCosts = () => {
+                localStorage.setItem('myopiaCosts', JSON.stringify(costs));
+            };
+
+            const renderCosts = () => {
+                const sortedCosts = [...costs].sort((a, b) => new Date(b.date) - new Date(a.date));
+                costList.innerHTML = '';
+                let total = 0;
+
+                if (sortedCosts.length === 0) {
+                    costList.innerHTML = '<tr><td colspan="4" style="text-align:center; display:table-cell;">暂无记录</td></tr>';
+                } else {
+                    sortedCosts.forEach((cost) => {
+                        const originalIndex = costs.findIndex(c => c.name === cost.name && c.amount === cost.amount && c.date === cost.date);
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td data-label="项目">${cost.name}</td>
+                            <td data-label="金额 (元)">${parseFloat(cost.amount).toFixed(2)}</td>
+                            <td data-label="日期">${cost.date}</td>
+                            <td data-label="操作" class="actions-cell">
+                                <button class="btn btn-edit" data-index="${originalIndex}">修改</button>
+                                <button class="btn btn-danger" data-index="${originalIndex}">删除</button>
+                            </td>
+                        `;
+                        costList.appendChild(row);
+                        total += parseFloat(cost.amount);
+                    });
+                }
+                totalAmountEl.textContent = total.toFixed(2);
+            };
+
+            const resetForm = () => {
+                costForm.reset();
+                itemDateInput.valueAsDate = new Date();
+                editIndex = null;
+                formTitle.textContent = '新增';
+                submitBtn.textContent = '添加记录';
+                cancelEditBtn.style.display = 'none';
+            };
+
+            costForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const newCost = {
+                    name: itemNameInput.value.trim(),
+                    amount: itemAmountInput.value,
+                    date: itemDateInput.value,
+                };
+
+                if (newCost.name && newCost.amount && newCost.date) {
+                    if (editIndex !== null) {
+                        costs[editIndex] = newCost;
+                    } else {
+                        costs.push(newCost);
+                    }
+                    saveCosts();
+                    renderCosts();
+                    resetForm();
+                }
+            });
+
+            costList.addEventListener('click', (e) => {
+                const target = e.target.closest('button');
+                if (!target || target.dataset.index === undefined) return;
+
+                const index = parseInt(target.dataset.index, 10);
+
+                if (target.classList.contains('btn-danger')) {
+                    if (confirm('确定要删除这条记录吗？')) {
+                        costs.splice(index, 1);
+                        saveCosts();
+                        renderCosts();
+                    }
+                } else if (target.classList.contains('btn-edit')) {
+                    editIndex = index;
+                    const costToEdit = costs[index];
+                    
+                    itemNameInput.value = costToEdit.name;
+                    itemAmountInput.value = costToEdit.amount;
+                    itemDateInput.value = costToEdit.date;
+
+                    formTitle.textContent = '修改花费记录';
+                    submitBtn.textContent = '更新记录';
+                    cancelEditBtn.style.display = 'block';
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            });
+
+            cancelEditBtn.addEventListener('click', () => {
+                resetForm();
+            });
+
+            exportCsvBtn.addEventListener('click', () => {
+                if (costs.length === 0) {
+                    alert('没有数据可以导出。');
+                    return;
+                }
+
+                let csvContent = "\uFEFF项目,金额(元),日期\n";
+                // 导出时也按日期排序
+                const sortedForExport = [...costs].sort((a, b) => new Date(a.date) - new Date(b.date));
+                sortedForExport.forEach(cost => {
+                    const name = `"${cost.name.replace(/"/g, '""')}"`;
+                    csvContent += `${name},${cost.amount},${cost.date}\n`;
+                });
+
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement("a");
+                const url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                const timestamp = new Date().toISOString().slice(0, 10);
+                link.setAttribute("download", `防控成本记录_${timestamp}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+
+            resetForm();
+            renderCosts();
+        });
+    </script>
+
+</body>
+</html>
