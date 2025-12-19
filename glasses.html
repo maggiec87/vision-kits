@@ -419,6 +419,7 @@
                     return;
                 }
                 
+                // ▼▼▼ 修改：按配镜日期排序 ▼▼▼
                 const sortedGlasses = [...glasses].sort((a,b) => new Date(b.date) - new Date(a.date));
 
                 sortedGlasses.forEach((glass) => {
@@ -432,7 +433,7 @@
                     card.innerHTML = `
                         <h3>${glass.name}的${glass.type}</h3>
                         <p><strong>年龄:</strong> ${glass.age || '未填写'}</p>
-                        <p><strong>日期:</strong> ${glass.date || '未填写'}</p>
+                        <p><strong>配镜日期:</strong> ${glass.date || '未填写'}</p>
                         <p><strong>度数:</strong> ${odStr} | ${osStr}</p>
                         <p><strong>价格:</strong> ${glass.price ? `¥${parseFloat(glass.price).toFixed(2)}` : '未填写'}</p>
                         <div class="card-actions">
@@ -460,11 +461,13 @@
             glassForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 
+                // ▼▼▼ 修改/新增：增加读取 wearDate ▼▼▼
                 const glassData = {
                     name: document.getElementById('glass-name').value.trim(),
                     age: document.getElementById('glass-age').value.trim(),
                     type: document.getElementById('glass-type').value,
-                    date: document.getElementById('purchase-date').value,
+                    date: document.getElementById('purchase-date').value, // 配镜日期
+                    wearDate: document.getElementById('wear-date').value,  // 戴镜日期
                     store: document.getElementById('purchase-store').value.trim(),
                     price: document.getElementById('purchase-price').value,
                     od_sph: document.getElementById('od-sph').value,
@@ -517,6 +520,7 @@
                     document.getElementById('glass-age').value = glass.age;
                     document.getElementById('glass-type').value = glass.type;
                     document.getElementById('purchase-date').value = glass.date;
+                    document.getElementById('wear-date').value = glass.wearDate; // ▼▼▼ 新增：填充戴镜日期 ▼▼▼
                     document.getElementById('purchase-store').value = glass.store;
                     document.getElementById('purchase-price').value = glass.price;
                     document.getElementById('od-sph').value = glass.od_sph;
@@ -534,15 +538,16 @@
             });
 
             function showDetailsModal(glass) {
+                // ▼▼▼ 修改：在详情中增加戴镜日期 ▼▼▼
                 modalBody.innerHTML = `
                     <h3>${glass.name}的${glass.type}</h3>
                     <div class="details-grid">
                         <p><strong>名字:</strong> ${glass.name}</p>
                         <p><strong>年龄:</strong> ${glass.age || 'N/A'}</p>
-                        <p><strong>购买日期:</strong> ${glass.date || 'N/A'}</p>
+                        <p><strong>配镜日期:</strong> ${glass.date || 'N/A'}</p>
+                        <p><strong>戴镜日期:</strong> ${glass.wearDate || 'N/A'}</p>
                         <p><strong>购买店铺:</strong> ${glass.store || 'N/A'}</p>
                         <p><strong>价格:</strong> ${glass.price ? `¥${parseFloat(glass.price).toFixed(2)}` : 'N/A'}</p>
-                        <p><strong>类型:</strong> ${glass.type}</p>
                     </div>
                     <hr style="border:0; border-top: 1px solid var(--border-color); margin: 15px 0;">
                     <div class="details-grid">
@@ -583,8 +588,9 @@
                     return;
                 }
 
+                // ▼▼▼ 修改：增加“戴镜日期”到表头 ▼▼▼
                 const headers = [
-                    '名字', '年龄', '类型', '购买日期', '购买店铺', '价格',
+                    '名字', '年龄', '类型', '配镜日期', '戴镜日期', '购买店铺', '价格',
                     '右眼球镜(SPH)', '右眼柱镜(CYL)', '右眼轴位(AX)',
                     '左眼球镜(SPH)', '左眼柱镜(CYL)', '左眼轴位(AX)', '备注'
                 ];
@@ -594,8 +600,9 @@
                 const sortedForExport = [...glasses].sort((a,b) => new Date(a.date) - new Date(b.date));
 
                 sortedForExport.forEach(g => {
+                    // ▼▼▼ 修改：增加 g.wearDate 到导出的行数据中 ▼▼▼
                     const row = [
-                        g.name, g.age, g.type, g.date, g.store, g.price,
+                        g.name, g.age, g.type, g.date, g.wearDate, g.store, g.price,
                         g.od_sph, g.od_cyl, g.od_ax,
                         g.os_sph, g.os_cyl, g.os_ax,
                         `"${(g.notes || '').replace(/"/g, '""')}"` // 处理备注中的逗号和引号
@@ -622,4 +629,3 @@
 </body>
 
 </html>
-
