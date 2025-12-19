@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>那些年的眼镜</title>
+    <title>眼镜库</title>
     <style>
         :root {
             --primary-color: #00796b;
@@ -257,35 +257,30 @@
     <div class="container">
         <!-- 1, 5. 更新标题和返回按钮 -->
         <div class="header-nav">
-            <h1>那些年的眼镜 🤓</h1>
+            <h1>眼镜库 🤓</h1>
             <div class="header-actions">
                 <a href="https://maggiec87.github.io/vision-kits/" class="btn btn-secondary">返回</a>
             </div>
         </div>
 
         <div class="card">
-            <h2 id="form-title">添加新眼镜</h2>
+            <h2 id="form-title">添加</h2>
             <form id="glass-form">
                 <input type="hidden" id="edit-index">
                 <div class="form-grid">
-                    <!-- 4. 使用者改为名字, 增加年龄备注 -->
+                    <!-- 4. 使用者改为名字, 增加年龄 -->
                     <div class="form-group">
                         <label for="glass-name">名字</label>
                         <input type="text" id="glass-name" placeholder="如：小明" required>
                     </div>
                     <div class="form-group">
-                        <label for="glass-age">年龄备注</label>
+                        <label for="glass-age">年龄</label>
                         <input type="text" id="glass-age" placeholder="如：配镜时8岁">
                     </div>
                     <div class="form-group">
-                        <label for="glass-type">眼镜类型</label>
-                        <select id="glass-type" required>
-                            <option value="框架镜">框架镜</option>
-                            <option value="备用镜">备用镜</option>
-                            <option value="太阳镜">太阳镜</option>
-                            <option value="运动眼镜">运动眼镜</option>
-                            <option value="其他">其他</option>
-                        </select>
+                        <label for="glass-type">类型</label>
+                        <input type="text" id="glass-type" placeholder="如：星趣控、控优点、柯学优">
+
                     </div>
                     <!-- 3. 增加购买店铺、时间、价格 -->
                     <div class="form-group">
@@ -338,12 +333,12 @@
                     </fieldset>
                     
                     <div class="form-group full-width">
-                        <label for="glass-notes">其他备注</label>
+                        <label for="glass-notes">备注</label>
                         <textarea id="glass-notes" placeholder="如：蔡司钻立方铂金膜，镜框品牌型号等"></textarea>
                     </div>
                 </div>
                 <div class="button-group">
-                    <button type="submit" id="submit-btn" class="btn-primary">添加到眼镜库</button>
+                    <button type="submit" id="submit-btn" class="btn-primary">添加</button>
                     <button type="button" id="cancel-edit-btn" class="btn-secondary" style="display: none;">取消修改</button>
                 </div>
             </form>
@@ -351,9 +346,9 @@
 
         <div class="card">
             <div class="actions-header">
-                <h2>现有眼镜</h2>
-                <!-- 6. 增加导出所有数据 -->
-                <button id="export-csv-btn" class="btn btn-export">导出所有数据</button>
+                <h2>眼镜们</h2>
+                <!-- 6. 增加导出 -->
+                <button id="export-csv-btn" class="btn btn-export">导出</button>
             </div>
             <div id="glasses-list" class="glasses-grid">
                 <!-- Glasses cards will be inserted here -->
@@ -453,8 +448,8 @@
                 document.getElementById('od-cyl').value = "0.00";
                 document.getElementById('os-cyl').value = "0.00";
                 editIndexInput.value = '';
-                formTitle.textContent = '添加新眼镜';
-                submitBtn.textContent = '添加到眼镜库';
+                formTitle.textContent = '添加';
+                submitBtn.textContent = '添加';
                 cancelEditBtn.style.display = 'none';
             };
 
@@ -539,11 +534,11 @@
                     <h3>${glass.name}的${glass.type}</h3>
                     <div class="details-grid">
                         <p><strong>名字:</strong> ${glass.name}</p>
-                        <p><strong>年龄备注:</strong> ${glass.age || 'N/A'}</p>
+                        <p><strong>年龄:</strong> ${glass.age || 'N/A'}</p>
                         <p><strong>购买日期:</strong> ${glass.date || 'N/A'}</p>
                         <p><strong>购买店铺:</strong> ${glass.store || 'N/A'}</p>
                         <p><strong>价格:</strong> ${glass.price ? `¥${parseFloat(glass.price).toFixed(2)}` : 'N/A'}</p>
-                        <p><strong>眼镜类型:</strong> ${glass.type}</p>
+                        <p><strong>类型:</strong> ${glass.type}</p>
                     </div>
                     <hr style="border:0; border-top: 1px solid var(--border-color); margin: 15px 0;">
                     <div class="details-grid">
@@ -561,7 +556,7 @@
                         </div>
                     </div>
                     <hr style="border:0; border-top: 1px solid var(--border-color); margin: 15px 0;">
-                    <h4>其他备注</h4>
+                    <h4>备注</h4>
                     <p>${glass.notes ? glass.notes.replace(/\n/g, '<br>') : '无'}</p>
                 `;
                 detailsModal.classList.add('visible');
@@ -585,7 +580,7 @@
                 }
 
                 const headers = [
-                    '名字', '年龄备注', '眼镜类型', '购买日期', '购买店铺', '价格',
+                    '名字', '年龄', '类型', '购买日期', '购买店铺', '价格',
                     '右眼球镜(SPH)', '右眼柱镜(CYL)', '右眼轴位(AX)',
                     '左眼球镜(SPH)', '左眼柱镜(CYL)', '左眼轴位(AX)', '备注'
                 ];
@@ -609,7 +604,7 @@
                 const url = URL.createObjectURL(blob);
                 link.setAttribute("href", url);
                 const timestamp = new Date().toISOString().slice(0, 10);
-                link.setAttribute("download", `那些年的眼镜_${timestamp}.csv`);
+                link.setAttribute("download", `眼镜库_${timestamp}.csv`);
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
@@ -621,4 +616,5 @@
     </script>
 
 </body>
+
 </html>
