@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>移近推远视训</title>
+    <!-- ▼▼▼ 修改：更新标题 ▼▼▼ -->
+    <title>视训记录</title>
     <style>
         :root {
             --primary-color: #2c5282; /* 深蓝 */
@@ -33,19 +34,60 @@
             margin-bottom: 25px; flex-wrap: wrap; gap: 10px;
         }
         .header-nav h1 { flex-grow: 1; text-align: center; margin: 0; color: var(--primary-color); font-size: 1.8em; }
-        .header-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
+        .header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
         
         h2 { color: var(--primary-color); text-align: center; margin-bottom: 25px; }
         
+        /* ▼▼▼ 新增/修改：统一的折叠项样式 ▼▼▼ */
+        .collapsible-section {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background-color: var(--card-bg-color);
+        }
+        .collapsible-section > summary {
+            font-weight: 600;
+            font-size: 1.3em;
+            color: var(--primary-color);
+            padding: 15px 20px;
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.2s;
+        }
+        .collapsible-section > summary:hover {
+            background-color: #f8f9fa;
+        }
+        .collapsible-section > summary::-webkit-details-marker { display: none; }
+        .collapsible-section > summary::after {
+            content: '＋ 展开';
+            font-size: 0.8em;
+            color: var(--secondary-color);
+            font-weight: 400;
+        }
+        .collapsible-section[open] > summary::after {
+            content: '－ 折叠';
+        }
+        .collapsible-section[open] > summary {
+            border-bottom: 1px solid var(--border-color);
+        }
+        .collapsible-content {
+            padding: 25px;
+        }
+        .placeholder-content {
+            color: #718096;
+            text-align: center;
+            padding: 30px;
+        }
+        /* ▲▲▲ 新增/修改：统一的折叠项样式 ▲▲▲ */
+
         .explanation-details { border: 1px dashed var(--border-color); border-radius: 8px; margin-bottom: 25px; background-color: #f8f9fa; }
         .explanation-summary { padding: 12px 15px; font-weight: 600; color: var(--primary-color); cursor: pointer; outline: none; list-style: none; }
         .explanation-summary::-webkit-details-marker { display: none; }
         .explanation-summary:hover { background-color: #eef2f7; }
-        .explanation-content { padding: 0 20px 20px 20px; border-top: 1px solid var(--border-color); margin-top: 10px; }
+        .explanation-content .explanation-content { padding: 0 20px 20px 20px; border-top: 1px solid var(--border-color); margin-top: 10px; }
         .explanation-content h3 { color: var(--primary-color); margin-top: 20px; margin-bottom: 8px; font-size: 1.1em; }
         .explanation-content p { line-height: 1.7; margin: 0 0 15px 0; }
 
@@ -75,7 +117,7 @@
         
         .rounds-list { list-style-type: none; padding: 0; margin-top: 15px; display: flex; flex-direction: column; gap: 10px; }
         .rounds-list li { background-color: #edf2f7; padding: 10px 12px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; font-size: 0.9em;}
-        .rounds-list li button { font-size: 1em; padding: 4px 8px; } /* 统一删除按钮大小 */
+        .rounds-list li button { font-size: 1em; padding: 4px 8px; }
 
         .history-section { margin-top: 40px; }
         .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
@@ -92,17 +134,8 @@
         .history-table .actions-cell .btn { padding: 5px 10px; font-size: 14px; }
         .history-distances { font-size: 0.9em; line-height: 1.5; }
 
-        /* ▼▼▼ 新增：弹窗样式 ▼▼▼ */
-        .modal {
-            display: none; position: fixed; z-index: 1000; left: 0; top: 0;
-            width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5);
-            align-items: center; justify-content: center;
-        }
-        .modal-content {
-            background-color: #fff; margin: auto; padding: 20px; border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3); width: 90%; max-width: 600px;
-            position: relative; max-height: 85vh; overflow-y: auto;
-    }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
+        .modal-content { background-color: #fff; margin: auto; padding: 20px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); width: 90%; max-width: 600px; position: relative; max-height: 85vh; overflow-y: auto; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 20px; }
         .modal-header h3 { margin: 0; font-size: 1.5em; color: var(--primary-color); }
         .close-btn { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; border: none; background: none; }
@@ -122,7 +155,6 @@
             .header-nav h1 { text-align: center; margin-bottom: 10px; }
             .header-actions { justify-content: stretch; }
             .header-actions .btn { flex-grow: 1; }
-
             .eye-data-grid { grid-template-columns: 1fr; }
             .round-adder-inputs .btn { width: 100%; margin-top: 5px; }
             .history-table { border: 0; table-layout: auto; }
@@ -141,34 +173,62 @@
 
     <div class="container">
         <div class="header-nav">
-            <h1>移近推远视训</h1>
+            <!-- ▼▼▼ 修改：更新标题 ▼▼▼ -->
+            <h1>视训记录</h1>
             <div class="header-actions">
                 <a href="https://maggiec87.github.io/vision-kits/" class="btn btn-secondary">返回</a>
             </div>
         </div>
 
-        <details class="explanation-details">
-            <summary class="explanation-summary">什么是移近推远？（点击查看）</summary>
-            <div class="explanation-content">
-                <h3>正镜推远 (Plus Lens Push-away)</h3><p>使用反转拍的正镜片（放大镜效果），将视标卡从距离眼睛40cm的位置开始，缓慢向远处推移至60-70cm。随着距离增加，视标逐渐模糊，当视标刚刚模糊时停留片刻，尝试努力看清，若仍能看清则继续推远，直至完全模糊。此过程旨在放松睫状肌，缓解调节疲劳，模拟眼睛看远的状态。</p>
-                <h3>负镜移近 (Minus Lens Pull-in)</h3><p>切换为反转拍的负镜片（缩小镜效果），将视标卡从40cm处逐渐向眼睛移近，保持视标清晰，直至距离眼睛15-20cm左右（具体距离可根据个体耐受程度调整）。这一过程通过增加调节刺激，锻炼睫状肌的力量，提升眼睛的调节幅度。</p>
-                <h3>目的与原理</h3><p>通过交替进行“移近”（增强调节力）和“推远”（放松调节）的动作，模拟眼睛在看近与看远之间的调节切换，帮助改善眼睛的调节功能，增强睫状肌的灵活性和力量，从而预防或缓解近视进展，尤其适用于调节幅度不足、调节灵敏度差等问题。</p>
+        <!-- ▼▼▼ 新增：将“移近推远”功能封装到折叠项中 ▼▼▼ -->
+        <details class="collapsible-section" open>
+            <summary>移近推远</summary>
+            <div class="collapsible-content">
+                <details class="explanation-details">
+                    <summary class="explanation-summary">什么是移近推远？</summary>
+                    <div class="explanation-content">
+                        <h3>正镜推远 (Plus Lens Push-away)</h3><p>使用反转拍的正镜片（放大镜效果），将视标卡从距离眼睛40cm的位置开始，缓慢向远处推移至60-70cm。随着距离增加，视标逐渐模糊，当视标刚刚模糊时停留片刻，尝试努力看清，若仍能看清则继续推远，直至完全模糊。此过程旨在放松睫状肌，缓解调节疲劳，模拟眼睛看远的状态。</p>
+                        <h3>负镜移近 (Minus Lens Pull-in)</h3><p>切换为反转拍的负镜片（缩小镜效果），将视标卡从40cm处逐渐向眼睛移近，保持视标清晰，直至距离眼睛15-20cm左右（具体距离可根据个体耐受程度调整）。这一过程通过增加调节刺激，锻炼睫状肌的力量，提升眼睛的调节幅度。</p>
+                        <h3>目的与原理</h3><p>通过交替进行“移近”（增强调节力）和“推远”（放松调节）的动作，模拟眼睛在看近与看远之间的调节切换，帮助改善眼睛的调节功能，增强睫状肌的灵活性和力量，从而预防或缓解近视进展，尤其适用于调节幅度不足、调节灵敏度差等问题。</p>
+                    </div>
+                </details>
+        
+                <form id="record-form">
+                    <fieldset><legend></legend><div class="form-grid"><div class="form-group"><label for="flipper-diopter">反转拍</label><select id="flipper-diopter"><option value="1.00">±1.00 D</option><option value="1.50">±1.50 D</option><option value="2.00" selected>±2.00 D</option><option value="2.50">±2.50 D</option></select></div><div class="form-group"><label for="acuity-chart">视标卡</label><select id="acuity-chart"><option value="20/50">20/50</option><option value="20/40" selected>20/40</option><option value="20/30">20/30</option><option value="20/25">20/25</option><option value="20/20">20/20</option></select></div><div class="form-group"><label for="record-date">日期</label><input type="date" id="record-date" required></div><div class="form-group"><label for="practice-duration">时长</label><input type="text" id="practice-duration" placeholder="例如: 15分钟"></div></div></fieldset>
+                    <fieldset><legend>推远数据 (cm)</legend><div class="eye-data-grid"><div class="eye-section" id="left-eye-section"><h3>左眼</h3><div class="round-adder"><div class="round-adder-inputs"><div class="form-group"><label for="left-data1-input">远1</label><input type="number" id="left-data1-input" placeholder="数值"></div><div class="form-group"><label for="left-data2-input">远2</label><input type="number" id="left-data2-input" placeholder="数值"></div></div><button type="button" id="add-left-round-btn" class="btn btn-secondary">添加本轮</button></div><ul id="left-rounds-list" class="rounds-list"></ul></div><div class="eye-section" id="right-eye-section"><h3>右眼</h3><div class="round-adder"><div class="round-adder-inputs"><div class="form-group"><label for="right-data1-input">远1</label><input type="number" id="right-data1-input" placeholder="数值"></div><div class="form-group"><label for="right-data2-input">远2</label><input type="number" id="right-data2-input" placeholder="数值"></div></div><button type="button" id="add-right-round-btn" class="btn btn-secondary">添加本轮</button></div><ul id="right-rounds-list" class="rounds-list"></ul></div></div></fieldset>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </form>
+        
+                <div class="history-section">
+                    <div class="history-header"><h2>历史</h2><button id="export-btn" class="btn">导出</button></div>
+                    <table class="history-table"><thead><tr><th>日期</th><th>反转拍</th><th>视标卡</th><th>时长</th><th>推远数据 (cm)</th><th>操作</th></tr></thead><tbody id="history-table-body"></tbody></table>
+                </div>
             </div>
         </details>
 
-        <form id="record-form">
-            <fieldset><legend></legend><div class="form-grid"><div class="form-group"><label for="flipper-diopter">反转拍</label><select id="flipper-diopter"><option value="1.00">±1.00 D</option><option value="1.50">±1.50 D</option><option value="2.00" selected>±2.00 D</option><option value="2.50">±2.50 D</option></select></div><div class="form-group"><label for="acuity-chart">视标卡</label><select id="acuity-chart"><option value="20/50">20/50</option><option value="20/40" selected>20/40</option><option value="20/30">20/30</option><option value="20/25">20/25</option><option value="20/20">20/20</option></select></div><div class="form-group"><label for="record-date">日期</label><input type="date" id="record-date" required></div><div class="form-group"><label for="practice-duration">时长</label><input type="text" id="practice-duration" placeholder="例如: 15分钟"></div></div></fieldset>
-            <fieldset><legend>推远数据 (cm)</legend><div class="eye-data-grid"><div class="eye-section" id="left-eye-section"><h3>左眼</h3><div class="round-adder"><div class="round-adder-inputs"><div class="form-group"><label for="left-data1-input">远1</label><input type="number" id="left-data1-input" placeholder="数值"></div><div class="form-group"><label for="left-data2-input">远2</label><input type="number" id="left-data2-input" placeholder="数值"></div></div><button type="button" id="add-left-round-btn" class="btn btn-secondary">添加本轮</button></div><ul id="left-rounds-list" class="rounds-list"></ul></div><div class="eye-section" id="right-eye-section"><h3>右眼</h3><div class="round-adder"><div class="round-adder-inputs"><div class="form-group"><label for="right-data1-input">远1</label><input type="number" id="right-data1-input" placeholder="数值"></div><div class="form-group"><label for="right-data2-input">远2</label><input type="number" id="right-data2-input" placeholder="数值"></div></div><button type="button" id="add-right-round-btn" class="btn btn-secondary">添加本轮</button></div><ul id="right-rounds-list" class="rounds-list"></ul></div></div></fieldset>
-            <button type="submit" class="btn btn-primary">保存</button>
-        </form>
+        <!-- ▼▼▼ 新增：“红绿矢量图”折叠项占位符 ▼▼▼ -->
+        <details class="collapsible-section">
+            <summary>红绿矢量图</summary>
+            <div class="collapsible-content">
+                <div class="placeholder-content">
+                    <p>此功能模块正在开发中。</p>
+                </div>
+            </div>
+        </details>
 
-        <div class="history-section">
-            <div class="history-header"><h2>记录</h2><button id="export-btn" class="btn">导出</button></div>
-            <table class="history-table"><thead><tr><th>日期</th><th>反转拍</th><th>视标卡</th><th>时长</th><th>推远数据 (cm)</th><th>操作</th></tr></thead><tbody id="history-table-body"></tbody></table>
-        </div>
+        <!-- ▼▼▼ 新增：“其他训练”折叠项占位符 ▼▼▼ -->
+        <details class="collapsible-section">
+            <summary>更多</summary>
+            <div class="collapsible-content">
+                <div class="placeholder-content">
+                    <p>此功能模块正在开发中。</p>
+                </div>
+            </div>
+        </details>
+
     </div>
 
-    <!-- ▼▼▼ 新增：详情弹窗 ▼▼▼ -->
+    <!-- 详情弹窗 -->
     <div id="details-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -181,6 +241,7 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
+        // --- “移近推远”模块的变量和函数 ---
         const form = document.getElementById('record-form');
         const submitBtn = form.querySelector('button[type="submit"]');
         const recordDateInput = document.getElementById('record-date');
@@ -195,7 +256,6 @@
         const rightData2Input = document.getElementById('right-data2-input');
         const rightRoundsList = document.getElementById('right-rounds-list');
         
-        // ▼▼▼ 新增：弹窗元素选择器 ▼▼▼
         const modal = document.getElementById('details-modal');
         const modalTitle = document.getElementById('modal-title');
         const modalBody = document.getElementById('modal-body');
@@ -226,7 +286,6 @@
                 const rightDistances = record.distances.right.map(r => `R${r.round}(${r.data1}, ${r.data2})`).join('; ') || '无记录';
                 const distancesHtml = `<div class="history-distances"><strong>左:</strong> ${leftDistances}<br><strong>右:</strong> ${rightDistances}</div>`;
                 
-                // ▼▼▼ 修改：增加详情按钮，调整修改按钮样式 ▼▼▼
                 tr.innerHTML = `
                     <td data-label="日期">${record.date}</td>
                     <td data-label="反转拍">±${record.diopter} D</td>
@@ -283,7 +342,7 @@
             renderRounds('left');
             renderRounds('right');
 
-            submitBtn.textContent = '更新';
+            submitBtn.textContent = '更新本项记录';
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
         
@@ -316,7 +375,6 @@
             resetFormAndState();
         };
 
-        // ▼▼▼ 新增：显示详情弹窗的函数 ▼▼▼
         const showDetailsModal = (recordId) => {
             const record = records.find(r => r.id == recordId);
             if (!record) return;
@@ -364,7 +422,7 @@
                 }
             } else if (target.classList.contains('edit-btn')) {
                 loadRecordIntoForm(recordId);
-            } else if (target.classList.contains('details-btn')) { // 新增：监听详情按钮
+            } else if (target.classList.contains('details-btn')) {
                 showDetailsModal(recordId);
             }
         };
@@ -381,7 +439,7 @@
         };
 
         const exportToCSV = () => {
-            if (records.length === 0) { alert('没有历史记录可导出。'); return; }
+            if (records.length === 0) { alert('没有历史可导出。'); return; }
             const escapeCSV = (str) => `"${(str || '').replace(/"/g, '""')}"`;
             let csvContent = '\uFEFF"日期","反转拍度数(D)","视标卡","练习时长","左眼推远数据","右眼推远数据"\n';
             const sortedRecords = [...records].sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -393,8 +451,9 @@
             });
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
+            // ▼▼▼ 修改：更新导出文件名 ▼▼▼
             link.setAttribute('href', URL.createObjectURL(blob));
-            link.setAttribute('download', `移近推远练习记录-${new Date().toISOString().slice(0,10)}.csv`);
+            link.setAttribute('download', `视训记录-移近推远-${new Date().toISOString().slice(0,10)}.csv`);
             document.body.appendChild(link); link.click(); document.body.removeChild(link);
         };
 
@@ -409,7 +468,6 @@
         historyTableBody.addEventListener('click', handleHistoryTableClick);
         exportBtn.addEventListener('click', exportToCSV);
         
-        // ▼▼▼ 新增：弹窗关闭事件监听 ▼▼▼
         closeModalBtn.addEventListener('click', () => modal.style.display = 'none');
         window.addEventListener('click', (e) => { if (e.target == modal) modal.style.display = 'none'; });
 
