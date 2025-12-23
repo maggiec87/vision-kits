@@ -344,12 +344,12 @@
                 </div>
             </details>
 
-            <button type="submit" class="btn btn-primary">保存完整记录</button>
+            <button type="submit" class="btn btn-primary">保存全部</button>
         </form>
 
         <!-- 历史 -->
         <div class="history-section">
-            <div class="history-header"><h2>历史记录</h2><button id="export-btn" class="btn">导出全部</button></div>
+            <div class="history-header"><h2>历史</h2><button id="export-btn" class="btn">导出全部</button></div>
             <table class="history-table"><thead><tr><th>日期</th><th>机构</th><th>眼轴(OD/OS)</th><th>综合验光(OD/OS)</th><th class="actions-cell">操作</th></tr></thead><tbody id="history-table-body"></tbody></table>
         </div>
     </div>
@@ -459,7 +459,7 @@
             form.reset();
             setInputValue('exam-date', new Date().toISOString().split('T')[0]);
             editingRecordId = null;
-            submitBtn.textContent = '保存完整记录';
+            submitBtn.textContent = '保存全部';
             // Close all collapsible sections
             document.querySelectorAll('.collapsible-section').forEach(d => d.open = false);
         };
