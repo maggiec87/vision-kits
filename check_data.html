@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>检查记录</title>
-    <!-- ▼▼▼ 修改：删除了不再需要的 html2canvas 脚本 ▼▼▼ -->
     <style>
         :root {
             --primary-color: #00796b;
@@ -71,7 +70,7 @@
         .btn-warning { background-color: var(--warning-color); color: white; }
         .btn-calc { background-color: var(--warning-color); color: white; }
 
-        form { display: flex; flex-direction: column; gap: 30px; }
+        form { display: flex; flex-direction: column; gap: 20px; } /* Reduced gap for tighter sections */
         fieldset {
             border: 1px solid var(--border-color); border-radius: 8px; padding: 25px;
             margin: 0;
@@ -130,6 +129,59 @@
         .detail-item span:first-child { font-weight: 600; color: var(--secondary-color); margin-right: 10px; }
         .detail-item span:last-child { text-align: right; flex-grow: 1; word-break: break-all; }
 
+        /* ▼▼▼ 新增：折叠部分样式 ▼▼▼ */
+        details.collapsible-section {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0;
+            transition: all 0.2s ease-in-out;
+        }
+        details.collapsible-section > summary {
+            font-weight: 600;
+            font-size: 1.3em;
+            color: var(--primary-color);
+            padding: 15px 20px;
+            cursor: pointer;
+            list-style: none; /* 移除默认的三角箭头 */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        details.collapsible-section > summary::-webkit-details-marker { display: none; } /* 兼容 Webkit */
+        details.collapsible-section > summary::after {
+            content: '＋ 展开';
+            font-size: 0.8em;
+            color: var(--secondary-color);
+            font-weight: 400;
+            transition: transform 0.2s;
+        }
+        details[open] > summary::after {
+            content: '－ 折叠';
+        }
+        details[open] > summary {
+            border-bottom: 1px solid var(--border-color);
+        }
+        .collapsible-content {
+            padding: 25px;
+        }
+        .collapsible-content fieldset {
+            border: none;
+            padding: 0;
+        }
+        .collapsible-content fieldset legend {
+            display: none; /* 隐藏内部的 legend，因为标题已在 summary 中 */
+        }
+        .section-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            padding: 0 25px 20px; /* 调整内边距 */
+        }
+        .section-actions .btn {
+            flex-grow: 1;
+        }
+        /* ▲▲▲ 新增：折叠部分样式 ▲▲▲ */
+
         @media (max-width: 768px) {
             body { padding: 10px; }
             .container { padding: 20px 15px; }
@@ -167,7 +219,6 @@
         <div class="header-nav">
             <h1>检查记录</h1>
             <div class="header-actions">
-                <!-- ▼▼▼ 修改：删除分享按钮，并更新返回链接 ▼▼▼ -->
                 <a href="https://maggiec87.github.io/vision-kits/" class="btn btn-secondary">返回</a>
             </div>
         </div>
@@ -186,79 +237,119 @@
                 </div>
             </fieldset>
 
-            <!-- 验光数据 -->
-            <fieldset>
-                <legend>验光数据</legend>
-                <div class="form-group">
-                    <label>裸眼视力</label>
-                    <div class="grid grid-2 compact-grid-2">
-                       <input type="text" id="va-od" placeholder="OD (例如: 0.8 或 4.9)">
-                       <input type="text" id="va-os" placeholder="OS (例如: 0.8 或 4.9)">
-                    </div>
-                </div>
-                <h3 style="margin-top: 20px;">电脑验光</h3>
-                <div class="grid grid-2">
-                    <div class="form-group"><label>右眼 (OD)</label><div class="grid grid-3 compact-grid-3"><input type="number" step="0.25" id="ar-s-od" placeholder="SPH"><input type="number" step="0.25" id="ar-c-od" placeholder="CYL"><input type="number" step="1" id="ar-a-od" placeholder="AX"></div></div>
-                    <div class="form-group"><label>左眼 (OS)</label><div class="grid grid-3 compact-grid-3"><input type="number" step="0.25" id="ar-s-os" placeholder="SPH"><input type="number" step="0.25" id="ar-c-os" placeholder="CYL"><input type="number" step="1" id="ar-a-os" placeholder="AX"></div></div>
-                </div>
-                <h3 style="margin-top: 30px;">综合验光</h3>
-                <div class="grid grid-2">
-                    <div class="form-group"><label>右眼 (OD)</label><div class="grid grid-3 compact-grid-3"><input type="number" step="0.25" id="sr-s-od" placeholder="SPH"><input type="number" step="0.25" id="sr-c-od" placeholder="CYL"><input type="number" step="1" id="sr-a-od" placeholder="AX"></div></div>
-                    <div class="form-group"><label>左眼 (OS)</label><div class="grid grid-3 compact-grid-3"><input type="number" step="0.25" id="sr-s-os" placeholder="SPH"><input type="number" step="0.25" id="sr-c-os" placeholder="CYL"><input type="number" step="1" id="sr-a-os" placeholder="AX"></div></div>
-                </div>
-                <div class="form-group" style="margin-top: 20px;"><label>矫正视力</label><div class="grid grid-2 compact-grid-2"><input type="text" id="cva-od" placeholder="OD (例如: 1.0 或 5.0)"><input type="text" id="cva-os" placeholder="OS (例如: 1.0 或 5.0)"></div></div>
-            </fieldset>
+            <!-- ▼▼▼ 修改：验光数据改为折叠结构 ▼▼▼ -->
+            <details class="collapsible-section" id="optometry-section">
+                <summary>验光数据</summary>
+                <div class="collapsible-content">
+                    <fieldset>
+                        <legend>验光数据</legend>
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label for="optometry-report">上传验光报告 (图片/PDF)</label>
+                            <input type="file" id="optometry-report" accept="image/*,.pdf">
+                        </div>
 
-            <!-- 生物测量数据 -->
-            <fieldset>
-                <legend>生物测量数据</legend>
-                <div class="form-group"><label for="bio-device">测量设备</label><select id="bio-device"><option value="">-- 请选择 --</option><option value="蔡司700">蔡司700</option><option value="蔡司500">蔡司500</option><option value="索维">索维(Suowei)</option><option value="尼德克">尼德克(Nidek)</option><option value="其他">其他</option></select></div>
-                <div class="grid grid-dynamic" style="margin-top: 20px;">
-                    <div class="form-group"><label>眼轴 (AL, mm)</label><div class="grid grid-2 compact-grid-2"><input type="number" step="0.01" id="al-od" placeholder="OD"><input type="number" step="0.01" id="al-os" placeholder="OS"></div></div>
-                    <div class="form-group"><label>晶体厚度 (LT, mm)</label><div class="grid grid-2 compact-grid-2"><input type="number" step="0.01" id="lt-od" placeholder="OD"><input type="number" step="0.01" id="lt-os" placeholder="OS"></div></div>
-                    <div class="form-group"><label>瞳孔直径 (P, mm)</label><div class="grid grid-2 compact-grid-2"><input type="number" step="0.1" id="p-od" placeholder="OD"><input type="number" step="0.1" id="p-os" placeholder="OS"></div></div>
+                        <div class="form-group">
+                            <label>裸眼视力</label>
+                            <div class="grid grid-2 compact-grid-2">
+                               <input type="text" id="va-od" placeholder="OD (例如: 0.8 或 4.9)">
+                               <input type="text" id="va-os" placeholder="OS (例如: 0.8 或 4.9)">
+                            </div>
+                        </div>
+                        <h3 style="margin-top: 20px;">电脑验光</h3>
+                        <div class="grid grid-2">
+                            <div class="form-group"><label>右眼 (OD)</label><div class="grid grid-3 compact-grid-3"><input type="number" step="0.25" id="ar-s-od" placeholder="SPH"><input type="number" step="0.25" id="ar-c-od" placeholder="CYL"><input type="number" step="1" id="ar-a-od" placeholder="AX"></div></div>
+                            <div class="form-group"><label>左眼 (OS)</label><div class="grid grid-3 compact-grid-3"><input type="number" step="0.25" id="ar-s-os" placeholder="SPH"><input type="number" step="0.25" id="ar-c-os" placeholder="CYL"><input type="number" step="1" id="ar-a-os" placeholder="AX"></div></div>
+                        </div>
+                        <h3 style="margin-top: 30px;">综合验光</h3>
+                        <div class="grid grid-2">
+                            <div class="form-group"><label>右眼 (OD)</label><div class="grid grid-3 compact-grid-3"><input type="number" step="0.25" id="sr-s-od" placeholder="SPH"><input type="number" step="0.25" id="sr-c-od" placeholder="CYL"><input type="number" step="1" id="sr-a-od" placeholder="AX"></div></div>
+                            <div class="form-group"><label>左眼 (OS)</label><div class="grid grid-3 compact-grid-3"><input type="number" step="0.25" id="sr-s-os" placeholder="SPH"><input type="number" step="0.25" id="sr-c-os" placeholder="CYL"><input type="number" step="1" id="sr-a-os" placeholder="AX"></div></div>
+                        </div>
+                        <div class="form-group" style="margin-top: 20px;"><label>矫正视力</label><div class="grid grid-2 compact-grid-2"><input type="text" id="cva-od" placeholder="OD (例如: 1.0 或 5.0)"><input type="text" id="cva-os" placeholder="OS (例如: 1.0 或 5.0)"></div></div>
+                    </fieldset>
                 </div>
-                <div class="grid grid-3" style="margin-top: 20px;">
-                    <div class="form-group"><label>ACD (mm)</label><div class="grid grid-2 compact-grid-2"><input type="number" step="0.01" id="acd-od" placeholder="OD"><input type="number" step="0.01" id="acd-os" placeholder="OS"></div></div>
-                    <div class="form-group"><label>角膜厚度 (CTT, μm)</label><div class="grid grid-2 compact-grid-2"><input type="number" id="ctt-od" placeholder="OD"><input type="number" id="ctt-os" placeholder="OS"></div></div>
-                    <div class="form-group"><label>前房深度 (AD, mm)</label><div class="input-group"><div class="grid grid-2 compact-grid-2" style="flex-grow:1;"><input type="number" step="0.01" id="ad-od" placeholder="OD"><input type="number" step="0.01" id="ad-os" placeholder="OS"></div><button type="button" id="calc-ad-btn" class="btn btn-sm btn-calc">计算</button></div></div>
+                <div class="section-actions">
+                    <button type="button" class="btn btn-info btn-sm" data-action="save-section" data-section="optometry">保存</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-action="export-section" data-section="optometry">导出</button>
                 </div>
-                <div class="form-group" style="margin-top: 20px;"><label>曲率 (K, D)</label><div class="grid grid-4"><input type="number" step="0.01" id="k1-od" placeholder="OD K1"><input type="number" step="0.01" id="k2-od" placeholder="OD K2"><input type="number" step="0.01" id="k1-os" placeholder="OS K1"><input type="number" step="0.01" id="k2-os" placeholder="OS K2"></div></div>
-            </fieldset>
+            </details>
+
+            <!-- ▼▼▼ 修改：生物测量数据改为折叠结构 ▼▼▼ -->
+            <details class="collapsible-section" id="biometry-section">
+                <summary>生物测量数据</summary>
+                <div class="collapsible-content">
+                    <fieldset>
+                        <legend>生物测量数据</legend>
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label for="biometry-report">上传生物测量报告 (图片/PDF)</label>
+                            <input type="file" id="biometry-report" accept="image/*,.pdf">
+                        </div>
+                        <div class="form-group"><label for="bio-device">测量设备</label><select id="bio-device"><option value="">-- 请选择 --</option><option value="蔡司700">蔡司700</option><option value="蔡司500">蔡司500</option><option value="索维">索维(Suowei)</option><option value="尼德克">尼德克(Nidek)</option><option value="其他">其他</option></select></div>
+                        <div class="grid grid-dynamic" style="margin-top: 20px;">
+                            <div class="form-group"><label>眼轴 (AL, mm)</label><div class="grid grid-2 compact-grid-2"><input type="number" step="0.01" id="al-od" placeholder="OD"><input type="number" step="0.01" id="al-os" placeholder="OS"></div></div>
+                            <div class="form-group"><label>晶体厚度 (LT, mm)</label><div class="grid grid-2 compact-grid-2"><input type="number" step="0.01" id="lt-od" placeholder="OD"><input type="number" step="0.01" id="lt-os" placeholder="OS"></div></div>
+                            <div class="form-group"><label>瞳孔直径 (P, mm)</label><div class="grid grid-2 compact-grid-2"><input type="number" step="0.1" id="p-od" placeholder="OD"><input type="number" step="0.1" id="p-os" placeholder="OS"></div></div>
+                        </div>
+                        <div class="grid grid-3" style="margin-top: 20px;">
+                            <div class="form-group"><label>ACD (mm)</label><div class="grid grid-2 compact-grid-2"><input type="number" step="0.01" id="acd-od" placeholder="OD"><input type="number" step="0.01" id="acd-os" placeholder="OS"></div></div>
+                            <div class="form-group"><label>角膜厚度 (CTT, μm)</label><div class="grid grid-2 compact-grid-2"><input type="number" id="ctt-od" placeholder="OD"><input type="number" id="ctt-os" placeholder="OS"></div></div>
+                            <div class="form-group"><label>前房深度 (AD, mm)</label><div class="input-group"><div class="grid grid-2 compact-grid-2" style="flex-grow:1;"><input type="number" step="0.01" id="ad-od" placeholder="OD"><input type="number" step="0.01" id="ad-os" placeholder="OS"></div><button type="button" id="calc-ad-btn" class="btn btn-sm btn-calc">计算</button></div></div>
+                        </div>
+                        <div class="form-group" style="margin-top: 20px;"><label>曲率 (K, D)</label><div class="grid grid-4"><input type="number" step="0.01" id="k1-od" placeholder="OD K1"><input type="number" step="0.01" id="k2-od" placeholder="OD K2"><input type="number" step="0.01" id="k1-os" placeholder="OS K1"><input type="number" step="0.01" id="k2-os" placeholder="OS K2"></div></div>
+                    </fieldset>
+                </div>
+                <div class="section-actions">
+                    <button type="button" class="btn btn-info btn-sm" data-action="save-section" data-section="biometry">保存</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-action="export-section" data-section="biometry">导出</button>
+                </div>
+            </details>
             
-            <!-- 视功能 -->
-            <fieldset>
-                <legend>视功能</legend>
-                <h3>双眼视</h3>
-                <div class="grid grid-dynamic"><div class="form-group"><label for="worth4">Worth4点</label><input type="text" id="worth4" placeholder="正常: 4点"></div><div class="form-group"><label for="stereo">立体视</label><input type="text" id="stereo" placeholder="正常: ≤60秒"></div></div>
-                <h3 style="margin-top: 30px;">反应集合能力</h3>
-                <div class="grid grid-dynamic">
-                    <div class="form-group"><label>远眼位 隐斜位</label><input type="text" id="far-phoria" placeholder="例: 1△EP"></div>
-                    <div class="form-group"><label>远融像(BO)<small>(B/B/R)</small></label><div class="grid grid-3 compact-grid-3"><input type="text" id="far-fus-bo-blur" placeholder="模糊"><input type="text" id="far-fus-bo-break" placeholder="破裂"><input type="text" id="far-fus-bo-rec" placeholder="恢复"></div></div>
-                    <div class="form-group"><label>远融像(BI)<small>(B/B/R)</small></label><div class="grid grid-3 compact-grid-3"><input type="text" id="far-fus-bi-blur" placeholder="模糊"><input type="text" id="far-fus-bi-break" placeholder="破裂"><input type="text" id="far-fus-bi-rec" placeholder="恢复"></div></div>
-                    <div class="form-group"><label>近眼位(40cm) 隐斜位</label><input type="text" id="near-phoria" placeholder="例: 3△EP"></div>
-                    <div class="form-group"><label>AC/A比率</label><input type="text" id="ac-a-ratio" placeholder="正常: 4±2 △/D"></div>
-                    <div class="form-group"><label>+1.00D 水平眼位</label><input type="text" id="plus1-phoria" placeholder="BI/BO/值 (△)"></div>
-                    <div class="form-group"><label>近融像(BO)<small>(B/B/R)</small></label><div class="grid grid-3 compact-grid-3"><input type="text" id="near-fus-bo-blur" placeholder="模糊"><input type="text" id="near-fus-bo-break" placeholder="破裂"><input type="text" id="near-fus-bo-rec" placeholder="恢复"></div></div>
-                    <div class="form-group"><label>近融像(BI)<small>(B/B/R)</small></label><div class="grid grid-3 compact-grid-3"><input type="text" id="near-fus-bi-blur" placeholder="模糊"><input type="text" id="near-fus-bi-break" placeholder="破裂"><input type="text" id="near-fus-bi-rec" placeholder="恢复"></div></div>
+            <!-- ▼▼▼ 修改：视功能改为折叠结构 ▼▼▼ -->
+            <details class="collapsible-section" id="visual-function-section">
+                <summary>视功能数据</summary>
+                <div class="collapsible-content">
+                    <fieldset>
+                        <legend>视功能</legend>
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label for="visual-function-report">上传视功能报告 (图片/PDF)</label>
+                            <input type="file" id="visual-function-report" accept="image/*,.pdf">
+                        </div>
+                        <h3>双眼视</h3>
+                        <div class="grid grid-dynamic"><div class="form-group"><label for="worth4">Worth4点</label><input type="text" id="worth4" placeholder="正常: 4点"></div><div class="form-group"><label for="stereo">立体视</label><input type="text" id="stereo" placeholder="正常: ≤60秒"></div></div>
+                        <h3 style="margin-top: 30px;">反应集合能力</h3>
+                        <div class="grid grid-dynamic">
+                            <div class="form-group"><label>远眼位 隐斜位</label><input type="text" id="far-phoria" placeholder="例: 1△EP"></div>
+                            <div class="form-group"><label>远融像(BO)<small>(B/B/R)</small></label><div class="grid grid-3 compact-grid-3"><input type="text" id="far-fus-bo-blur" placeholder="模糊"><input type="text" id="far-fus-bo-break" placeholder="破裂"><input type="text" id="far-fus-bo-rec" placeholder="恢复"></div></div>
+                            <div class="form-group"><label>远融像(BI)<small>(B/B/R)</small></label><div class="grid grid-3 compact-grid-3"><input type="text" id="far-fus-bi-blur" placeholder="模糊"><input type="text" id="far-fus-bi-break" placeholder="破裂"><input type="text" id="far-fus-bi-rec" placeholder="恢复"></div></div>
+                            <div class="form-group"><label>近眼位(40cm) 隐斜位</label><input type="text" id="near-phoria" placeholder="例: 3△EP"></div>
+                            <div class="form-group"><label>AC/A比率</label><input type="text" id="ac-a-ratio" placeholder="正常: 4±2 △/D"></div>
+                            <div class="form-group"><label>+1.00D 水平眼位</label><input type="text" id="plus1-phoria" placeholder="BI/BO/值 (△)"></div>
+                            <div class="form-group"><label>近融像(BO)<small>(B/B/R)</small></label><div class="grid grid-3 compact-grid-3"><input type="text" id="near-fus-bo-blur" placeholder="模糊"><input type="text" id="near-fus-bo-break" placeholder="破裂"><input type="text" id="near-fus-bo-rec" placeholder="恢复"></div></div>
+                            <div class="form-group"><label>近融像(BI)<small>(B/B/R)</small></label><div class="grid grid-3 compact-grid-3"><input type="text" id="near-fus-bi-blur" placeholder="模糊"><input type="text" id="near-fus-bi-break" placeholder="破裂"><input type="text" id="near-fus-bi-rec" placeholder="恢复"></div></div>
+                        </div>
+                        <h3 style="margin-top: 30px;">反应调节能力</h3>
+                        <div class="grid grid-dynamic">
+                            <div class="form-group"><label>NRA</label><input type="number" step="0.25" id="nra" placeholder="正常: +2.00±0.50D"></div>
+                            <div class="form-group"><label>PRA</label><input type="number" step="0.25" id="pra" placeholder="正常: -2.37±1.00D"></div>
+                            <div class="form-group"><label>调节反应BCC</label><div class="grid grid-2 compact-grid-2"><input type="text" id="bcc-lead" placeholder="超前 -_D"><input type="text" id="bcc-lag" placeholder="滞后 (正常: +0.50~+0.75D)"></div></div>
+                            <div class="form-group"><label>集合近点(NPC)</label><input type="text" id="npc" placeholder="正常: ≤5cm/7cm"></div>
+                        </div>
+                        <div class="grid grid-dynamic" style="margin-top: 20px;"><div class="form-group"><label>ADD(公式法)</label><div class="input-group"><input type="text" id="add-formula" placeholder="结果 (D)" readonly><button type="button" id="calc-add-btn" class="btn btn-sm btn-calc">计算</button></div></div><div class="form-group"><label>AMP(镜片法)</label><div class="input-group"><input type="text" id="amp-lens" placeholder="结果 (D)" readonly><button type="button" id="calc-amp-btn" class="btn btn-sm btn-calc">计算</button></div></div></div>
+                        <div class="form-group" style="margin-top: 20px;"><label>调节灵敏度(cpm)</label><div class="grid grid-3 compact-grid-3"><input type="number" id="flipper-od" placeholder="OD"><input type="number" id="flipper-os" placeholder="OS"><input type="number" id="flipper-ou" placeholder="OU"></div></div>
+                    </fieldset>
                 </div>
-                <h3 style="margin-top: 30px;">反应调节能力</h3>
-                <div class="grid grid-dynamic">
-                    <div class="form-group"><label>NRA</label><input type="number" step="0.25" id="nra" placeholder="正常: +2.00±0.50D"></div>
-                    <div class="form-group"><label>PRA</label><input type="number" step="0.25" id="pra" placeholder="正常: -2.37±1.00D"></div>
-                    <div class="form-group"><label>调节反应BCC</label><div class="grid grid-2 compact-grid-2"><input type="text" id="bcc-lead" placeholder="超前 -_D"><input type="text" id="bcc-lag" placeholder="滞后 (正常: +0.50~+0.75D)"></div></div>
-                    <div class="form-group"><label>集合近点(NPC)</label><input type="text" id="npc" placeholder="正常: ≤5cm/7cm"></div>
+                <div class="section-actions">
+                    <button type="button" class="btn btn-info btn-sm" data-action="save-section" data-section="visual-function">保存</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-action="export-section" data-section="visual-function">导出</button>
                 </div>
-                <div class="grid grid-dynamic" style="margin-top: 20px;"><div class="form-group"><label>ADD(公式法)</label><div class="input-group"><input type="text" id="add-formula" placeholder="结果 (D)" readonly><button type="button" id="calc-add-btn" class="btn btn-sm btn-calc">计算</button></div></div><div class="form-group"><label>AMP(镜片法)</label><div class="input-group"><input type="text" id="amp-lens" placeholder="结果 (D)" readonly><button type="button" id="calc-amp-btn" class="btn btn-sm btn-calc">计算</button></div></div></div>
-                <div class="form-group" style="margin-top: 20px;"><label>调节灵敏度(cpm)</label><div class="grid grid-3 compact-grid-3"><input type="number" id="flipper-od" placeholder="OD"><input type="number" id="flipper-os" placeholder="OS"><input type="number" id="flipper-ou" placeholder="OU"></div></div>
-            </fieldset>
+            </details>
 
-            <button type="submit" class="btn btn-primary">保存</button>
+            <button type="submit" class="btn btn-primary">保存完整记录</button>
         </form>
 
         <!-- 历史 -->
         <div class="history-section">
-            <div class="history-header"><h2>记录</h2><button id="export-btn" class="btn">导出</button></div>
+            <div class="history-header"><h2>历史记录</h2><button id="export-btn" class="btn">导出全部</button></div>
             <table class="history-table"><thead><tr><th>日期</th><th>机构</th><th>眼轴(OD/OS)</th><th>综合验光(OD/OS)</th><th class="actions-cell">操作</th></tr></thead><tbody id="history-table-body"></tbody></table>
         </div>
     </div>
@@ -266,13 +357,11 @@
     <!-- 详情弹窗 -->
     <div id="details-modal" class="modal"><div class="modal-content"><div class="modal-header"><h3 id="modal-title">检查详情</h3><span class="close-btn">&times;</span></div><div id="modal-body"></div></div></div>
     
-    <!-- ▼▼▼ 修改：删除了用于生成PNG的隐藏模板 ▼▼▼ -->
-
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         // --- Element Selectors ---
         const form = document.getElementById('exam-form');
-        const submitBtn = form.querySelector('button[type="submit"]'); // ▼▼▼ 新增：获取提交按钮
+        const submitBtn = form.querySelector('button[type="submit"]');
         const historyTableBody = document.getElementById('history-table-body');
         const exportBtn = document.getElementById('export-btn');
         const modal = document.getElementById('details-modal');
@@ -284,18 +373,52 @@
         const calcAddBtn = document.getElementById('calc-add-btn');
         const calcAmpBtn = document.getElementById('calc-amp-btn');
 
-        const DB_KEY = 'eyeExamRecords_v5';
+        const DB_KEY = 'eyeExamRecords_v6'; // Updated version key
         let records = JSON.parse(localStorage.getItem(DB_KEY)) || [];
-        let editingRecordId = null; // ▼▼▼ 新增：用于跟踪编辑状态
+        let editingRecordId = null;
         const formInputs = Array.from(form.querySelectorAll('input, textarea, select'));
+
+        // ▼▼▼ 新增：独立分区的配置 ▼▼▼
+        const SECTION_CONFIG = {
+            'optometry': {
+                dbKey: 'eyeExam_optometry_records',
+                name: '验光数据',
+                fields: ['exam-date', 'exam-institution', 'va-od', 'va-os', 'ar-s-od', 'ar-c-od', 'ar-a-od', 'ar-s-os', 'ar-c-os', 'ar-a-os', 'sr-s-od', 'sr-c-od', 'sr-a-od', 'sr-s-os', 'sr-c-os', 'sr-a-os', 'cva-od', 'cva-os']
+            },
+            'biometry': {
+                dbKey: 'eyeExam_biometry_records',
+                name: '生物测量数据',
+                fields: ['exam-date', 'exam-institution', 'bio-device', 'al-od', 'al-os', 'lt-od', 'lt-os', 'p-od', 'p-os', 'acd-od', 'acd-os', 'ctt-od', 'ctt-os', 'ad-od', 'ad-os', 'k1-od', 'k2-od', 'k1-os', 'k2-os']
+            },
+            'visual-function': {
+                dbKey: 'eyeExam_visual_function_records',
+                name: '视功能数据',
+                fields: ['exam-date', 'exam-institution', 'worth4', 'stereo', 'far-phoria', 'far-fus-bo-blur', 'far-fus-bo-break', 'far-fus-bo-rec', 'far-fus-bi-blur', 'far-fus-bi-break', 'far-fus-bi-rec', 'near-phoria', 'ac-a-ratio', 'plus1-phoria', 'near-fus-bo-blur', 'near-fus-bo-break', 'near-fus-bo-rec', 'near-fus-bi-blur', 'near-fus-bi-break', 'near-fus-bi-rec', 'nra', 'pra', 'bcc-lead', 'bcc-lag', 'npc', 'add-formula', 'amp-lens', 'flipper-od', 'flipper-os', 'flipper-ou']
+            }
+        };
         
         // --- Utility Functions ---
         const saveRecords = () => localStorage.setItem(DB_KEY, JSON.stringify(records));
         const getInputValue = (id) => document.getElementById(id).value;
         const setInputValue = (id, value) => {
             const el = document.getElementById(id);
-            if (el) el.value = value || ''; // 确保空值被设为''
+            if (el) {
+                if (el.type === 'file') {
+                    el.value = ''; // Cannot pre-fill file inputs
+                } else {
+                    el.value = value || '';
+                }
+            }
         };
+
+        // ▼▼▼ 新增：文件转 Base64 工具函数 ▼▼▼
+        const fileToBase64 = (file) => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+
         const formatRx = (s, c, a, placeholder = '-') => {
             if (!s && !c && !a) return placeholder;
             let s_val = parseFloat(s);
@@ -306,6 +429,8 @@
             }
             return rx;
         };
+        
+        const escapeCSV = (str) => `"${(str || '').replace(/"/g, '""')}"`;
 
         // --- Core Logic: History, Form, Modal ---
         const renderHistory = () => {
@@ -315,7 +440,6 @@
                 const na = '无';
                 const odRx = formatRx(rec['sr-s-od'], rec['sr-c-od'], rec['sr-a-od']);
                 const osRx = formatRx(rec['sr-s-os'], rec['sr-c-os'], rec['sr-a-os']);
-                // ▼▼▼ 修改：增加“修改”按钮 ▼▼▼
                 tr.innerHTML = `
                     <td data-label="日期">${rec['exam-date'] || na}</td>
                     <td data-label="机构">${rec['exam-institution'] || na}</td>
@@ -335,10 +459,11 @@
             form.reset();
             setInputValue('exam-date', new Date().toISOString().split('T')[0]);
             editingRecordId = null;
-            submitBtn.textContent = '保存';
+            submitBtn.textContent = '保存完整记录';
+            // Close all collapsible sections
+            document.querySelectorAll('.collapsible-section').forEach(d => d.open = false);
         };
 
-        // ▼▼▼ 新增：将记录加载到表单中以供编辑的函数 ▼▼▼
         const loadRecordIntoForm = (recordId) => {
             const record = records.find(r => r.id == recordId);
             if (!record) return;
@@ -350,26 +475,60 @@
                 }
             });
 
-            submitBtn.textContent = '更新';
+            // Open sections that have data
+            if (Object.keys(record).some(k => k.startsWith('sr-') || k.startsWith('ar-'))) {
+                document.getElementById('optometry-section').open = true;
+            }
+            if (Object.keys(record).some(k => k.startsWith('al-') || k.startsWith('k1-'))) {
+                 document.getElementById('biometry-section').open = true;
+            }
+            if (Object.keys(record).some(k => k.startsWith('far-') || k.startsWith('nra'))) {
+                 document.getElementById('visual-function-section').open = true;
+            }
+
+            submitBtn.textContent = '更新完整记录';
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
-        // ▼▼▼ 修改：处理表单提交，区分创建和更新 ▼▼▼
-        const handleFormSubmit = (e) => {
+        // ▼▼▼ 修改：表单提交函数，增加文件处理 ▼▼▼
+        const handleFormSubmit = async (e) => {
             e.preventDefault();
             
             const recordData = {};
-            formInputs.forEach(input => { if (input.id) recordData[input.id] = input.value; });
+            formInputs.forEach(input => { 
+                if (input.id && input.type !== 'file') {
+                    recordData[input.id] = input.value; 
+                }
+            });
+
+            // Handle file uploads
+            const optometryFile = document.getElementById('optometry-report').files[0];
+            const biometryFile = document.getElementById('biometry-report').files[0];
+            const visualFile = document.getElementById('visual-function-report').files[0];
+
+            try {
+                if (optometryFile) recordData.optometryReport = await fileToBase64(optometryFile);
+                if (biometryFile) recordData.biometryReport = await fileToBase64(biometryFile);
+                if (visualFile) recordData.visualFunctionReport = await fileToBase64(visualFile);
+            } catch (error) {
+                console.error("File to Base64 conversion failed:", error);
+                alert('文件转换失败，请重试。');
+                return;
+            }
 
             if (editingRecordId) {
-                // 更新模式
                 const recordIndex = records.findIndex(r => r.id === editingRecordId);
                 if (recordIndex > -1) {
-                    records[recordIndex] = { ...records[recordIndex], ...recordData };
+                    // Preserve old reports if new ones are not uploaded
+                    const oldRecord = records[recordIndex];
+                    recordData.optometryReport = recordData.optometryReport || oldRecord.optometryReport;
+                    recordData.biometryReport = recordData.biometryReport || oldRecord.biometryReport;
+                    recordData.visualFunctionReport = recordData.visualFunctionReport || oldRecord.visualFunctionReport;
+                    
+                    records[recordIndex] = { ...oldRecord, ...recordData, id: editingRecordId };
                     alert('检查记录已更新！');
                 }
             } else {
-                // 创建模式
                 recordData.id = Date.now();
                 records.push(recordData);
                 alert('检查记录已保存！');
@@ -380,12 +539,18 @@
             resetFormAndState();
         };
         
+        // ▼▼▼ 修改：详情弹窗，增加报告链接 ▼▼▼
         const showDetailsModal = (recordId) => {
             const record = records.find(r => r.id == recordId);
             if (!record) return;
             const na = 'N/A';
             const val = (key) => record[key] || na;
             
+            const createReportLink = (reportData, reportName) => {
+                if (!reportData) return `<span>${na}</span>`;
+                return `<a href="${reportData}" target="_blank" download="${reportName}-${val('exam-date')}.pdf">查看/下载</a>`;
+            };
+
             const odArRx = formatRx(val('ar-s-od'), val('ar-c-od'), val('ar-a-od'));
             const osArRx = formatRx(val('ar-s-os'), val('ar-c-os'), val('ar-a-os'));
             const odSrRx = formatRx(val('sr-s-od'), val('sr-c-od'), val('sr-a-od'));
@@ -395,30 +560,26 @@
             modalBody.innerHTML = `
                 <div class="detail-grid">
                     <div class="detail-group"><h4>基本信息</h4><div class="detail-item"><span>检查日期:</span> <span>${val('exam-date')}</span></div><div class="detail-item"><span>检查机构:</span> <span>${val('exam-institution')}</span></div><div class="detail-item"><span>备注:</span> <span>${val('notes')}</span></div></div>
-                    <div class="detail-group"><h4>验光数据</h4><div class="detail-item"><span>裸眼视力 (OD/OS):</span> <span>${val('va-od')} / ${val('va-os')}</span></div><div class="detail-item"><span>电脑验光 (OD):</span> <span>${odArRx}</span></div><div class="detail-item"><span>电脑验光 (OS):</span> <span>${osArRx}</span></div><div class="detail-item"><span>综合验光 (OD):</span> <span>${odSrRx}</span></div><div class="detail-item"><span>综合验光 (OS):</span> <span>${osSrRx}</span></div><div class="detail-item"><span>矫正视力 (OD/OS):</span> <span>${val('cva-od')} / ${val('cva-os')}</span></div></div>
-                    <div class="detail-group"><h4>生物学参数</h4><div class="detail-item"><span>测量设备:</span> <span>${val('bio-device')}</span></div><div class="detail-item"><span>眼轴 (OD/OS):</span> <span>${val('al-od')} / ${val('al-os')} mm</span></div><div class="detail-item"><span>ACD (OD/OS):</span> <span>${val('acd-od')} / ${val('acd-os')} mm</span></div><div class="detail-item"><span>CTT (OD/OS):</span> <span>${val('ctt-od')} / ${val('ctt-os')} μm</span></div><div class="detail-item"><span>AD (OD/OS):</span> <span>${val('ad-od')} / ${val('ad-os')} mm</span></div><div class="detail-item"><span>晶体厚度 (OD/OS):</span> <span>${val('lt-od')} / ${val('lt-os')} mm</span></div><div class="detail-item"><span>瞳孔直径 (OD/OS):</span> <span>${val('p-od')} / ${val('p-os')} mm</span></div><div class="detail-item"><span>曲率 K1/K2 (OD):</span> <span>${val('k1-od')} / ${val('k2-od')} D</span></div><div class="detail-item"><span>曲率 K1/K2 (OS):</span> <span>${val('k1-os')} / ${val('k2-os')} D</span></div></div>
-                    <div class="detail-group"><h4>检查与筛查</h4><div class="detail-item"><span>Worth4点:</span> <span>${val('worth4')}</span></div><div class="detail-item"><span>立体视:</span> <span>${val('stereo')}</span></div></div>
-                    <div class="detail-group"><h4>反应集合能力</h4><div class="detail-item"><span>远眼位 隐斜位:</span> <span>${val('far-phoria')}</span></div><div class="detail-item"><span>远距离融像 BO (B/B/R):</span> <span>${val('far-fus-bo-blur')} / ${val('far-fus-bo-break')} / ${val('far-fus-bo-rec')}</span></div><div class="detail-item"><span>远距离融像 BI (B/B/R):</span> <span>${val('far-fus-bi-blur')} / ${val('far-fus-bi-break')} / ${val('far-fus-bi-rec')}</span></div><div class="detail-item"><span>水平眼位(40cm) 隐斜位:</span> <span>${val('near-phoria')}</span></div><div class="detail-item"><span>AC/A比率:</span> <span>${val('ac-a-ratio')}</span></div><div class="detail-item"><span>+1.00D 水平眼位:</span> <span>${val('plus1-phoria')}</span></div><div class="detail-item"><span>40cm融像 BO (B/B/R):</span> <span>${val('near-fus-bo-blur')} / ${val('near-fus-bo-break')} / ${val('near-fus-bo-rec')}</span></div><div class="detail-item"><span>40cm融像 BI (B/B/R):</span> <span>${val('near-fus-bi-blur')} / ${val('near-fus-bi-break')} / ${val('near-fus-bi-rec')}</span></div></div>
-                    <div class="detail-group"><h4>反应调节能力</h4><div class="detail-item"><span>NRA / PRA:</span> <span>${val('nra')} D / ${val('pra')} D</span></div><div class="detail-item"><span>调节反应 BCC (超前/滞后):</span> <span>${val('bcc-lead')} / ${val('bcc-lag')}</span></div><div class="detail-item"><span>集合近点 NPC:</span> <span>${val('npc')}</span></div><div class="detail-item"><span>附加球镜 ADD (公式法):</span> <span>${val('add-formula')} D</span></div><div class="detail-item"><span>调节幅度 AMP (镜片法):</span> <span>${val('amp-lens')} D</span></div><div class="detail-item"><span>调节灵敏度 Flipper (OD/OS/OU):</span> <span>${val('flipper-od')} / ${val('flipper-os')} / ${val('flipper-ou')} cpm</span></div></div>
+                    <div class="detail-group"><h4>验光数据</h4><div class="detail-item"><span>报告:</span> <span>${createReportLink(record.optometryReport, '验光报告')}</span></div><div class="detail-item"><span>裸眼视力 (OD/OS):</span> <span>${val('va-od')} / ${val('va-os')}</span></div><div class="detail-item"><span>电脑验光 (OD):</span> <span>${odArRx}</span></div><div class="detail-item"><span>电脑验光 (OS):</span> <span>${osArRx}</span></div><div class="detail-item"><span>综合验光 (OD):</span> <span>${odSrRx}</span></div><div class="detail-item"><span>综合验光 (OS):</span> <span>${osSrRx}</span></div><div class="detail-item"><span>矫正视力 (OD/OS):</span> <span>${val('cva-od')} / ${val('cva-os')}</span></div></div>
+                    <div class="detail-group"><h4>生物学参数</h4><div class="detail-item"><span>报告:</span> <span>${createReportLink(record.biometryReport, '生物测量报告')}</span></div><div class="detail-item"><span>测量设备:</span> <span>${val('bio-device')}</span></div><div class="detail-item"><span>眼轴 (OD/OS):</span> <span>${val('al-od')} / ${val('al-os')} mm</span></div><div class="detail-item"><span>ACD (OD/OS):</span> <span>${val('acd-od')} / ${val('acd-os')} mm</span></div><div class="detail-item"><span>CTT (OD/OS):</span> <span>${val('ctt-od')} / ${val('ctt-os')} μm</span></div><div class="detail-item"><span>AD (OD/OS):</span> <span>${val('ad-od')} / ${val('ad-os')} mm</span></div><div class="detail-item"><span>晶体厚度 (OD/OS):</span> <span>${val('lt-od')} / ${val('lt-os')} mm</span></div><div class="detail-item"><span>瞳孔直径 (OD/OS):</span> <span>${val('p-od')} / ${val('p-os')} mm</span></div><div class="detail-item"><span>曲率 K1/K2 (OD):</span> <span>${val('k1-od')} / ${val('k2-od')} D</span></div><div class="detail-item"><span>曲率 K1/K2 (OS):</span> <span>${val('k1-os')} / ${val('k2-os')} D</span></div></div>
+                    <div class="detail-group"><h4>视功能</h4><div class="detail-item"><span>报告:</span> <span>${createReportLink(record.visualFunctionReport, '视功能报告')}</span></div><div class="detail-item"><span>Worth4点:</span> <span>${val('worth4')}</span></div><div class="detail-item"><span>立体视:</span> <span>${val('stereo')}</span></div><div class="detail-item"><span>远眼位 隐斜位:</span> <span>${val('far-phoria')}</span></div><div class="detail-item"><span>近眼位(40cm) 隐斜位:</span> <span>${val('near-phoria')}</span></div><div class="detail-item"><span>NRA / PRA:</span> <span>${val('nra')} D / ${val('pra')} D</span></div><div class="detail-item"><span>集合近点 NPC:</span> <span>${val('npc')}</span></div></div>
                 </div>
             `;
             modal.style.display = 'flex';
         };
 
-        const exportToCSV = () => {
-            if (records.length === 0) { alert('没有历史记录可导出。'); return; }
-            const headers = formInputs.map(input => input.id).filter(id => id);
-            const escapeCSV = (str) => `"${(str || '').replace(/"/g, '""')}"`;
+        const exportToCSV = (data, headers, fileName) => {
+            if (data.length === 0) { alert('没有记录可导出。'); return; }
             let csvContent = '\uFEFF' + headers.map(escapeCSV).join(',') + '\n';
-            const sortedRecords = [...records].sort((a, b) => new Date(a['exam-date']) - new Date(b['exam-date']));
-            sortedRecords.forEach(record => {
+            const sortedData = [...data].sort((a, b) => new Date(a['exam-date']) - new Date(b['exam-date']));
+            sortedData.forEach(record => {
                 const row = headers.map(header => escapeCSV(record[header]));
                 csvContent += row.join(',') + '\n';
             });
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             link.setAttribute('href', URL.createObjectURL(blob));
-            link.setAttribute('download', `眼科检查记录-${new Date().toISOString().slice(0,10)}.csv`);
+            link.setAttribute('download', `${fileName}-${new Date().toISOString().slice(0,10)}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -426,9 +587,12 @@
 
         // --- Event Listeners ---
         form.addEventListener('submit', handleFormSubmit);
-        exportBtn.addEventListener('click', exportToCSV);
+        
+        exportBtn.addEventListener('click', () => {
+            const allHeaders = formInputs.map(input => input.id).filter(id => id && input.type !== 'file');
+            exportToCSV(records, allHeaders, '眼科检查记录-全部');
+        });
 
-        // ▼▼▼ 修改：更新事件委托，增加对“修改”按钮的监听 ▼▼▼
         historyTableBody.addEventListener('click', (e) => {
             const btn = e.target.closest('button');
             if (!btn) return;
@@ -443,6 +607,37 @@
                 showDetailsModal(id);
             } else if (btn.classList.contains('edit-btn')) {
                 loadRecordIntoForm(id);
+            }
+        });
+
+        // ▼▼▼ 新增：独立分区操作的事件监听 ▼▼▼
+        form.addEventListener('click', (e) => {
+            const btn = e.target.closest('button[data-action]');
+            if (!btn) return;
+
+            const action = btn.dataset.action;
+            const sectionKey = btn.dataset.section;
+            const config = SECTION_CONFIG[sectionKey];
+            if (!config) return;
+
+            if (action === 'save-section') {
+                const sectionData = { id: Date.now() };
+                config.fields.forEach(fieldId => {
+                    sectionData[fieldId] = getInputValue(fieldId);
+                });
+                
+                let sectionRecords = JSON.parse(localStorage.getItem(config.dbKey)) || [];
+                sectionRecords.push(sectionData);
+                localStorage.setItem(config.dbKey, JSON.stringify(sectionRecords));
+                alert(`${config.name} 已独立保存！`);
+            } 
+            else if (action === 'export-section') {
+                let sectionRecords = JSON.parse(localStorage.getItem(config.dbKey)) || [];
+                if (sectionRecords.length === 0) {
+                    alert(`没有独立的 ${config.name} 记录可导出。`);
+                    return;
+                }
+                exportToCSV(sectionRecords, config.fields, `独立记录-${config.name}`);
             }
         });
 
@@ -474,7 +669,7 @@
         });
 
         // --- Page Initialization ---
-        setInputValue('exam-date', new Date().toISOString().split('T')[0]);
+        resetFormAndState(); // Use this to set date and close sections initially
         renderHistory();
     });
     </script>
