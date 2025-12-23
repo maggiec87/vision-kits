@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- ▼▼▼ 修改：更新标题 ▼▼▼ -->
     <title>视训记录</title>
     <style>
         :root {
@@ -38,7 +37,7 @@
         
         h2 { color: var(--primary-color); text-align: center; margin-bottom: 25px; }
         
-        /* ▼▼▼ 新增/修改：统一的折叠项样式 ▼▼▼ */
+        /* 统一的折叠项样式 */
         .collapsible-section {
             border: 1px solid var(--border-color);
             border-radius: 8px;
@@ -81,7 +80,6 @@
             text-align: center;
             padding: 30px;
         }
-        /* ▲▲▲ 新增/修改：统一的折叠项样式 ▲▲▲ */
 
         .explanation-details { border: 1px dashed var(--border-color); border-radius: 8px; margin-bottom: 25px; background-color: #f8f9fa; }
         .explanation-summary { padding: 12px 15px; font-weight: 600; color: var(--primary-color); cursor: pointer; outline: none; list-style: none; }
@@ -173,15 +171,14 @@
 
     <div class="container">
         <div class="header-nav">
-            <!-- ▼▼▼ 修改：更新标题 ▼▼▼ -->
             <h1>视训记录</h1>
             <div class="header-actions">
                 <a href="https://maggiec87.github.io/vision-kits/" class="btn btn-secondary">返回</a>
             </div>
         </div>
 
-        <!-- ▼▼▼ 新增：将“移近推远”功能封装到折叠项中 ▼▼▼ -->
-        <details class="collapsible-section" open>
+        <!-- 移近推远折叠项，移除 open 属性使其默认折叠 -->
+        <details class="collapsible-section">
             <summary>移近推远</summary>
             <div class="collapsible-content">
                 <details class="explanation-details">
@@ -206,7 +203,7 @@
             </div>
         </details>
 
-        <!-- ▼▼▼ 新增：“红绿矢量图”折叠项占位符 ▼▼▼ -->
+        <!-- 红绿矢量图折叠项 -->
         <details class="collapsible-section">
             <summary>红绿矢量图</summary>
             <div class="collapsible-content">
@@ -216,7 +213,7 @@
             </div>
         </details>
 
-        <!-- ▼▼▼ 新增：“其他训练”折叠项占位符 ▼▼▼ -->
+        <!-- 更多折叠项 -->
         <details class="collapsible-section">
             <summary>更多</summary>
             <div class="collapsible-content">
@@ -324,7 +321,7 @@
             renderRounds('right');
             recordDateInput.value = new Date().toISOString().split('T')[0];
             editingRecordId = null;
-            submitBtn.textContent = '保存';
+            submitBtn.textContent = '保存'; // 简化文本
         };
 
         const loadRecordIntoForm = (recordId) => {
@@ -342,7 +339,7 @@
             renderRounds('left');
             renderRounds('right');
 
-            submitBtn.textContent = '更新本项记录';
+            submitBtn.textContent = '更新'; // 简化文本
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
         
@@ -451,7 +448,6 @@
             });
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
-            // ▼▼▼ 修改：更新导出文件名 ▼▼▼
             link.setAttribute('href', URL.createObjectURL(blob));
             link.setAttribute('download', `视训记录-移近推远-${new Date().toISOString().slice(0,10)}.csv`);
             document.body.appendChild(link); link.click(); document.body.removeChild(link);
