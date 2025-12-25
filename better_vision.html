@@ -85,7 +85,7 @@
         }
 
         /* --- 按钮通用样式 --- */
-        .btn, .footer-btn, .mobile-control-btn.action-btn {
+        .btn, .footer-btn, .mobile-control-btn {
             color: var(--white);
             border-radius: 0.5rem;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
@@ -119,14 +119,17 @@
         /* --- 内容页 & Prose 样式 --- */
         .content-page { padding: 1rem; max-width: 56rem; margin: 0 auto; }
         .content-page h2 { font-size: 1.5rem; font-weight: bold; text-align: center; margin-bottom: 1rem; }
+        .content-page h4 { font-size: 1.2rem; font-weight: bold; margin-top: 1.5rem; margin-bottom: 0.75rem; }
         .back-btn-container { text-align: center; margin-top: 1.5rem; }
         .back-btn { padding: 0.75rem 1.25rem; background-color: var(--gray-600); color: var(--white); border: none; border-radius: 0.5rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); cursor: pointer; }
         .back-btn:hover { background-color: var(--gray-700); }
         .prose { background-color: var(--white); padding: 1.25rem; border-radius: 0.5rem; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1); line-height: 1.6; font-size: 0.95rem; }
-        .prose h4 { font-size: 1.1rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.5rem; }
         .prose p, .prose li { color: #374151; }
-        .prose ol, .prose ul { padding-left: 1.25rem; }
+        .prose ol, .prose ul { padding-left: 1.25rem; margin-bottom: 1rem; }
         .prose .disclaimer { font-weight: bold; color: var(--red-600); }
+        .prose ul li { list-style-type: disc; }
+        .prose ol li { list-style-type: decimal; }
+
 
         /* --- 视标选择页样式 --- */
         .setup-page { padding: 1rem; }
@@ -159,54 +162,62 @@
         
         /* --- 移动端专属控制面板 --- */
         .mobile-controls-panel {
-            display: grid; /* 默认显示 */
-            grid-template-columns: 1fr 1fr 1fr;
-            grid-template-rows: 1fr 1fr 1fr;
-            gap: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem; /* Gap between D-pad and action grid */
             padding: 1rem;
             background-color: var(--gray-200);
             flex-shrink: 0;
-        }
-        .mobile-control-btn {
-            background-color: var(--white); /* 方向键默认白色 */
-            border: none;
-            border-radius: 0.5rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            cursor: pointer;
-            width: 100%;
-            height: 100%;
-            aspect-ratio: 1 / 1; /* 保持按钮为正方形 */
-            font-size: 0.75rem;
-            color: var(--gray-700); /* 方向键文字颜色 */
         }
-        .mobile-control-btn svg {
+
+        .directional-pad-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 0.25rem;
+            width: 180px;
+            height: 180px;
+        }
+        .directional-pad-container .mobile-control-btn {
+            background-color: var(--white);
+            color: var(--gray-700);
+            height: 100%;
+            width: 100%;
+            font-size: 0.75rem;
+            flex-direction: column; /* Icon above text */
+        }
+        .directional-pad-container .mobile-control-btn svg {
             width: 28px;
             height: 28px;
         }
-        .mobile-control-btn.action-btn { /* 功能键的通用样式 */
-            color: var(--white); /* 功能键文字颜色白色 */
-            font-weight: 500;
+
+        /* D-pad layout */
+        .directional-pad-container .btn-dir-up    { grid-area: 1 / 2 / 2 / 3; }
+        .directional-pad-container .btn-dir-left  { grid-area: 2 / 1 / 3 / 2; }
+        .directional-pad-container .dpad-center-filler { grid-area: 2 / 2 / 3 / 3; background-color: transparent; }
+        .directional-pad-container .btn-dir-right { grid-area: 2 / 3 / 3 / 4; }
+        .directional-pad-container .btn-dir-down  { grid-area: 3 / 2 / 4 / 3; }
+        
+        /* Action Buttons Grid */
+        .action-buttons-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            width: 100%;
+            max-width: 320px;
         }
-        .mobile-control-btn.action-btn svg {
+        .action-buttons-grid .mobile-control-btn {
+            height: 56px;
+            font-size: 0.95rem;
+            flex-direction: column; /* Icon above text */
+        }
+        .action-buttons-grid .mobile-control-btn svg {
             width: 24px;
             height: 24px;
             margin-bottom: 0.25rem;
         }
 
-        /* 移动端按钮网格布局 */
-        #mobile-btn-back-home { grid-area: 1 / 1 / 2 / 2; }
-        .btn-dir-up { grid-area: 1 / 2 / 2 / 3; }
-        #mobile-btn-pause-resume { grid-area: 1 / 3 / 2 / 4; }
-        .btn-dir-left { grid-area: 2 / 1 / 3 / 2; }
-        #mobile-btn-end { grid-area: 2 / 2 / 3 / 3; }
-        .btn-dir-right { grid-area: 2 / 3 / 3 / 4; }
-        .btn-dir-down { grid-area: 3 / 2 / 4 / 3; }
-        #mobile-btn-retry { grid-area: 3 / 3 / 4 / 4; }
-        
         /* --- 桌面端专属底部 --- */
         .desktop-footer {
             display: none; /* 默认隐藏 */
@@ -249,9 +260,9 @@
 
             .content-page { padding: 2rem; }
             .content-page h2 { font-size: 2rem; margin-bottom: 1.5rem; }
+            .content-page h4 { font-size: 1.5rem; margin-top: 2rem; margin-bottom: 1rem; }
             .back-btn-container { margin-top: 2rem; }
             .prose { padding: 1.5rem; line-height: 1.7; font-size: 1rem; }
-            .prose h4 { font-size: 1.25rem; margin-top: 1.5rem; }
             .prose ol, .prose ul { padding-left: 1.5rem; }
 
             .setup-page { padding: 2rem; }
@@ -270,7 +281,6 @@
             .test-title { font-size: 1.25rem; }
             .test-info { font-size: 1.125rem; gap: 1rem; }
             
-            /* 在桌面端隐藏移动控制面板，显示桌面底部 */
             .mobile-controls-panel { display: none; }
             .desktop-footer {
                 display: flex;
@@ -364,19 +374,21 @@
             </div>
         </main>
         
-        <!-- === 移动端专属控制面板 === -->
+        <!-- === 移动端专属控制面板 (调整后的布局) === -->
         <div class="mobile-controls-panel">
-            <button id="mobile-btn-back-home" class="mobile-control-btn action-btn bg-gray"><svg><use href="#icon-home"/></svg><span>退出</span></button>
-            <button class="mobile-control-btn touch-btn btn-dir-up" data-dir="up"><svg><use href="#icon-up"/></svg></button>
-            <button id="mobile-btn-pause-resume" class="mobile-control-btn action-btn bg-yellow"><svg><use href="#icon-pause"/></svg><span>暂停</span></button>
-            
-            <button class="mobile-control-btn touch-btn btn-dir-left" data-dir="left"><svg><use href="#icon-left"/></svg></button>
-            <button id="mobile-btn-end" class="mobile-control-btn action-btn bg-red"><svg><use href="#icon-x"/></svg><span>结束</span></button>
-            <button class="mobile-control-btn touch-btn btn-dir-right" data-dir="right"><svg><use href="#icon-right"/></svg></button>
-            
-            <div></div> <!-- Empty slot for layout -->
-            <button class="mobile-control-btn touch-btn btn-dir-down" data-dir="down"><svg><use href="#icon-down"/></svg></button>
-            <button id="mobile-btn-retry" class="mobile-control-btn action-btn bg-blue"><svg><use href="#icon-redo"/></svg><span>重测</span></button>
+            <div class="directional-pad-container">
+                <button class="mobile-control-btn touch-btn btn-dir-up" data-dir="up"><svg><use href="#icon-up"/></svg></button>
+                <button class="mobile-control-btn touch-btn btn-dir-left" data-dir="left"><svg><use href="#icon-left"/></svg></button>
+                <div class="dpad-center-filler"></div> <!-- Empty cell for center -->
+                <button class="mobile-control-btn touch-btn btn-dir-right" data-dir="right"><svg><use href="#icon-right"/></svg></button>
+                <button class="mobile-control-btn touch-btn btn-dir-down" data-dir="down"><svg><use href="#icon-down"/></svg></button>
+            </div>
+            <div class="action-buttons-grid">
+                <button id="mobile-btn-pause-resume" class="mobile-control-btn bg-yellow"><svg><use href="#icon-pause"/></svg><span>暂停</span></button>
+                <button id="mobile-btn-retry" class="mobile-control-btn bg-blue"><svg><use href="#icon-redo"/></svg><span>重测</span></button>
+                <button id="mobile-btn-end" class="mobile-control-btn bg-red"><svg><use href="#icon-x"/></svg><span>结束</span></button>
+                <button id="mobile-btn-back-home" class="mobile-control-btn bg-gray"><svg><use href="#icon-home"/></svg><span>退出</span></button>
+            </div>
         </div>
 
         <!-- === 桌面端专属底部 === -->
@@ -405,10 +417,10 @@
     <!-- 使用说明页 -->
     <div id="page-instructions" class="page content-page">
         <div>
-            <h2>6米雾视法|提升裸眼视力 <span style="font-size: 0.8em; color: var(--gray-500);">(by 欧老师)</span></h2>
+            <h2>6米雾视法 | 提升裸眼视力 <span style="font-size: 0.8em; color: var(--gray-500);">(by 欧老师)</span></h2>
             <div class="prose">
                 <h4>训练原理</h4>
-                <p>通过调整视标交替刺激睫状肌。</p>
+                <p>通过交替看大小视标来刺激睫状肌。</p>
                 
                 <h4>跟练指南</h4>
                 <ol>
@@ -420,6 +432,40 @@
                     <li>双眼视力差 &gt;2行者，请遮盖弱势眼训练。</li>
                     <li>当能轻松看清当前目标行，立即下移一行加大难度，始终保持轻微模糊感。</li>
                 </ul>
+
+                <h4>双眼视差训练周期</h4>
+                <ul>
+                    <li><strong>DAY1-3：</strong>遮盖优势眼20 分钟/天</li>
+                    <li><strong>DAY4：</strong>遮盖弱势眼30 分钟/天</li>
+                    <li><strong>DAY5-7：</strong>循环DAY1-3模式</li>
+                </ul>
+
+                <h4>安全须知</h4>
+                <ol>
+                    <li>出现头晕/眼胀立即暂停</li>
+                    <li>散光200度以上必须戴镜</li>
+                    <li>训练后热敷眼周3分钟</li>
+                    <li>配合20-20-20护眼法则</li>
+                </ol>
+
+                <h4>温馨Tips</h4>
+                <ul>
+                    <li><strong>最佳时段：</strong>晨起 & 放学后</li>
+                    <li><strong>进阶版：</strong>加入动态追视卡</li>
+                    <li><strong>饮食配合：</strong>补充叶黄素</li>
+                    <li><strong>训练后：</strong>做晶体操或看3D动画放松</li>
+                </ul>
+
+                <h4>安全中止信号 (家长必读!)</h4>
+                <ol>
+                    <li>频繁揉眼/眨眼, 立即暂停</li>
+                    <li>说"眼睛好酸", 改做晶体操</li>
+                    <li>注意力涣散, 切换动态追视卡</li>
+                    <li>头晕/恶心, 冷敷眼周+远眺，立即暂停</li>
+                </ol>
+
+                <h4>效果观测</h4>
+                <p>坚持15天左右对比, 裸眼视力表识别能力</p>
             </div>
             <div class="back-btn-container">
                 <button class="back-btn btn-nav-home">退出</button>
@@ -532,7 +578,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (state.type === 'baseline') {
             nextE = generateRandomE(config.level);
         } else {
-            const isNextMinLevel = (state.total + 1) % 2 !== 0;
+            const isNextMinLevel = (state.total + 1) % 2 !== 0; // Alternates between minLevel and fogLevels
             const levelToUse = isNextMinLevel ? config.minLevel : config.fogLevels[Math.floor(Math.random() * config.fogLevels.length)];
             nextE = generateRandomE(levelToUse);
         }
@@ -593,7 +639,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const pauseResumeColorClass = isRunning ? 'bg-yellow' : 'bg-green';
 
         mobileBtnPauseResume.innerHTML = `<svg><use href="${pauseResumeIcon}"/></svg><span>${pauseResumeText}</span>`;
-        mobileBtnPauseResume.className = `mobile-control-btn action-btn ${pauseResumeColorClass}`;
+        mobileBtnPauseResume.className = `mobile-control-btn ${pauseResumeColorClass}`;
         
         desktopBtnPauseResume.innerHTML = `<svg><use href="${pauseResumeIcon}"/></svg>${pauseResumeText}`;
         desktopBtnPauseResume.className = `footer-btn ${pauseResumeColorClass}`;
@@ -691,15 +737,14 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-goto-instructions').onclick = () => navigateTo('instructions');
     document.querySelectorAll('.btn-nav-home').forEach(btn => btn.onclick = () => navigateTo('home'));
     
-    // 统一绑定事件
     mobileBtnPauseResume.onclick = () => (appState.testState.status === 'running' ? pauseTest() : resumeTest());
     desktopBtnPauseResume.onclick = () => (appState.testState.status === 'running' ? pauseTest() : resumeTest());
     document.getElementById('mobile-btn-retry').onclick = retryTest;
     document.getElementById('desktop-btn-retry').onclick = retryTest;
     document.getElementById('mobile-btn-end').onclick = () => endTest(true);
     document.getElementById('desktop-btn-end').onclick = () => endTest(true);
-    mobileBtnBackHome.onclick = () => endTest(false); // Mobile Exit button
-    desktopBtnBackHome.onclick = () => endTest(false); // Desktop Exit button
+    mobileBtnBackHome.onclick = () => endTest(false);
+    desktopBtnBackHome.onclick = () => endTest(false);
 
     document.querySelectorAll('.touch-btn').forEach(btn => {
         btn.onclick = () => handleAnswer(btn.dataset.dir);
