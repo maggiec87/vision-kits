@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>视力表提升裸眼</title>
     <style>
-        /* --- 全局样式 --- */
+        /* --- 全局样式变量 --- */
         :root {
             --blue-500: #3b82f6; --blue-600: #2563eb;
             --green-500: #22c55e; --green-600: #16a34a;
@@ -17,6 +17,7 @@
             --white: #ffffff; --black: #000000;
         }
 
+        /* --- 基础样式 (Mobile-First) --- */
         body, html {
             margin: 0;
             padding: 0;
@@ -26,8 +27,7 @@
             color: #333;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            /* 防止在移动设备上双击缩放 */
-            touch-action: manipulation;
+            touch-action: manipulation; /* 防止移动设备双击缩放 */
         }
 
         /* --- 全局返回按钮样式 --- */
@@ -35,7 +35,7 @@
             position: fixed;
             top: 1rem;
             right: 1rem;
-            z-index: 100; /* 确保在最上层，高于弹窗(50) */
+            z-index: 100;
             padding: 0.5rem 1rem;
             background-color: var(--gray-600);
             color: var(--white);
@@ -69,23 +69,23 @@
             padding: 1rem;
         }
         #page-home h1 {
-            font-size: 2.5rem;
+            font-size: 2rem; /* 手机端标题字号 */
             font-weight: bold;
             color: var(--gray-700);
-            margin-bottom: 3rem;
-            text-align: center; /* 确保标题居中 */
+            margin-bottom: 2rem; /* 手机端间距 */
+            text-align: center;
         }
         .home-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
+            grid-template-columns: 1fr; /* 手机端单列 */
+            gap: 1rem; /* 手机端间距 */
             width: 100%;
             max-width: 48rem;
         }
 
         /* --- 按钮样式 --- */
         .btn {
-            padding: 1.5rem;
+            padding: 1.25rem; /* 手机端按钮内边距 */
             color: var(--white);
             border-radius: 0.5rem;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
@@ -95,9 +95,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.25rem;
+            font-size: 1.125rem; /* 手机端按钮字号 */
             font-weight: 600;
             text-decoration: none;
+            width: 100%; /* 手机端按钮默认全宽 */
+            box-sizing: border-box;
         }
         .btn:focus {
             outline: none;
@@ -115,121 +117,148 @@
         .btn-red:hover { background-color: var(--red-600); }
 
         .btn svg {
-            margin-right: 0.75rem;
-            width: 24px;
-            height: 24px;
+            margin-right: 0.5rem; /* 手机端图标间距 */
+            width: 20px; /* 手机端图标大小 */
+            height: 20px;
         }
 
         /* --- 内容页 & Prose 样式 --- */
-        .content-page { padding: 1rem 2rem; max-width: 56rem; margin: 0 auto; }
-        .content-page h2 { font-size: 2rem; font-weight: bold; text-align: center; margin-bottom: 1.5rem; }
-        .back-btn-container { text-align: center; margin-top: 2rem; }
-        .back-btn { padding: 0.75rem 1.5rem; background-color: var(--gray-600); color: var(--white); border: none; border-radius: 0.5rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); cursor: pointer; }
+        .content-page { padding: 1rem; max-width: 56rem; margin: 0 auto; } /* 手机端内边距 */
+        .content-page h2 { font-size: 1.5rem; font-weight: bold; text-align: center; margin-bottom: 1rem; } /* 手机端标题字号 */
+        .back-btn-container { text-align: center; margin-top: 1.5rem; } /* 手机端间距 */
+        .back-btn { padding: 0.75rem 1.25rem; background-color: var(--gray-600); color: var(--white); border: none; border-radius: 0.5rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); cursor: pointer; }
         .back-btn:hover { background-color: var(--gray-700); }
-        .prose { background-color: var(--white); padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1); line-height: 1.7; }
-        .prose h4 { font-size: 1.25rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+        .prose { background-color: var(--white); padding: 1.25rem; border-radius: 0.5rem; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1); line-height: 1.6; font-size: 0.95rem; } /* 手机端内边距和字号 */
+        .prose h4 { font-size: 1.1rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.5rem; } /* 手机端标题字号 */
         .prose p, .prose li { color: #374151; }
-        .prose ol, .prose ul { padding-left: 1.5rem; }
+        .prose ol, .prose ul { padding-left: 1.25rem; } /* 手机端列表内边距 */
         .prose .disclaimer { font-weight: bold; color: var(--red-600); }
 
-        /* --- 其他页面样式 --- */
-        .setup-page { padding: 1rem 2rem; }
-        .setup-page h2 { font-size: 2rem; font-weight: bold; text-align: center; margin-bottom: 1.5rem; }
-        .level-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; max-width: 64rem; margin: 0 auto; }
-        @media (min-width: 640px) { .level-grid { grid-template-columns: repeat(4, 1fr); } }
-        @media (min-width: 768px) { .level-grid { grid-template-columns: repeat(5, 1fr); } }
-        @media (min-width: 1024px) { .level-grid { grid-template-columns: repeat(7, 1fr); } }
-        .level-btn { padding: 1rem; background-color: var(--white); border: 2px solid var(--gray-300); border-radius: 0.5rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s; }
+        /* --- 视标选择页样式 --- */
+        .setup-page { padding: 1rem; } /* 手机端内边距 */
+        .setup-page h2 { font-size: 1.5rem; font-weight: bold; text-align: center; margin-bottom: 1rem; } /* 手机端标题字号 */
+        .level-grid { display: grid; grid-template-columns: repeat(3, 1fr); /* 手机端3列 */
+            gap: 0.75rem; /* 手机端间距 */
+            max-width: 64rem; margin: 0 auto; }
+        .level-btn { padding: 0.75rem; background-color: var(--white); border: 2px solid var(--gray-300); border-radius: 0.5rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s; }
         .level-btn:hover { background-color: var(--gray-100); }
-        .level-btn .decimal { display: block; font-size: 1.125rem; font-weight: bold; color: #1f2937; }
-        .level-btn .logmar { display: block; font-size: 0.875rem; color: var(--gray-500); }
+        .level-btn .decimal { display: block; font-size: 1rem; font-weight: bold; color: #1f2937; } /* 手机端字号 */
+        .level-btn .logmar { display: block; font-size: 0.8rem; color: var(--gray-500); } /* 手机端字号 */
+
+        /* --- 测试页样式 --- */
         #page-test { background-color: var(--gray-100); }
-        .test-header, .test-footer { padding: 1rem; background-color: var(--white); box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-        .test-footer { box-shadow: 0 -2px 4px rgba(0,0,0,0.1); justify-content: center; gap: 0.5rem; }
-        @media (min-width: 768px) { .test-footer { gap: 1rem; } }
-        .test-title { font-size: 1.25rem; font-weight: bold; }
-        .test-info { display: flex; gap: 1rem; font-size: 1.125rem; }
+        .test-header {
+            padding: 0.75rem; /* 手机端内边距 */
+            background-color: var(--white);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column; /* 手机端垂直堆叠 */
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem; /* 手机端间距 */
+            flex-shrink: 0;
+        }
+        .test-footer {
+            padding: 0.75rem; /* 手机端内边距 */
+            background-color: var(--white);
+            box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+            display: grid; /* 手机端2x2网格 */
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem; /* 手机端间距 */
+            flex-shrink: 0;
+        }
+        .test-title { font-size: 1rem; font-weight: bold; text-align: center; } /* 手机端字号 */
+        .test-info { display: flex; gap: 0.75rem; font-size: 0.875rem; } /* 手机端字号 */
         .test-info span { font-weight: 600; }
         .test-main { flex-grow: 1; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; /* 防止E-chart过大时溢出 */ }
         #e-chart-container { display: flex; align-items: center; justify-content: center; }
-        #e-chart-svg { color: var(--black); }
-        .touch-controls { padding: 1rem; background-color: var(--gray-200); }
+        #e-chart-svg { color: var(--black); } /* E视标大小由JS控制，CSS不干预其尺寸 */
+        .touch-controls { padding: 1rem; background-color: var(--gray-200); display: block; } /* 手机端显示 */
         .touch-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; max-width: 20rem; margin: 0 auto; }
         .touch-btn { background-color: var(--white); border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 1rem; display: flex; justify-content: center; align-items: center; border: none; cursor: pointer; }
-        @media (min-width: 768px) { .touch-controls { display: none; } }
-        .footer-btn { padding: 0.5rem 1rem; border: none; border-radius: 0.5rem; color: var(--white); cursor: pointer; display: flex; align-items: center; font-weight: 500; font-size: 0.875rem; }
-        .footer-btn svg { margin-right: 0.5rem; width: 20px; height: 20px; }
+        .footer-btn { padding: 0.75rem; border: none; border-radius: 0.5rem; color: var(--white); cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: 500; font-size: 0.9rem; } /* 手机端按钮样式 */
+        .footer-btn svg { margin-right: 0.25rem; width: 18px; height: 18px; } /* 手机端图标大小 */
         .btn-pause { background-color: var(--yellow-500); } .btn-pause:hover { background-color: var(--yellow-600); }
         .btn-resume { background-color: var(--green-500); } .btn-resume:hover { background-color: var(--green-600); }
         .btn-retry { background-color: var(--blue-500); } .btn-retry:hover { background-color: var(--blue-600); }
         .btn-end { background-color: var(--red-500); } .btn-end:hover { background-color: var(--red-600); }
         .btn-back-home { background-color: var(--gray-600); } .btn-back-home:hover { background-color: var(--gray-700); }
         #pause-overlay { position: absolute; inset: 0; background-color: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10; }
-        #pause-overlay h2 { font-size: 3rem; font-weight: bold; color: var(--white); }
+        #pause-overlay h2 { font-size: 2.5rem; font-weight: bold; color: var(--white); } /* 手机端暂停字号 */
+
+        /* --- 结果弹窗样式 --- */
         #result-modal { position: fixed; inset: 0; background-color: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 1rem; }
-        .modal-content { background-color: var(--white); border-radius: 0.75rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); padding: 2rem; max-width: 28rem; width: 100%; text-align: center; }
-        .modal-content h2 { font-size: 2rem; font-weight: bold; margin-bottom: 1rem; }
-        .modal-content p { font-size: 1.125rem; margin-bottom: 0.5rem; }
-        .modal-actions { display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem; }
-        @media (min-width: 768px) { .modal-actions { flex-direction: row; justify-content: center; } }
-        .modal-actions .btn { padding: 0.75rem 1.5rem; font-size: 1rem; }
+        .modal-content { background-color: var(--white); border-radius: 0.75rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); padding: 1.5rem; max-width: 28rem; width: 100%; text-align: center; } /* 手机端内边距 */
+        .modal-content h2 { font-size: 1.5rem; font-weight: bold; margin-bottom: 0.75rem; } /* 手机端标题字号 */
+        .modal-content p { font-size: 1rem; margin-bottom: 0.4rem; } /* 手机端段落字号 */
+        .modal-actions { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.5rem; } /* 手机端按钮垂直堆叠 */
+        .modal-actions .btn { padding: 0.75rem 1rem; font-size: 0.95rem; } /* 手机端按钮字号 */
+
+        /* --- 历史记录页样式 --- */
         .history-table-container { overflow-x: auto; background-color: var(--white); border-radius: 0.5rem; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1); margin-top: 1.5rem; }
-        .history-table { width: 100%; text-align: left; color: var(--gray-500); font-size: 0.875rem; border-collapse: collapse; }
-        .history-table thead { background-color: var(--gray-50); color: #374151; text-transform: uppercase; font-size: 0.75rem; }
-        .history-table th, .history-table td { padding: 0.75rem 1.5rem; border-bottom: 1px solid var(--gray-200); }
+        .history-table { width: 100%; text-align: left; color: var(--gray-500); font-size: 0.8rem; border-collapse: collapse; } /* 手机端字号 */
+        .history-table thead { background-color: var(--gray-50); color: #374151; text-transform: uppercase; font-size: 0.7rem; } /* 手机端表头字号 */
+        .history-table th, .history-table td { padding: 0.6rem 0.4rem; border-bottom: 1px solid var(--gray-200); } /* 手机端单元格内边距 */
         .history-table tbody tr:last-child td { border-bottom: none; }
-        .no-history { text-align: center; color: var(--gray-500); margin-top: 3rem; }
-        .history-actions { display: flex; justify-content: center; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
-        .history-actions .btn { padding: 0.75rem 1.5rem; font-size: 1rem; }
+        .history-table td:first-child { white-space: normal; } /* 允许日期时间换行 */
+        .no-history { text-align: center; color: var(--gray-500); margin-top: 2rem; }
+        .history-actions { display: flex; justify-content: center; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap; }
+        .history-actions .btn { padding: 0.75rem 1rem; font-size: 0.95rem; }
 
-        /* --- 移动端适配样式 --- */
-        @media (max-width: 768px) {
-            #page-home h1 { font-size: 2rem; } /* 主页标题缩小 */
-            .home-grid { grid-template-columns: 1fr; } /* 主页按钮单列显示 */
-            .home-grid .btn { grid-column: 1 / -1; } /* 确保按钮占据整列 */
+        /* --- 桌面端适配样式 (min-width: 769px) --- */
+        @media (min-width: 769px) {
+            #page-home h1 { font-size: 3rem; margin-bottom: 3rem; } /* 桌面端标题字号 */
+            .home-grid { grid-template-columns: 1fr 1fr; gap: 1.5rem; } /* 桌面端两列 */
+            .btn { padding: 1.5rem; font-size: 1.25rem; width: auto; } /* 桌面端按钮样式 */
+            .btn svg { margin-right: 0.75rem; width: 24px; height: 24px; } /* 桌面端图标大小 */
 
-            .btn { padding: 1.25rem; font-size: 1.125rem; } /* 按钮内边距和字号微调 */
-            
-            .content-page, .setup-page { padding-left: 1rem; padding-right: 1rem; } /* 内容页左右边距减小 */
-            .content-page h2, .setup-page h2 { font-size: 1.5rem; } /* 内容页标题缩小 */
-            
-            .level-grid { grid-template-columns: repeat(3, 1fr); gap: 0.75rem; } /* 视标选择页网格调整 */
+            .content-page { padding: 2rem; } /* 桌面端内边距 */
+            .content-page h2 { font-size: 2rem; margin-bottom: 1.5rem; } /* 桌面端标题字号 */
+            .back-btn-container { margin-top: 2rem; }
+            .prose { padding: 1.5rem; line-height: 1.7; font-size: 1rem; } /* 桌面端内边距和字号 */
+            .prose h4 { font-size: 1.25rem; margin-top: 1.5rem; }
+            .prose ol, .prose ul { padding-left: 1.5rem; }
+
+            .setup-page { padding: 2rem; }
+            .setup-page h2 { font-size: 2rem; margin-bottom: 1.5rem; }
+            .level-grid { grid-template-columns: repeat(5, 1fr); /* 桌面端5列 */
+                gap: 1rem; }
+            @media (min-width: 1024px) { .level-grid { grid-template-columns: repeat(7, 1fr); } } /* 更大屏幕7列 */
+            .level-btn .decimal { font-size: 1.125rem; } /* 桌面端字号 */
+            .level-btn .logmar { font-size: 0.875rem; } /* 桌面端字号 */
 
             .test-header {
-                flex-direction: column; /* 测试页头部垂直堆叠 */
-                gap: 0.5rem;
-                padding: 0.75rem;
+                flex-direction: row; /* 桌面端水平布局 */
+                justify-content: space-between;
+                padding: 1rem;
+                gap: 1rem;
             }
-            .test-title { font-size: 1rem; text-align: center; } /* 测试页标题缩小并居中 */
-            .test-info { font-size: 0.875rem; gap: 1rem; justify-content: center; } /* 测试页信息缩小并居中 */
-
+            .test-title { font-size: 1.25rem; } /* 桌面端字号 */
+            .test-info { font-size: 1.125rem; gap: 1rem; } /* 桌面端字号 */
             .test-footer {
-                display: grid; /* 测试页底部按钮改为2x2网格 */
-                grid-template-columns: 1fr 1fr;
-                gap: 0.75rem;
-                padding: 0.75rem;
-            }
-            .footer-btn {
+                display: flex; /* 桌面端flex布局 */
                 justify-content: center;
-                padding: 0.75rem;
-                font-size: 0.9rem; /* 底部按钮字号微调 */
+                gap: 1rem;
+                padding: 1rem;
             }
-            .footer-btn svg { margin-right: 0.25rem; width: 18px; height: 18px; } /* 底部按钮图标微调 */
+            .footer-btn { font-size: 1rem; padding: 0.5rem 1rem; } /* 桌面端按钮样式 */
+            .footer-btn svg { margin-right: 0.5rem; width: 20px; height: 20px; } /* 桌面端图标大小 */
+            .touch-controls { display: none; } /* 桌面端隐藏触摸控件 */
+            #pause-overlay h2 { font-size: 3rem; } /* 桌面端暂停字号 */
 
-            .touch-controls { display: block; } /* 确保在小屏幕上显示触摸控件 */
-            
-            #result-modal .modal-content { padding: 1.5rem; } /* 结果弹窗内边距调整 */
-            #result-modal .modal-content h2 { font-size: 1.5rem; } /* 结果弹窗标题缩小 */
-            .modal-actions { flex-direction: column; } /* 结果弹窗按钮垂直堆叠 */
-            .modal-actions .btn { width: 100%; box-sizing: border-box; } /* 结果弹窗按钮占据全部宽度 */
+            #result-modal .modal-content { padding: 2rem; }
+            #result-modal .modal-content h2 { font-size: 2rem; margin-bottom: 1rem; }
+            .modal-content p { font-size: 1.125rem; margin-bottom: 0.5rem; }
+            .modal-actions { flex-direction: row; justify-content: center; gap: 1rem; margin-top: 2rem; }
+            .modal-actions .btn { padding: 0.75rem 1.5rem; font-size: 1rem; width: auto; }
 
-            .history-table th, .history-table td { padding: 0.75rem 0.5rem; } /* 历史记录表格单元格内边距减小 */
-            .history-table { font-size: 0.8rem; } /* 历史记录表格字体缩小 */
-            .history-table td:first-child { white-space: normal; } /* 允许第一列（时间）换行 */
-        }
-        /* 在大屏幕上隐藏触摸控件 */
-        @media (min-width: 769px) {
-             .touch-controls { display: none; }
+            .history-table { font-size: 0.875rem; } /* 桌面端字号 */
+            .history-table thead { font-size: 0.75rem; } /* 桌面端表头字号 */
+            .history-table th, .history-table td { padding: 0.75rem 1.5rem; } /* 桌面端单元格内边距 */
+            .history-table td:first-child { white-space: nowrap; } /* 桌面端日期时间不换行 */
+            .no-history { margin-top: 3rem; }
+            .history-actions { gap: 1rem; }
+            .history-actions .btn { padding: 0.75rem 1.5rem; font-size: 1rem; }
         }
     </style>
 </head>
@@ -362,7 +391,7 @@
 
                 <h4>温馨Tips</h4>
                 <ul>
-                    <li><strong>最佳时段：</strong>晨起 & 放学后</li>
+                    <li><strong>最佳时段：：</strong>晨起 & 放学后</li>
                     <li><strong>进阶版：</strong>加入动态追视卡</li>
                     <li><strong>饮食配合：</strong>补充叶黄素</li>
                     <li><strong>训练后：</strong>做晶体操或看3D动画放松</li>
@@ -403,6 +432,7 @@ document.addEventListener('DOMContentLoaded', () => {
       { logMAR: '5.2', decimal: 1.5, sizeMm: 4.85 }, { logMAR: '5.3', decimal: 2.0, sizeMm: 3.64 },
     ].map(level => ({
         ...level,
+        // E视标大小由JS计算，CSS不应干预其尺寸
         sizePx: level.sizeMm * PIXELS_PER_MM_ASSUMED
     }));
 
@@ -446,6 +476,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderEChart(sizePx, direction) {
+        // E视标大小完全由JS控制，确保其物理尺寸不变
         eChartEl.style.width = `${sizePx}px`;
         eChartEl.style.height = `${sizePx}px`;
         eChartEl.style.transform = `rotate(${ROTATION_MAP[direction]}deg)`;
@@ -515,6 +546,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             showResultModal();
         } else {
+            // 如果 isFinished 为 false (如按Esc键退出)，则不显示结果弹窗，直接返回主页
             state.status = 'idle';
             navigateTo('home');
         }
