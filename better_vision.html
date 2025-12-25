@@ -26,9 +26,11 @@
             color: #333;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            /* 防止在移动设备上双击缩放 */
+            touch-action: manipulation;
         }
 
-        /* --- 新增：全局返回按钮样式 --- */
+        /* --- 全局返回按钮样式 --- */
         .global-back-button {
             position: fixed;
             top: 1rem;
@@ -71,6 +73,7 @@
             font-weight: bold;
             color: var(--gray-700);
             margin-bottom: 3rem;
+            text-align: center; /* 确保标题居中 */
         }
         .home-grid {
             display: grid;
@@ -78,13 +81,6 @@
             gap: 1.5rem;
             width: 100%;
             max-width: 48rem;
-        }
-        @media (max-width: 640px) {
-            .home-grid { grid-template-columns: 1fr; }
-            .home-grid .btn { grid-column: 1 / -1; }
-        }
-        @media (min-width: 768px) {
-            #page-home h1 { font-size: 3rem; }
         }
 
         /* --- 按钮样式 --- */
@@ -154,14 +150,14 @@
         .test-title { font-size: 1.25rem; font-weight: bold; }
         .test-info { display: flex; gap: 1rem; font-size: 1.125rem; }
         .test-info span { font-weight: 600; }
-        .test-main { flex-grow: 1; display: flex; align-items: center; justify-content: center; position: relative; }
+        .test-main { flex-grow: 1; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; /* 防止E-chart过大时溢出 */ }
         #e-chart-container { display: flex; align-items: center; justify-content: center; }
         #e-chart-svg { color: var(--black); }
         .touch-controls { padding: 1rem; background-color: var(--gray-200); }
         .touch-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; max-width: 20rem; margin: 0 auto; }
         .touch-btn { background-color: var(--white); border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 1rem; display: flex; justify-content: center; align-items: center; border: none; cursor: pointer; }
         @media (min-width: 768px) { .touch-controls { display: none; } }
-        .footer-btn { padding: 0.5rem 1rem; border: none; border-radius: 0.5rem; color: var(--white); cursor: pointer; display: flex; align-items: center; font-weight: 500; }
+        .footer-btn { padding: 0.5rem 1rem; border: none; border-radius: 0.5rem; color: var(--white); cursor: pointer; display: flex; align-items: center; font-weight: 500; font-size: 0.875rem; }
         .footer-btn svg { margin-right: 0.5rem; width: 20px; height: 20px; }
         .btn-pause { background-color: var(--yellow-500); } .btn-pause:hover { background-color: var(--yellow-600); }
         .btn-resume { background-color: var(--green-500); } .btn-resume:hover { background-color: var(--green-600); }
@@ -185,11 +181,61 @@
         .no-history { text-align: center; color: var(--gray-500); margin-top: 3rem; }
         .history-actions { display: flex; justify-content: center; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
         .history-actions .btn { padding: 0.75rem 1.5rem; font-size: 1rem; }
+
+        /* --- 移动端适配样式 --- */
+        @media (max-width: 768px) {
+            #page-home h1 { font-size: 2rem; } /* 主页标题缩小 */
+            .home-grid { grid-template-columns: 1fr; } /* 主页按钮单列显示 */
+            .home-grid .btn { grid-column: 1 / -1; } /* 确保按钮占据整列 */
+
+            .btn { padding: 1.25rem; font-size: 1.125rem; } /* 按钮内边距和字号微调 */
+            
+            .content-page, .setup-page { padding-left: 1rem; padding-right: 1rem; } /* 内容页左右边距减小 */
+            .content-page h2, .setup-page h2 { font-size: 1.5rem; } /* 内容页标题缩小 */
+            
+            .level-grid { grid-template-columns: repeat(3, 1fr); gap: 0.75rem; } /* 视标选择页网格调整 */
+
+            .test-header {
+                flex-direction: column; /* 测试页头部垂直堆叠 */
+                gap: 0.5rem;
+                padding: 0.75rem;
+            }
+            .test-title { font-size: 1rem; text-align: center; } /* 测试页标题缩小并居中 */
+            .test-info { font-size: 0.875rem; gap: 1rem; justify-content: center; } /* 测试页信息缩小并居中 */
+
+            .test-footer {
+                display: grid; /* 测试页底部按钮改为2x2网格 */
+                grid-template-columns: 1fr 1fr;
+                gap: 0.75rem;
+                padding: 0.75rem;
+            }
+            .footer-btn {
+                justify-content: center;
+                padding: 0.75rem;
+                font-size: 0.9rem; /* 底部按钮字号微调 */
+            }
+            .footer-btn svg { margin-right: 0.25rem; width: 18px; height: 18px; } /* 底部按钮图标微调 */
+
+            .touch-controls { display: block; } /* 确保在小屏幕上显示触摸控件 */
+            
+            #result-modal .modal-content { padding: 1.5rem; } /* 结果弹窗内边距调整 */
+            #result-modal .modal-content h2 { font-size: 1.5rem; } /* 结果弹窗标题缩小 */
+            .modal-actions { flex-direction: column; } /* 结果弹窗按钮垂直堆叠 */
+            .modal-actions .btn { width: 100%; box-sizing: border-box; } /* 结果弹窗按钮占据全部宽度 */
+
+            .history-table th, .history-table td { padding: 0.75rem 0.5rem; } /* 历史记录表格单元格内边距减小 */
+            .history-table { font-size: 0.8rem; } /* 历史记录表格字体缩小 */
+            .history-table td:first-child { white-space: normal; } /* 允许第一列（时间）换行 */
+        }
+        /* 在大屏幕上隐藏触摸控件 */
+        @media (min-width: 769px) {
+             .touch-controls { display: none; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- 新增：全局返回按钮 -->
+    <!-- 全局返回按钮 -->
     <a href="https://maggiec87.github.io/vision-kits/" class="global-back-button">返回</a>
 
     <!-- SVG 图标定义 -->
@@ -262,7 +308,7 @@
             <button id="btn-pause-resume" class="footer-btn btn-pause"><svg><use href="#icon-pause"/></svg>暂停</button>
             <button id="btn-retry" class="footer-btn btn-retry"><svg><use href="#icon-redo"/></svg>重测</button>
             <button id="btn-end" class="footer-btn btn-end"><svg><use href="#icon-x"/></svg>结束</button>
-            <button class="footer-btn btn-back-home btn-nav-home"><svg><use href="#icon-home"/></svg>返回</button>
+            <button class="footer-btn btn-back-home btn-nav-home"><svg><use href="#icon-home"/></svg>退出</button>
         </footer>
     </div>
 
@@ -291,7 +337,7 @@
                 <h4>跟练指南</h4>
                 <ol>
                     <li><strong>基准定位：</strong>站在距视力表 <strong>5米</strong> 处，找到自己能完全看清的那行视标。</li>
-                    <li><strong>雾视挑战：：</strong>选择上一步测得的基准视标，后退至 <strong>6米</strong> 位置，循环交替指认基准视标和最大三行的视标。(每日早晚各 <strong>10分钟</strong>)</li>
+                    <li><strong>雾视挑战：</strong>选择上一步测得的基准视标，后退至 <strong>6米</strong> 位置，循环交替指认基准视标和最大三行的视标。(每日早晚各 <strong>10分钟</strong>)</li>
                 </ol>
                 <p class="disclaimer">！！！注意：</p>
                 <ul>
@@ -395,6 +441,7 @@ document.addEventListener('DOMContentLoaded', () => {
         appState.currentPage = pageId;
         pages.forEach(p => p.classList.remove('active'));
         document.getElementById(`page-${pageId}`).classList.add('active');
+        window.scrollTo(0, 0); // 切换页面时滚动到顶部
         if (pageId === 'history') renderHistoryPage();
     }
 
@@ -428,6 +475,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function startTimer() {
         if (appState.timerInterval) clearInterval(appState.timerInterval);
         appState.timerInterval = setInterval(() => {
+            if (appState.testState.status !== 'running') return; // 只有在运行状态才计时
             appState.testState.timer--;
             testTimerEl.textContent = appState.testState.timer;
             if (appState.testState.timer <= 0) {
@@ -501,6 +549,7 @@ document.addEventListener('DOMContentLoaded', () => {
         pauseOverlay.style.display = status === 'paused' ? 'flex' : 'none';
         btnPauseResume.innerHTML = status === 'running' ? '<svg><use href="#icon-pause"/></svg>暂停' : '<svg><use href="#icon-play"/></svg>继续';
         btnPauseResume.className = `footer-btn ${status === 'running' ? 'btn-pause' : 'btn-resume'}`;
+        // 重新绑定点击事件，因为按钮的innerHTML和class会变
         btnPauseResume.onclick = status === 'running' ? pauseTest : resumeTest;
     }
 
@@ -547,7 +596,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const headers = ['日期', '时间', '类型', '等级', '得分', '正确率'];
         const csvRows = [];
 
-        // 添加 CSV 头部
+        // 添加 CSV 头部 (添加BOM头，解决Excel中文乱码问题)
         csvRows.push(headers.map(h => `"${h}"`).join(','));
 
         // 添加数据行
@@ -565,7 +614,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const csvString = csvRows.join('\n');
-        const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+        const blob = new Blob([`\uFEFF${csvString}`], { type: 'text/csv;charset=utf-8;' }); // 添加BOM头
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
         link.download = `视力训练历史_${new Date().toISOString().slice(0, 10)}.csv`; // 文件名包含日期
@@ -585,16 +634,16 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             const tableRows = appState.history.map(r => `
                 <tr>
-                    <td>${r.date} ${r.time}</td>
+                    <td>${r.date}<br>${r.time}</td> <!-- 日期和时间分行显示 -->
                     <td>${r.type}</td>
                     <td>${r.level}</td>
-                    <td>${r.score} (${r.accuracy.toFixed(0)}%)</td>
+                    <td>${r.score}<br>(${r.accuracy.toFixed(0)}%)</td> <!-- 得分和正确率分行显示 -->
                 </tr>
             `).join('');
             contentHtml += `
                 <div class="history-table-container">
                     <table class="history-table">
-                        <thead><tr><th>时间</th><th>类型</th><th>等级</th><th>得分 (正确率)</th></tr></thead>
+                        <thead><tr><th>时间</th><th>类型</th><th>等级</th><th>得分</th></tr></thead>
                         <tbody>${tableRows}</tbody>
                     </table>
                 </div>
@@ -644,7 +693,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-goto-instructions').onclick = () => navigateTo('instructions');
     document.querySelectorAll('.btn-nav-home').forEach(btn => btn.onclick = () => navigateTo('home'));
     
-    btnPauseResume.onclick = pauseTest;
+    // btnPauseResume的点击事件已经在updateTestUI中动态绑定，这里可以移除
+    // btnPauseResume.onclick = pauseTest; 
     document.getElementById('btn-retry').onclick = retryTest;
     document.getElementById('btn-end').onclick = () => endTest(true);
     document.querySelectorAll('.touch-btn').forEach(btn => {
@@ -660,7 +710,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Escape' || e.key === 'Backspace') {
             e.preventDefault();
             if (appState.currentPage === 'test') {
-                endTest(true); // 结束测试并保存记录
+                endTest(false); // 结束测试但不显示结果弹窗，直接返回主页
             } else if (appState.currentPage !== 'home') {
                 navigateTo('home');
             }
@@ -673,6 +723,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (savedHistory) {
             appState.history = JSON.parse(savedHistory);
         }
+        navigateTo('home'); // 确保页面加载时显示主页
     }
 
     initialize();
