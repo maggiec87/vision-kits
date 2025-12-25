@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>视力表提升裸眼</title>
     <style>
         /* --- 全局样式变量 --- */
@@ -27,7 +27,8 @@
             color: #333;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            touch-action: manipulation; /* 防止移动设备双击缩放 */
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent; /* 移除移动端点击高亮 */
         }
 
         /* --- 全局返回按钮样式 --- */
@@ -69,23 +70,22 @@
             padding: 1rem;
         }
         #page-home h1 {
-            font-size: 2rem; /* 手机端标题字号 */
+            font-size: 2rem;
             font-weight: bold;
             color: var(--gray-700);
-            margin-bottom: 2rem; /* 手机端间距 */
+            margin-bottom: 2rem;
             text-align: center;
         }
         .home-grid {
             display: grid;
-            grid-template-columns: 1fr; /* 手机端单列 */
-            gap: 1rem; /* 手机端间距 */
+            grid-template-columns: 1fr;
+            gap: 1rem;
             width: 100%;
             max-width: 48rem;
         }
 
-        /* --- 按钮样式 --- */
-        .btn {
-            padding: 1.25rem; /* 手机端按钮内边距 */
+        /* --- 按钮通用样式 --- */
+        .btn, .footer-btn, .mobile-control-btn.action-btn {
             color: var(--white);
             border-radius: 0.5rem;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
@@ -95,156 +95,193 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.125rem; /* 手机端按钮字号 */
             font-weight: 600;
             text-decoration: none;
-            width: 100%; /* 手机端按钮默认全宽 */
             box-sizing: border-box;
         }
-        .btn:focus {
+        .btn:focus, .footer-btn:focus, .mobile-control-btn:focus {
             outline: none;
             box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.4);
         }
-        .btn-blue { background-color: var(--blue-500); }
-        .btn-blue:hover { background-color: var(--blue-600); }
-        .btn-green { background-color: var(--green-500); }
-        .btn-green:hover { background-color: var(--green-600); }
-        .btn-purple { background-color: var(--purple-500); }
-        .btn-purple:hover { background-color: var(--purple-600); }
-        .btn-gray { background-color: var(--gray-500); }
-        .btn-gray:hover { background-color: var(--gray-600); }
-        .btn-red { background-color: var(--red-500); }
-        .btn-red:hover { background-color: var(--red-600); }
 
-        .btn svg {
-            margin-right: 0.5rem; /* 手机端图标间距 */
-            width: 20px; /* 手机端图标大小 */
-            height: 20px;
-        }
+        /* --- 按钮颜色工具类 (通用) --- */
+        .bg-blue { background-color: var(--blue-500); } .bg-blue:hover { background-color: var(--blue-600); }
+        .bg-green { background-color: var(--green-500); } .bg-green:hover { background-color: var(--green-600); }
+        .bg-purple { background-color: var(--purple-500); } .bg-purple:hover { background-color: var(--purple-600); }
+        .bg-gray { background-color: var(--gray-500); } .bg-gray:hover { background-color: var(--gray-600); }
+        .bg-red { background-color: var(--red-500); } .bg-red:hover { background-color: var(--red-600); }
+        .bg-yellow { background-color: var(--yellow-500); } .bg-yellow:hover { background-color: var(--yellow-600); }
+
+        /* --- 主页按钮特定样式 --- */
+        .btn { padding: 1.25rem; font-size: 1.125rem; width: 100%; }
+        .btn svg { margin-right: 0.5rem; width: 20px; height: 20px; }
 
         /* --- 内容页 & Prose 样式 --- */
-        .content-page { padding: 1rem; max-width: 56rem; margin: 0 auto; } /* 手机端内边距 */
-        .content-page h2 { font-size: 1.5rem; font-weight: bold; text-align: center; margin-bottom: 1rem; } /* 手机端标题字号 */
-        .back-btn-container { text-align: center; margin-top: 1.5rem; } /* 手机端间距 */
+        .content-page { padding: 1rem; max-width: 56rem; margin: 0 auto; }
+        .content-page h2 { font-size: 1.5rem; font-weight: bold; text-align: center; margin-bottom: 1rem; }
+        .back-btn-container { text-align: center; margin-top: 1.5rem; }
         .back-btn { padding: 0.75rem 1.25rem; background-color: var(--gray-600); color: var(--white); border: none; border-radius: 0.5rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); cursor: pointer; }
         .back-btn:hover { background-color: var(--gray-700); }
-        .prose { background-color: var(--white); padding: 1.25rem; border-radius: 0.5rem; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1); line-height: 1.6; font-size: 0.95rem; } /* 手机端内边距和字号 */
-        .prose h4 { font-size: 1.1rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.5rem; } /* 手机端标题字号 */
+        .prose { background-color: var(--white); padding: 1.25rem; border-radius: 0.5rem; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1); line-height: 1.6; font-size: 0.95rem; }
+        .prose h4 { font-size: 1.1rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.5rem; }
         .prose p, .prose li { color: #374151; }
-        .prose ol, .prose ul { padding-left: 1.25rem; } /* 手机端列表内边距 */
+        .prose ol, .prose ul { padding-left: 1.25rem; }
         .prose .disclaimer { font-weight: bold; color: var(--red-600); }
 
         /* --- 视标选择页样式 --- */
-        .setup-page { padding: 1rem; } /* 手机端内边距 */
-        .setup-page h2 { font-size: 1.5rem; font-weight: bold; text-align: center; margin-bottom: 1rem; } /* 手机端标题字号 */
-        .level-grid { display: grid; grid-template-columns: repeat(3, 1fr); /* 手机端3列 */
-            gap: 0.75rem; /* 手机端间距 */
-            max-width: 64rem; margin: 0 auto; }
+        .setup-page { padding: 1rem; }
+        .setup-page h2 { font-size: 1.5rem; font-weight: bold; text-align: center; margin-bottom: 1rem; }
+        .level-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; max-width: 64rem; margin: 0 auto; }
         .level-btn { padding: 0.75rem; background-color: var(--white); border: 2px solid var(--gray-300); border-radius: 0.5rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s; }
         .level-btn:hover { background-color: var(--gray-100); }
-        .level-btn .decimal { display: block; font-size: 1rem; font-weight: bold; color: #1f2937; } /* 手机端字号 */
-        .level-btn .logmar { display: block; font-size: 0.8rem; color: var(--gray-500); } /* 手机端字号 */
+        .level-btn .decimal { display: block; font-size: 1rem; font-weight: bold; color: #1f2937; }
+        .level-btn .logmar { display: block; font-size: 0.8rem; color: var(--gray-500); }
 
         /* --- 测试页样式 --- */
         #page-test { background-color: var(--gray-100); }
         .test-header {
-            padding: 0.75rem; /* 手机端内边距 */
+            padding: 0.75rem;
             background-color: var(--white);
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             display: flex;
-            flex-direction: column; /* 手机端垂直堆叠 */
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem; /* 手机端间距 */
+            gap: 0.5rem;
             flex-shrink: 0;
         }
-        .test-footer {
-            padding: 0.75rem; /* 手机端内边距 */
-            background-color: var(--white);
-            box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
-            display: grid; /* 手机端2x2网格 */
-            grid-template-columns: 1fr 1fr;
-            gap: 0.75rem; /* 手机端间距 */
-            flex-shrink: 0;
-        }
-        .test-title { font-size: 1rem; font-weight: bold; text-align: center; } /* 手机端字号 */
-        .test-info { display: flex; gap: 0.75rem; font-size: 0.875rem; } /* 手机端字号 */
+        .test-title { font-size: 1rem; font-weight: bold; text-align: center; }
+        .test-info { display: flex; gap: 0.75rem; font-size: 0.875rem; }
         .test-info span { font-weight: 600; }
-        .test-main { flex-grow: 1; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; /* 防止E-chart过大时溢出 */ }
+        .test-main { flex-grow: 1; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
         #e-chart-container { display: flex; align-items: center; justify-content: center; }
-        #e-chart-svg { color: var(--black); } /* E视标大小由JS控制，CSS不干预其尺寸 */
-        .touch-controls { padding: 1rem; background-color: var(--gray-200); display: block; } /* 手机端显示 */
-        .touch-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; max-width: 20rem; margin: 0 auto; }
-        .touch-btn { background-color: var(--white); border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 1rem; display: flex; justify-content: center; align-items: center; border: none; cursor: pointer; }
-        .footer-btn { padding: 0.75rem; border: none; border-radius: 0.5rem; color: var(--white); cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: 500; font-size: 0.9rem; } /* 手机端按钮样式 */
-        .footer-btn svg { margin-right: 0.25rem; width: 18px; height: 18px; } /* 手机端图标大小 */
-        .btn-pause { background-color: var(--yellow-500); } .btn-pause:hover { background-color: var(--yellow-600); }
-        .btn-resume { background-color: var(--green-500); } .btn-resume:hover { background-color: var(--green-600); }
-        .btn-retry { background-color: var(--blue-500); } .btn-retry:hover { background-color: var(--blue-600); }
-        .btn-end { background-color: var(--red-500); } .btn-end:hover { background-color: var(--red-600); }
-        .btn-back-home { background-color: var(--gray-600); } .btn-back-home:hover { background-color: var(--gray-700); }
+        #e-chart-svg { color: var(--black); } /* E视标大小由JS控制 */
+        
+        /* --- 移动端专属控制面板 --- */
+        .mobile-controls-panel {
+            display: grid; /* 默认显示 */
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr 1fr;
+            gap: 0.5rem;
+            padding: 1rem;
+            background-color: var(--gray-200);
+            flex-shrink: 0;
+        }
+        .mobile-control-btn {
+            background-color: var(--white); /* 方向键默认白色 */
+            border: none;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+            aspect-ratio: 1 / 1; /* 保持按钮为正方形 */
+            font-size: 0.75rem;
+            color: var(--gray-700); /* 方向键文字颜色 */
+        }
+        .mobile-control-btn svg {
+            width: 28px;
+            height: 28px;
+        }
+        .mobile-control-btn.action-btn { /* 功能键的通用样式 */
+            color: var(--white); /* 功能键文字颜色白色 */
+            font-weight: 500;
+        }
+        .mobile-control-btn.action-btn svg {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 0.25rem;
+        }
+
+        /* 移动端按钮网格布局 */
+        #mobile-btn-back-home { grid-area: 1 / 1 / 2 / 2; }
+        .btn-dir-up { grid-area: 1 / 2 / 2 / 3; }
+        #mobile-btn-pause-resume { grid-area: 1 / 3 / 2 / 4; }
+        .btn-dir-left { grid-area: 2 / 1 / 3 / 2; }
+        #mobile-btn-end { grid-area: 2 / 2 / 3 / 3; }
+        .btn-dir-right { grid-area: 2 / 3 / 3 / 4; }
+        .btn-dir-down { grid-area: 3 / 2 / 4 / 3; }
+        #mobile-btn-retry { grid-area: 3 / 3 / 4 / 4; }
+        
+        /* --- 桌面端专属底部 --- */
+        .desktop-footer {
+            display: none; /* 默认隐藏 */
+        }
+        .desktop-footer .footer-btn { 
+            font-size: 1rem; 
+            padding: 0.5rem 1rem; 
+            font-weight: 500;
+        }
+        .desktop-footer .footer-btn svg { margin-right: 0.5rem; width: 20px; height: 20px; }
+
         #pause-overlay { position: absolute; inset: 0; background-color: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10; }
-        #pause-overlay h2 { font-size: 2.5rem; font-weight: bold; color: var(--white); } /* 手机端暂停字号 */
+        #pause-overlay h2 { font-size: 2.5rem; font-weight: bold; color: var(--white); }
 
         /* --- 结果弹窗样式 --- */
         #result-modal { position: fixed; inset: 0; background-color: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 1rem; }
-        .modal-content { background-color: var(--white); border-radius: 0.75rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); padding: 1.5rem; max-width: 28rem; width: 100%; text-align: center; } /* 手机端内边距 */
-        .modal-content h2 { font-size: 1.5rem; font-weight: bold; margin-bottom: 0.75rem; } /* 手机端标题字号 */
-        .modal-content p { font-size: 1rem; margin-bottom: 0.4rem; } /* 手机端段落字号 */
-        .modal-actions { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.5rem; } /* 手机端按钮垂直堆叠 */
-        .modal-actions .btn { padding: 0.75rem 1rem; font-size: 0.95rem; } /* 手机端按钮字号 */
+        .modal-content { background-color: var(--white); border-radius: 0.75rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); padding: 1.5rem; max-width: 28rem; width: 100%; text-align: center; }
+        .modal-content h2 { font-size: 1.5rem; font-weight: bold; margin-bottom: 0.75rem; }
+        .modal-content p { font-size: 1rem; margin-bottom: 0.4rem; }
+        .modal-actions { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.5rem; }
+        .modal-actions .btn { padding: 0.75rem 1rem; font-size: 0.95rem; }
 
         /* --- 历史记录页样式 --- */
         .history-table-container { overflow-x: auto; background-color: var(--white); border-radius: 0.5rem; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1); margin-top: 1.5rem; }
-        .history-table { width: 100%; text-align: left; color: var(--gray-500); font-size: 0.8rem; border-collapse: collapse; } /* 手机端字号 */
-        .history-table thead { background-color: var(--gray-50); color: #374151; text-transform: uppercase; font-size: 0.7rem; } /* 手机端表头字号 */
-        .history-table th, .history-table td { padding: 0.6rem 0.4rem; border-bottom: 1px solid var(--gray-200); } /* 手机端单元格内边距 */
+        .history-table { width: 100%; text-align: left; color: var(--gray-500); font-size: 0.8rem; border-collapse: collapse; }
+        .history-table thead { background-color: var(--gray-50); color: #374151; text-transform: uppercase; font-size: 0.7rem; }
+        .history-table th, .history-table td { padding: 0.6rem 0.4rem; border-bottom: 1px solid var(--gray-200); }
         .history-table tbody tr:last-child td { border-bottom: none; }
-        .history-table td:first-child { white-space: normal; } /* 允许日期时间换行 */
+        .history-table td:first-child { white-space: normal; }
         .no-history { text-align: center; color: var(--gray-500); margin-top: 2rem; }
         .history-actions { display: flex; justify-content: center; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap; }
         .history-actions .btn { padding: 0.75rem 1rem; font-size: 0.95rem; }
 
         /* --- 桌面端适配样式 (min-width: 769px) --- */
         @media (min-width: 769px) {
-            #page-home h1 { font-size: 3rem; margin-bottom: 3rem; } /* 桌面端标题字号 */
-            .home-grid { grid-template-columns: 1fr 1fr; gap: 1.5rem; } /* 桌面端两列 */
-            .btn { padding: 1.5rem; font-size: 1.25rem; width: auto; } /* 桌面端按钮样式 */
-            .btn svg { margin-right: 0.75rem; width: 24px; height: 24px; } /* 桌面端图标大小 */
+            #page-home h1 { font-size: 3rem; margin-bottom: 3rem; }
+            .home-grid { grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+            .btn { padding: 1.5rem; font-size: 1.25rem; width: auto; }
+            .btn svg { margin-right: 0.75rem; width: 24px; height: 24px; }
 
-            .content-page { padding: 2rem; } /* 桌面端内边距 */
-            .content-page h2 { font-size: 2rem; margin-bottom: 1.5rem; } /* 桌面端标题字号 */
+            .content-page { padding: 2rem; }
+            .content-page h2 { font-size: 2rem; margin-bottom: 1.5rem; }
             .back-btn-container { margin-top: 2rem; }
-            .prose { padding: 1.5rem; line-height: 1.7; font-size: 1rem; } /* 桌面端内边距和字号 */
+            .prose { padding: 1.5rem; line-height: 1.7; font-size: 1rem; }
             .prose h4 { font-size: 1.25rem; margin-top: 1.5rem; }
             .prose ol, .prose ul { padding-left: 1.5rem; }
 
             .setup-page { padding: 2rem; }
             .setup-page h2 { font-size: 2rem; margin-bottom: 1.5rem; }
-            .level-grid { grid-template-columns: repeat(5, 1fr); /* 桌面端5列 */
-                gap: 1rem; }
-            @media (min-width: 1024px) { .level-grid { grid-template-columns: repeat(7, 1fr); } } /* 更大屏幕7列 */
-            .level-btn .decimal { font-size: 1.125rem; } /* 桌面端字号 */
-            .level-btn .logmar { font-size: 0.875rem; } /* 桌面端字号 */
+            .level-grid { grid-template-columns: repeat(5, 1fr); gap: 1rem; }
+            @media (min-width: 1024px) { .level-grid { grid-template-columns: repeat(7, 1fr); } }
+            .level-btn .decimal { font-size: 1.125rem; }
+            .level-btn .logmar { font-size: 0.875rem; }
 
             .test-header {
-                flex-direction: row; /* 桌面端水平布局 */
+                flex-direction: row;
                 justify-content: space-between;
                 padding: 1rem;
                 gap: 1rem;
             }
-            .test-title { font-size: 1.25rem; } /* 桌面端字号 */
-            .test-info { font-size: 1.125rem; gap: 1rem; } /* 桌面端字号 */
-            .test-footer {
-                display: flex; /* 桌面端flex布局 */
+            .test-title { font-size: 1.25rem; }
+            .test-info { font-size: 1.125rem; gap: 1rem; }
+            
+            /* 在桌面端隐藏移动控制面板，显示桌面底部 */
+            .mobile-controls-panel { display: none; }
+            .desktop-footer {
+                display: flex;
                 justify-content: center;
                 gap: 1rem;
                 padding: 1rem;
+                background-color: var(--white);
+                box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+                flex-shrink: 0;
             }
-            .footer-btn { font-size: 1rem; padding: 0.5rem 1rem; } /* 桌面端按钮样式 */
-            .footer-btn svg { margin-right: 0.5rem; width: 20px; height: 20px; } /* 桌面端图标大小 */
-            .touch-controls { display: none; } /* 桌面端隐藏触摸控件 */
-            #pause-overlay h2 { font-size: 3rem; } /* 桌面端暂停字号 */
+            #pause-overlay h2 { font-size: 3rem; }
 
             #result-modal .modal-content { padding: 2rem; }
             #result-modal .modal-content h2 { font-size: 2rem; margin-bottom: 1rem; }
@@ -252,10 +289,10 @@
             .modal-actions { flex-direction: row; justify-content: center; gap: 1rem; margin-top: 2rem; }
             .modal-actions .btn { padding: 0.75rem 1.5rem; font-size: 1rem; width: auto; }
 
-            .history-table { font-size: 0.875rem; } /* 桌面端字号 */
-            .history-table thead { font-size: 0.75rem; } /* 桌面端表头字号 */
-            .history-table th, .history-table td { padding: 0.75rem 1.5rem; } /* 桌面端单元格内边距 */
-            .history-table td:first-child { white-space: nowrap; } /* 桌面端日期时间不换行 */
+            .history-table { font-size: 0.875rem; }
+            .history-table thead { font-size: 0.75rem; }
+            .history-table th, .history-table td { padding: 0.75rem 1.5rem; }
+            .history-table td:first-child { white-space: nowrap; }
             .no-history { margin-top: 3rem; }
             .history-actions { gap: 1rem; }
             .history-actions .btn { padding: 0.75rem 1.5rem; font-size: 1rem; }
@@ -292,10 +329,10 @@
         <div class="main-content">
             <h1>视力表提升裸眼</h1>
             <div class="home-grid">
-                <button id="btn-goto-instructions" class="btn btn-gray"><svg><use href="#icon-help"/></svg>使用说明</button>
-                <button id="btn-goto-baseline" class="btn btn-blue"><svg><use href="#icon-eye"/></svg>测定基准</button>
-                <button id="btn-goto-fogging" class="btn btn-green"><svg><use href="#icon-chart"/></svg>雾视挑战</button>
-                <button id="btn-goto-history" class="btn btn-purple"><svg><use href="#icon-chart"/></svg>历史记录</button>
+                <button id="btn-goto-instructions" class="btn bg-gray"><svg><use href="#icon-help"/></svg>使用说明</button>
+                <button id="btn-goto-baseline" class="btn bg-blue"><svg><use href="#icon-eye"/></svg>测定基准</button>
+                <button id="btn-goto-fogging" class="btn bg-green"><svg><use href="#icon-chart"/></svg>雾视挑战</button>
+                <button id="btn-goto-history" class="btn bg-purple"><svg><use href="#icon-chart"/></svg>历史记录</button>
             </div>
         </div>
     </div>
@@ -326,18 +363,28 @@
                 </svg>
             </div>
         </main>
-        <div class="touch-controls">
-            <div class="touch-grid">
-                <div></div><button class="touch-btn" data-dir="up"><svg><use href="#icon-up"/></svg></button><div></div>
-                <button class="touch-btn" data-dir="left"><svg><use href="#icon-left"/></svg></button><div></div><button class="touch-btn" data-dir="right"><svg><use href="#icon-right"/></svg></button>
-                <div></div><button class="touch-btn" data-dir="down"><svg><use href="#icon-down"/></svg></button><div></div>
-            </div>
+        
+        <!-- === 移动端专属控制面板 === -->
+        <div class="mobile-controls-panel">
+            <button id="mobile-btn-back-home" class="mobile-control-btn action-btn bg-gray"><svg><use href="#icon-home"/></svg><span>退出</span></button>
+            <button class="mobile-control-btn touch-btn btn-dir-up" data-dir="up"><svg><use href="#icon-up"/></svg></button>
+            <button id="mobile-btn-pause-resume" class="mobile-control-btn action-btn bg-yellow"><svg><use href="#icon-pause"/></svg><span>暂停</span></button>
+            
+            <button class="mobile-control-btn touch-btn btn-dir-left" data-dir="left"><svg><use href="#icon-left"/></svg></button>
+            <button id="mobile-btn-end" class="mobile-control-btn action-btn bg-red"><svg><use href="#icon-x"/></svg><span>结束</span></button>
+            <button class="mobile-control-btn touch-btn btn-dir-right" data-dir="right"><svg><use href="#icon-right"/></svg></button>
+            
+            <div></div> <!-- Empty slot for layout -->
+            <button class="mobile-control-btn touch-btn btn-dir-down" data-dir="down"><svg><use href="#icon-down"/></svg></button>
+            <button id="mobile-btn-retry" class="mobile-control-btn action-btn bg-blue"><svg><use href="#icon-redo"/></svg><span>重测</span></button>
         </div>
-        <footer class="test-footer">
-            <button id="btn-pause-resume" class="footer-btn btn-pause"><svg><use href="#icon-pause"/></svg>暂停</button>
-            <button id="btn-retry" class="footer-btn btn-retry"><svg><use href="#icon-redo"/></svg>重测</button>
-            <button id="btn-end" class="footer-btn btn-end"><svg><use href="#icon-x"/></svg>结束</button>
-            <button class="footer-btn btn-back-home btn-nav-home"><svg><use href="#icon-home"/></svg>退出</button>
+
+        <!-- === 桌面端专属底部 === -->
+        <footer class="desktop-footer">
+            <button id="desktop-btn-pause-resume" class="footer-btn bg-yellow"><svg><use href="#icon-pause"/></svg>暂停</button>
+            <button id="desktop-btn-retry" class="footer-btn bg-blue"><svg><use href="#icon-redo"/></svg>重测</button>
+            <button id="desktop-btn-end" class="footer-btn bg-red"><svg><use href="#icon-x"/></svg>结束</button>
+            <button class="footer-btn bg-gray btn-nav-home"><svg><use href="#icon-home"/></svg>退出</button>
         </footer>
     </div>
 
@@ -373,40 +420,6 @@
                     <li>双眼视力差 &gt;2行者，请遮盖弱势眼训练。</li>
                     <li>当能轻松看清当前目标行，立即下移一行加大难度，始终保持轻微模糊感。</li>
                 </ul>
-
-                <h4>双眼视差训练周期</h4>
-                <ul>
-                    <li><strong>DAY1-3：</strong>遮盖优势眼 <strong>20分钟/天</strong></li>
-                    <li><strong>DAY4：</strong>遮盖弱势眼 <strong>30分钟/天</strong></li>
-                    <li><strong>DAY5-7：</strong>循环DAY1-3模式</li>
-                </ul>
-
-                <h4>安全须知</h4>
-                <ol>
-                    <li>出现头晕/眼胀立即暂停。</li>
-                    <li><strong>散光200度以上</strong> 必须戴镜。</li>
-                    <li>训练后热敷眼周 <strong>3分钟</strong>。</li>
-                    <li>配合 <strong>20-20-20护眼法则</strong>。</li>
-                </ol>
-
-                <h4>温馨Tips</h4>
-                <ul>
-                    <li><strong>最佳时段：：</strong>晨起 & 放学后</li>
-                    <li><strong>进阶版：</strong>加入动态追视卡</li>
-                    <li><strong>饮食配合：</strong>补充叶黄素</li>
-                    <li><strong>训练后：</strong>做晶体操或看3D动画放松</li>
-                </ul>
-
-                <h4>安全中止信号 <span style="font-weight:bold; color:var(--red-600);">(家长必读!)</span></h4>
-                <ol>
-                    <li>频繁揉眼/眨眼，立即暂停。</li>
-                    <li>说 "眼睛好酸"，改做晶体操。</li>
-                    <li>注意力涣散，切换动态追视卡。</li>
-                    <li>头晕/恶心，冷敷眼周+远眺，立即暂停。</li>
-                </ol>
-
-                <h4>效果观测</h4>
-                <p>坚持 <strong>15天</strong> 左右对比，观察裸眼视力表识别能力的变化。</p>
             </div>
             <div class="back-btn-container">
                 <button class="back-btn btn-nav-home">退出</button>
@@ -418,10 +431,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- 数据和常量 ---
-    // 假设屏幕为 96 DPI，计算 1mm 对应的像素值
     const PIXELS_PER_MM_ASSUMED = 96 / 25.4;
-
-    // 原始视力数据，并预先计算好固定像素尺寸
     const VISION_LEVELS = [
       { logMAR: '4.0', decimal: 0.1, sizeMm: 72.72 }, { logMAR: '4.1', decimal: 0.12, sizeMm: 60.60 },
       { logMAR: '4.2', decimal: 0.15, sizeMm: 48.48 }, { logMAR: '4.3', decimal: 0.2, sizeMm: 36.36 },
@@ -432,10 +442,8 @@ document.addEventListener('DOMContentLoaded', () => {
       { logMAR: '5.2', decimal: 1.5, sizeMm: 4.85 }, { logMAR: '5.3', decimal: 2.0, sizeMm: 3.64 },
     ].map(level => ({
         ...level,
-        // E视标大小由JS计算，CSS不应干预其尺寸
         sizePx: level.sizeMm * PIXELS_PER_MM_ASSUMED
     }));
-
     const DIRECTIONS = ['up', 'down', 'left', 'right'];
     const KEY_MAP = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right' };
     const ROTATION_MAP = { up: -90, down: 90, left: 180, right: 0 };
@@ -446,12 +454,7 @@ document.addEventListener('DOMContentLoaded', () => {
         history: [],
         testConfig: null,
         testState: {
-            status: 'idle',
-            timer: 0,
-            correct: 0,
-            total: 0,
-            currentE: null,
-            type: null,
+            status: 'idle', timer: 0, correct: 0, total: 0, currentE: null, type: null,
         },
         timerInterval: null,
     };
@@ -462,21 +465,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const testTimerEl = document.getElementById('test-timer');
     const testScoreEl = document.getElementById('test-score');
     const pauseOverlay = document.getElementById('pause-overlay');
-    const btnPauseResume = document.getElementById('btn-pause-resume');
     const resultModal = document.getElementById('result-modal');
+    
+    // 引用两个版本的按钮
+    const mobileBtnPauseResume = document.getElementById('mobile-btn-pause-resume');
+    const desktopBtnPauseResume = document.getElementById('desktop-btn-pause-resume');
+    const mobileBtnBackHome = document.getElementById('mobile-btn-back-home');
+    const desktopBtnBackHome = document.querySelector('.desktop-footer .btn-nav-home');
+
 
     // --- 核心功能函数 ---
-
     function navigateTo(pageId) {
         appState.currentPage = pageId;
         pages.forEach(p => p.classList.remove('active'));
         document.getElementById(`page-${pageId}`).classList.add('active');
-        window.scrollTo(0, 0); // 切换页面时滚动到顶部
+        window.scrollTo(0, 0);
         if (pageId === 'history') renderHistoryPage();
     }
 
     function renderEChart(sizePx, direction) {
-        // E视标大小完全由JS控制，确保其物理尺寸不变
         eChartEl.style.width = `${sizePx}px`;
         eChartEl.style.height = `${sizePx}px`;
         eChartEl.style.transform = `rotate(${ROTATION_MAP[direction]}deg)`;
@@ -506,7 +513,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function startTimer() {
         if (appState.timerInterval) clearInterval(appState.timerInterval);
         appState.timerInterval = setInterval(() => {
-            if (appState.testState.status !== 'running') return; // 只有在运行状态才计时
+            if (appState.testState.status !== 'running') return;
             appState.testState.timer--;
             testTimerEl.textContent = appState.testState.timer;
             if (appState.testState.timer <= 0) {
@@ -525,7 +532,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (state.type === 'baseline') {
             nextE = generateRandomE(config.level);
         } else {
-            const isNextMinLevel = (state.total + 1) % 2 !== 0; // 交替出现最小视标和雾视视标
+            const isNextMinLevel = (state.total + 1) % 2 !== 0;
             const levelToUse = isNextMinLevel ? config.minLevel : config.fogLevels[Math.floor(Math.random() * config.fogLevels.length)];
             nextE = generateRandomE(levelToUse);
         }
@@ -541,12 +548,11 @@ document.addEventListener('DOMContentLoaded', () => {
             state.status = 'finished';
             if (state.total > 0 || state.type === 'baseline') {
                 const newRecord = { date: new Date().toLocaleDateString(), time: new Date().toLocaleTimeString(), type: state.type === 'baseline' ? '测定基准' : '雾视挑战', level: appState.testConfig?.level?.decimal || appState.testConfig?.minLevel?.decimal, accuracy: state.total > 0 ? (state.correct / state.total) * 100 : 0, score: `${state.correct}/${state.total}` };
-                appState.history.unshift(newRecord); // 新记录放在最前面
+                appState.history.unshift(newRecord);
                 localStorage.setItem('visionHistory', JSON.stringify(appState.history));
             }
             showResultModal();
         } else {
-            // 如果 isFinished 为 false (如按Esc键退出)，则不显示结果弹窗，直接返回主页
             state.status = 'idle';
             navigateTo('home');
         }
@@ -579,10 +585,18 @@ document.addEventListener('DOMContentLoaded', () => {
         testScoreEl.textContent = `${correct}/${total}`;
         if (currentE) renderEChart(currentE.level.sizePx, currentE.direction);
         pauseOverlay.style.display = status === 'paused' ? 'flex' : 'none';
-        btnPauseResume.innerHTML = status === 'running' ? '<svg><use href="#icon-pause"/></svg>暂停' : '<svg><use href="#icon-play"/></svg>继续';
-        btnPauseResume.className = `footer-btn ${status === 'running' ? 'btn-pause' : 'btn-resume'}`;
-        // 重新绑定点击事件，因为按钮的innerHTML和class会变
-        btnPauseResume.onclick = status === 'running' ? pauseTest : resumeTest;
+        
+        // 更新两个版本的暂停/继续按钮
+        const isRunning = status === 'running';
+        const pauseResumeIcon = isRunning ? '#icon-pause' : '#icon-play';
+        const pauseResumeText = isRunning ? '暂停' : '继续';
+        const pauseResumeColorClass = isRunning ? 'bg-yellow' : 'bg-green';
+
+        mobileBtnPauseResume.innerHTML = `<svg><use href="${pauseResumeIcon}"/></svg><span>${pauseResumeText}</span>`;
+        mobileBtnPauseResume.className = `mobile-control-btn action-btn ${pauseResumeColorClass}`;
+        
+        desktopBtnPauseResume.innerHTML = `<svg><use href="${pauseResumeIcon}"/></svg>${pauseResumeText}`;
+        desktopBtnPauseResume.className = `footer-btn ${pauseResumeColorClass}`;
     }
 
     function showResultModal() {
@@ -593,15 +607,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const accuracy = total > 0 ? ((correct / total) * 100).toFixed(0) : 0;
         
         document.getElementById('result-title').textContent = type === 'baseline' ? '基准测定完成' : '雾视挑战结束';
-        document.getElementById('result-body').innerHTML = `
-            <p>测试等级: <strong>${level}</strong></p>
-            <p>最终得分: <strong>${correct} / ${total}</strong></p>
-            <p>正确率: <strong>${accuracy}%</strong></p>
-        `;
-        document.getElementById('result-actions').innerHTML = `
-            <button class="btn btn-blue" id="modal-btn-retry">再试一次</button>
-            <button class="btn btn-gray" id="modal-btn-home">退出</button>
-        `;
+        document.getElementById('result-body').innerHTML = `<p>测试等级: <strong>${level}</strong></p><p>最终得分: <strong>${correct} / ${total}</strong></p><p>正确率: <strong>${accuracy}%</strong></p>`;
+        document.getElementById('result-actions').innerHTML = `<button class="btn bg-blue" id="modal-btn-retry">再试一次</button><button class="btn bg-gray" id="modal-btn-home">退出</button>`;
         document.getElementById('modal-btn-retry').onclick = retryTest;
         document.getElementById('modal-btn-home').onclick = () => {
             resultModal.style.display = 'none';
@@ -609,86 +616,47 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    // 新增：清空历史记录功能
     function clearHistory() {
         if (confirm('确定要清空所有历史记录吗？此操作不可撤销。')) {
             appState.history = [];
             localStorage.removeItem('visionHistory');
-            renderHistoryPage(); // 重新渲染历史记录页面以显示空状态
+            renderHistoryPage();
         }
     }
 
-    // 新增：导出历史记录功能 (CSV 格式)
     function exportHistory() {
         if (appState.history.length === 0) {
             alert('没有历史记录可以导出。');
             return;
         }
-
         const headers = ['日期', '时间', '类型', '等级', '得分', '正确率'];
-        const csvRows = [];
-
-        // 添加 CSV 头部 (添加BOM头，解决Excel中文乱码问题)
-        csvRows.push(headers.map(h => `"${h}"`).join(','));
-
-        // 添加数据行
+        const csvRows = [headers.map(h => `"${h}"`).join(',')];
         appState.history.forEach(record => {
-            const values = [
-                record.date,
-                record.time,
-                record.type,
-                record.level,
-                record.score,
-                `${record.accuracy.toFixed(0)}%` // 格式化正确率
-            ];
-            // 处理 CSV 中的逗号和引号，确保数据正确性
+            const values = [record.date, record.time, record.type, record.level, record.score, `${record.accuracy.toFixed(0)}%`];
             csvRows.push(values.map(v => `"${String(v).replace(/"/g, '""')}"`).join(','));
         });
-
         const csvString = csvRows.join('\n');
-        const blob = new Blob([`\uFEFF${csvString}`], { type: 'text/csv;charset=utf-8;' }); // 添加BOM头
+        const blob = new Blob([`\uFEFF${csvString}`], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = `视力训练历史_${new Date().toISOString().slice(0, 10)}.csv`; // 文件名包含日期
-        document.body.appendChild(link); // 兼容 Firefox
+        link.download = `视力训练历史_${new Date().toISOString().slice(0, 10)}.csv`;
+        document.body.appendChild(link);
         link.click();
-        document.body.removeChild(link); // 清理
-        URL.revokeObjectURL(link.href); // 释放内存
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
     }
-
 
     function renderHistoryPage() {
         const container = document.getElementById('page-history');
         let contentHtml = '<h2>历史记录</h2>';
-
         if (appState.history.length === 0) {
             contentHtml += `<p class="no-history">暂无历史记录。</p>`;
         } else {
-            const tableRows = appState.history.map(r => `
-                <tr>
-                    <td>${r.date}<br>${r.time}</td> <!-- 日期和时间分行显示 -->
-                    <td>${r.type}</td>
-                    <td>${r.level}</td>
-                    <td>${r.score}<br>(${r.accuracy.toFixed(0)}%)</td> <!-- 得分和正确率分行显示 -->
-                </tr>
-            `).join('');
-            contentHtml += `
-                <div class="history-table-container">
-                    <table class="history-table">
-                        <thead><tr><th>时间</th><th>类型</th><th>等级</th><th>得分</th></tr></thead>
-                        <tbody>${tableRows}</tbody>
-                    </table>
-                </div>
-                <div class="history-actions">
-                    <button id="btn-export-history" class="btn btn-blue"><svg><use href="#icon-download"/></svg>导出</button>
-                    <button id="btn-clear-history" class="btn btn-red"><svg><use href="#icon-trash"/></svg>清空</button>
-                </div>
-            `;
+            const tableRows = appState.history.map(r => `<tr><td>${r.date}<br>${r.time}</td><td>${r.type}</td><td>${r.level}</td><td>${r.score}<br>(${r.accuracy.toFixed(0)}%)</td></tr>`).join('');
+            contentHtml += `<div class="history-table-container"><table class="history-table"><thead><tr><th>时间</th><th>类型</th><th>等级</th><th>得分</th></tr></thead><tbody>${tableRows}</tbody></table></div><div class="history-actions"><button id="btn-export-history" class="btn bg-blue"><svg><use href="#icon-download"/></svg>导出</button><button id="btn-clear-history" class="btn bg-red"><svg><use href="#icon-trash"/></svg>清空</button></div>`;
         }
         contentHtml += `<div class="back-btn-container"><button class="back-btn btn-nav-home">退出</button></div>`;
         container.innerHTML = contentHtml;
-
-        // 重新绑定事件监听器，因为innerHTML会替换元素
         if (appState.history.length > 0) {
             document.getElementById('btn-export-history').onclick = exportHistory;
             document.getElementById('btn-clear-history').onclick = clearHistory;
@@ -708,7 +676,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (type === 'baseline') {
                     startTest('baseline', { level });
                 } else {
-                    // 雾视挑战的雾视等级选择前3个（0.1, 0.12, 0.15）
                     startTest('fogging', { minLevel: level, fogLevels: VISION_LEVELS.slice(0, 3) });
                 }
             };
@@ -718,17 +685,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 事件监听器 ---
-    
     document.getElementById('btn-goto-baseline').onclick = () => setupLevelSelection('baseline');
     document.getElementById('btn-goto-fogging').onclick = () => setupLevelSelection('fogging');
     document.getElementById('btn-goto-history').onclick = () => navigateTo('history');
     document.getElementById('btn-goto-instructions').onclick = () => navigateTo('instructions');
     document.querySelectorAll('.btn-nav-home').forEach(btn => btn.onclick = () => navigateTo('home'));
     
-    // btnPauseResume的点击事件已经在updateTestUI中动态绑定，这里可以移除
-    // btnPauseResume.onclick = pauseTest; 
-    document.getElementById('btn-retry').onclick = retryTest;
-    document.getElementById('btn-end').onclick = () => endTest(true);
+    // 统一绑定事件
+    mobileBtnPauseResume.onclick = () => (appState.testState.status === 'running' ? pauseTest() : resumeTest());
+    desktopBtnPauseResume.onclick = () => (appState.testState.status === 'running' ? pauseTest() : resumeTest());
+    document.getElementById('mobile-btn-retry').onclick = retryTest;
+    document.getElementById('desktop-btn-retry').onclick = retryTest;
+    document.getElementById('mobile-btn-end').onclick = () => endTest(true);
+    document.getElementById('desktop-btn-end').onclick = () => endTest(true);
+    mobileBtnBackHome.onclick = () => endTest(false); // Mobile Exit button
+    desktopBtnBackHome.onclick = () => endTest(false); // Desktop Exit button
+
     document.querySelectorAll('.touch-btn').forEach(btn => {
         btn.onclick = () => handleAnswer(btn.dataset.dir);
     });
@@ -738,11 +710,10 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             handleAnswer(KEY_MAP[e.key]);
         }
-        // 按下 Esc 或 Backspace 键时，结束当前测试或退出
         if (e.key === 'Escape' || e.key === 'Backspace') {
             e.preventDefault();
             if (appState.currentPage === 'test') {
-                endTest(false); // 结束测试但不显示结果弹窗，直接返回主页
+                endTest(false);
             } else if (appState.currentPage !== 'home') {
                 navigateTo('home');
             }
@@ -755,7 +726,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (savedHistory) {
             appState.history = JSON.parse(savedHistory);
         }
-        navigateTo('home'); // 确保页面加载时显示主页
+        navigateTo('home');
     }
 
     initialize();
