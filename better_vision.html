@@ -91,7 +91,7 @@
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
             border: none;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.1s ease; /* 优化：过渡时间缩短 */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -102,6 +102,13 @@
         .btn:focus, .footer-btn:focus, .mobile-control-btn:focus {
             outline: none;
             box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.4);
+        }
+
+        /* 新增：为按钮添加按下的 active 状态，提升触摸响应感 */
+        .btn:active, .footer-btn:active, .mobile-control-btn:active {
+            transform: scale(0.97);
+            box-shadow: 0 2px 4px -1px rgba(0,0,0,0.1);
+            filter: brightness(0.95);
         }
 
         /* --- 按钮颜色工具类 (通用) --- */
@@ -488,7 +495,6 @@ document.addEventListener('DOMContentLoaded', () => {
       { logMAR: '5.2', decimal: 1.5, sizeMm: 4.85 }, { logMAR: '5.3', decimal: 2.0, sizeMm: 3.64 },
     ].map(level => ({
         ...level,
-        // 优化点4: E字母尺寸在现有基础上除以4
         sizePx: (level.sizeMm * PIXELS_PER_MM_ASSUMED) / 4
     }));
     const DIRECTIONS = ['up', 'down', 'left', 'right'];
@@ -513,7 +519,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const testScoreEl = document.getElementById('test-score');
     const pauseOverlay = document.getElementById('pause-overlay');
     const resultModal = document.getElementById('result-modal');
-    const globalBackButton = document.querySelector('.global-back-button'); // 新增：获取全局HOME按钮的引用
+    const globalBackButton = document.querySelector('.global-back-button');
     
     // 引用两个版本的按钮
     const mobileBtnPauseResume = document.getElementById('mobile-btn-pause-resume');
@@ -528,14 +534,11 @@ document.addEventListener('DOMContentLoaded', () => {
         pages.forEach(p => p.classList.remove('active'));
         document.getElementById(`page-${pageId}`).classList.add('active');
         
-        // --- 修改开始 ---
-        // 根据当前页面ID决定是否显示全局HOME按钮
         if (pageId === 'home') {
-            globalBackButton.style.display = 'block'; // 在首页显示
+            globalBackButton.style.display = 'block';
         } else {
-            globalBackButton.style.display = 'none'; // 在其他页面隐藏
+            globalBackButton.style.display = 'none';
         }
-        // --- 修改结束 ---
 
         window.scrollTo(0, 0);
         if (pageId === 'history') renderHistoryPage();
@@ -574,9 +577,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (appState.testState.status !== 'running') return;
             appState.testState.timer--;
             testTimerEl.textContent = appState.testState.timer;
-            // 优化点2: 测试计时结束后自动结束并计分 (已存在)
             if (appState.testState.timer <= 0) {
-                endTest(true); // isFinished = true 会保存分数并显示结果
+                endTest(true);
             }
         }, 1000);
     }
@@ -591,7 +593,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (state.type === 'baseline') {
             nextE = generateRandomE(config.level);
         } else {
-            const isNextMinLevel = (state.total + 1) % 2 !== 0; // Alternates between minLevel and fogLevels
+            const isNextMinLevel = (state.total + 1) % 2 !== 0;
             const levelToUse = isNextMinLevel ? config.minLevel : config.fogLevels[Math.floor(Math.random() * config.fogLevels.length)];
             nextE = generateRandomE(levelToUse);
         }
@@ -605,11 +607,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const state = appState.testState;
         if (isFinished) {
             state.status = 'finished';
-            // 只有当有实际交互或基准测试时才保存记录
             if (state.total > 0 || state.type === 'baseline') { 
                 const newRecord = { date: new Date().toLocaleDateString(), time: new Date().toLocaleTimeString(), type: state.type === 'baseline' ? '测定基准' : '雾视挑战', level: appState.testConfig?.level?.decimal || appState.testConfig?.minLevel?.decimal, accuracy: state.total > 0 ? (state.correct / state.total) * 100 : 0, score: `${state.correct}/${state.total}` };
                 appState.history.unshift(newRecord);
-                localStorage.setItem('visionHistory', JSON.stringify(appState.history));
+                
+                // 健壮性优化：捕获 localStorage 错误
+                try {
+                    localStorage.setItem('visionHistory', JSON.stringify(appState.history));
+                } catch (e) {
+                    console.error("保存历史记录失败:", e);
+                    setTimeout(() => {
+                         alert('无法保存您的训练记录。\n\n这通常是因为您正在使用浏览器的“无痕模式”或“隐私模式”。请切换到正常模式后重试。');
+                    }, 500);
+                }
             }
             showResultModal();
         } else {
@@ -634,7 +644,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function retryTest() {
         resultModal.style.display = 'none';
-        // 确保在重试前清除之前的计时器
         clearInterval(appState.timerInterval); 
         startTest(appState.testState.type, appState.testConfig);
     }
@@ -648,7 +657,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentE) renderEChart(currentE.level.sizePx, currentE.direction);
         pauseOverlay.style.display = status === 'paused' ? 'flex' : 'none';
         
-        // 更新两个版本的暂停/继续按钮
         const isRunning = status === 'running';
         const pauseResumeIcon = isRunning ? '#icon-pause' : '#icon-play';
         const pauseResumeText = isRunning ? '暂停' : '继续';
@@ -680,9 +688,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function clearHistory() {
         if (confirm('确定要清空所有历史记录吗？此操作不可撤销。')) {
-            appState.history = [];
-            localStorage.removeItem('visionHistory');
-            renderHistoryPage();
+            try {
+                appState.history = [];
+                localStorage.removeItem('visionHistory');
+                renderHistoryPage();
+            } catch (e) {
+                alert('无法清空记录，可能您正处于无痕模式。');
+            }
         }
     }
 
@@ -766,42 +778,37 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.onclick = () => handleAnswer(btn.dataset.dir);
     });
 
-    // 优化点1 & 3: 电视遥控器按键控制
-    // 常见的电视遥控器按键码，可能因设备而异
     const TV_REMOTE_KEY_CODES = {
-        OK_ENTER: [13],         // 确定键 / Enter
-        BACK: [8, 461],         // 返回键 / Backspace, 常见电视返回键
-        HOME: [27, 460],        // Home键 / Escape, 常见电视Home键
-        MENU_OPTIONS: [415, 18] // 三横键 / 菜单/选项键
+        OK_ENTER: [13],
+        BACK: [8, 461],
+        HOME: [27, 460],
+        MENU_OPTIONS: [415, 18]
     };
 
     window.addEventListener('keydown', (e) => {
         const keyCode = e.keyCode || e.which;
 
         if (appState.currentPage === 'test') {
-            // 遥控器方向键用于回答E字方向
-            if (KEY_MAP[e.key]) { // ArrowUp, ArrowDown, ArrowLeft, ArrowRight
+            if (KEY_MAP[e.key]) {
                 e.preventDefault();
-                if (appState.testState.status === 'running') { // 只有在测试运行时才接受方向键输入
+                if (appState.testState.status === 'running') {
                     handleAnswer(KEY_MAP[e.key]);
                 }
             } 
-            // 遥控器功能键映射
-            else if (TV_REMOTE_KEY_CODES.OK_ENTER.includes(keyCode)) { // 确定键 -> 暂停/继续
+            else if (TV_REMOTE_KEY_CODES.OK_ENTER.includes(keyCode)) {
                 e.preventDefault();
                 appState.testState.status === 'running' ? pauseTest() : resumeTest();
-            } else if (TV_REMOTE_KEY_CODES.BACK.includes(keyCode)) { // 返回键 -> 重测
+            } else if (TV_REMOTE_KEY_CODES.BACK.includes(keyCode)) {
                 e.preventDefault();
                 retryTest();
-            } else if (TV_REMOTE_KEY_CODES.MENU_OPTIONS.includes(keyCode)) { // 三横键 -> 结束测试 (保存分数)
+            } else if (TV_REMOTE_KEY_CODES.MENU_OPTIONS.includes(keyCode)) {
                 e.preventDefault();
                 endTest(true);
-            } else if (TV_REMOTE_KEY_CODES.HOME.includes(keyCode)) { // Home键 -> 退出测试 (不保存分数)
+            } else if (TV_REMOTE_KEY_CODES.HOME.includes(keyCode)) {
                 e.preventDefault();
                 endTest(false);
             }
-        } else { // 不在测试页面时
-            // 返回键、Home键或Escape键都导航回主页
+        } else {
             if (TV_REMOTE_KEY_CODES.BACK.includes(keyCode) || TV_REMOTE_KEY_CODES.HOME.includes(keyCode) || e.key === 'Escape') {
                 e.preventDefault();
                 navigateTo('home');
@@ -811,9 +818,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 初始化 ---
     function initialize() {
-        const savedHistory = localStorage.getItem('visionHistory');
-        if (savedHistory) {
-            appState.history = JSON.parse(savedHistory);
+        // 健壮性优化：捕获 localStorage 错误
+        try {
+            const savedHistory = localStorage.getItem('visionHistory');
+            if (savedHistory) {
+                appState.history = JSON.parse(savedHistory);
+            }
+        } catch (e) {
+            console.error("读取历史记录失败:", e);
         }
         navigateTo('home');
     }
