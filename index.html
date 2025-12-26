@@ -36,27 +36,17 @@
             margin-bottom: 15px;
             font-size: 2.5em;
         }
-        p.description {
-            font-size: 1.1em;
-            color: var(--secondary-color);
-            margin-bottom: 40px;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
         .tool-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 25px;
             margin-top: 30px;
         }
-
         .tool-card {
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px; /* 修改点：内边距从 25px 减小到 20px，使卡片变小 */
+            padding: 20px;
             background-color: var(--card-bg-color);
             border-radius: 10px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
@@ -71,62 +61,64 @@
             box-shadow: var(--hover-shadow);
             border-color: var(--primary-color);
         }
-
         .tool-card .icon {
-            font-size: 3em; /* Larger emoji icons */
+            font-size: 3em;
             margin-bottom: 15px;
             color: var(--primary-color);
-            line-height: 1; /* Adjust line height for emojis */
-            font-weight: bold; /* 让字母E更突出 */
+            line-height: 1;
+            font-weight: bold;
         }
-
         .tool-card h2 {
             font-size: 1.5em;
             color: var(--primary-color);
             margin-top: 0;
-            margin-bottom: 8px; /* 修改点：下外边距从 10px 减小到 8px，减少与下方文字的距离 */
+            margin-bottom: 8px;
         }
-
         .tool-card p {
             font-size: 0.95em;
             color: #6b7280;
             margin-bottom: 0;
         }
-
-        /* 新增：底部提醒文字的样式 */
         .footer-note {
-            margin-top: 50px; /* 与上方内容的间距 */
-            font-size: 0.8em; /* 字体更小 */
-            color: #a0aec0; /* 颜色更灰 */
-            line-height: 1.5; /* 行距更小 */
+            margin-top: 50px;
+            font-size: 0.8em;
+            color: #a0aec0;
+            line-height: 1.5;
         }
 
+        /* === 移动端紧凑布局调整 === */
         @media (max-width: 768px) {
             body {
-                padding: 15px;
+                padding: 10px; /* 修改：减小页面边距 */
             }
             .container {
-                padding: 20px;
+                padding: 15px; /* 修改：减小主容器内边距 */
             }
             h1 {
-                font-size: 2em;
-            }
-            p.description {
-                font-size: 1em;
-                margin-bottom: 30px;
+                font-size: 1.8em; /* 修改：减小主标题字体 */
+                margin-bottom: 20px; /* 修改：调整主标题下方间距 */
             }
             .tool-grid {
-                grid-template-columns: 1fr; /* Stack cards on small screens */
-                gap: 20px;
+                grid-template-columns: 1fr;
+                gap: 15px; /* 修改：大幅减小卡片之间的垂直间距 */
+                margin-top: 0; /* 修改：移除与标题的额外间距 */
             }
             .tool-card {
-                padding: 18px; /* 修改点：对应调整移动端内边距 */
+                padding: 15px; /* 修改：进一步减小卡片内边距，使其更紧凑 */
             }
             .tool-card .icon {
-                font-size: 2.5em;
+                font-size: 2.2em; /* 修改：减小图标大小 */
+                margin-bottom: 10px; /* 修改：减小图标和标题的间距 */
             }
             .tool-card h2 {
-                font-size: 1.3em;
+                font-size: 1.2em; /* 修改：减小卡片标题字体 */
+                margin-bottom: 5px; /* 修改：减小标题和描述的间距 */
+            }
+            .tool-card p {
+                font-size: 0.85em; /* 修改：减小描述文字大小 */
+            }
+            .footer-note {
+                margin-top: 30px; /* 修改：调整底部文字与卡片列表的间距 */
             }
         }
     </style>
@@ -193,7 +185,6 @@
             </a>
         </div>
         
-        <!-- 修改点：将提醒文字放入新的 div 中，并使用正确的 <br> 标签 -->
         <div class="footer-note">
             自用非商用，侵删。意见反馈WX-Ping20251987。<br>
             数据为本地浏览器保留、无云端储存。<br>
