@@ -513,6 +513,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const testScoreEl = document.getElementById('test-score');
     const pauseOverlay = document.getElementById('pause-overlay');
     const resultModal = document.getElementById('result-modal');
+    const globalBackButton = document.querySelector('.global-back-button'); // 新增：获取全局HOME按钮的引用
     
     // 引用两个版本的按钮
     const mobileBtnPauseResume = document.getElementById('mobile-btn-pause-resume');
@@ -526,6 +527,16 @@ document.addEventListener('DOMContentLoaded', () => {
         appState.currentPage = pageId;
         pages.forEach(p => p.classList.remove('active'));
         document.getElementById(`page-${pageId}`).classList.add('active');
+        
+        // --- 修改开始 ---
+        // 根据当前页面ID决定是否显示全局HOME按钮
+        if (pageId === 'home') {
+            globalBackButton.style.display = 'block'; // 在首页显示
+        } else {
+            globalBackButton.style.display = 'none'; // 在其他页面隐藏
+        }
+        // --- 修改结束 ---
+
         window.scrollTo(0, 0);
         if (pageId === 'history') renderHistoryPage();
     }
