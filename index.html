@@ -56,7 +56,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 25px;
+            padding: 20px; /* 修改点：内边距从 25px 减小到 20px，使卡片变小 */
             background-color: var(--card-bg-color);
             border-radius: 10px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
@@ -84,13 +84,21 @@
             font-size: 1.5em;
             color: var(--primary-color);
             margin-top: 0;
-            margin-bottom: 10px;
+            margin-bottom: 8px; /* 修改点：下外边距从 10px 减小到 8px，减少与下方文字的距离 */
         }
 
         .tool-card p {
             font-size: 0.95em;
             color: #6b7280;
             margin-bottom: 0;
+        }
+
+        /* 新增：底部提醒文字的样式 */
+        .footer-note {
+            margin-top: 50px; /* 与上方内容的间距 */
+            font-size: 0.8em; /* 字体更小 */
+            color: #a0aec0; /* 颜色更灰 */
+            line-height: 1.5; /* 行距更小 */
         }
 
         @media (max-width: 768px) {
@@ -112,7 +120,7 @@
                 gap: 20px;
             }
             .tool-card {
-                padding: 20px;
+                padding: 18px; /* 修改点：对应调整移动端内边距 */
             }
             .tool-card .icon {
                 font-size: 2.5em;
@@ -185,11 +193,12 @@
             </a>
         </div>
         
-        <p class="description">
-            <br>自用非商用，侵删。意见反馈WX-Ping20251987。</br> 
-            <br>数据为本地浏览器保留、无云端储存。</br> 
-            <br>开发者不定期更新，可能导致以往数据丢失，请注意保存/导出重要数据。</br>           
-        </p>
+        <!-- 修改点：将提醒文字放入新的 div 中，并使用正确的 <br> 标签 -->
+        <div class="footer-note">
+            自用非商用，侵删。意见反馈WX-Ping20251987。<br>
+            数据为本地浏览器保留、无云端储存。<br>
+            不定期更新，可能导致以往数据丢失，请注意保存/导出重要数据。
+        </div>
         
     </div>
 
