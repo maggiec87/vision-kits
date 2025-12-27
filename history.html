@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>历史记录</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- SVG 图标定义文件，所有页面共享 -->
+    <div style="display: none;">
+        <object type="image/svg+xml" data="icons.svg"></object>
+    </div>
+
+    <!-- 历史记录页 -->
+    <div id="page-history" class="page content-page">
+        <!-- 内容由JS动态生成 -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DOM 元素引用 ---
+            const historyContainer = document.getElementById('page-history');
+
+            // --- 历史记录功能 ---
+            function loadHistory() {
+                try {
+                    const savedHistory = localStorage.getItem('visionHistory');
+                    return savedHistory ? JSON.parse(savedHistory) : [];
+                } catch (e) {
+                    console.error("Error loading history:", e);
+                    return [];
+                }
+            }
+
+            function clearHistory() {
+                if (confirm('确定要清空所有历史记录吗？')) {
+                    localStorage.removeItem('visionHistory');
+                    renderHistoryPage();
+                }
+            }
+
+            function exportHistory() {
+                const history = loadHistory();
+                if (history.length === 0) {
+                    alert('没有记录可以导出。');
+                    return;
+                }
+                const csvContent = "data:text/csv;charset=utf-8,\uFEFF" 
+                    + "日期,时间,类型,视标,得分,正确率\n" 
+                    + history.map(e => `${e.date},${e.time},${e.type},${e.level},${e.score},${e.accuracy.toFixed(0)}%`).join("\n");
+                const link = document.createElement("a");
+                link.href = encodeURI(csvContent);
+                link.download = "vision_history.csv";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+
+            function renderHistoryPage() {
+                const history = loadHistory();
+                let contentHtml = '<h2>历史记录</h2>';
+                if (history.length === 0) {
+                    contentHtml += `<p style="text-align:center;color:#666;margin-top:2rem;">暂无历史记录。</p>`;
+                } else {
+                    const tableRows = history.map(r => `<tr><td>${r.date}<br>${r.time}</td><td>${r.type}</td><td>${r.level}</td><td>${r.score}<br>(${r.accuracy.toFixed(0)}%)</td></tr>`).join('');
+                    contentHtml += `<div class="history-table-container"><table class="history-table"><thead><tr><th>时间</th><th>类型</th><th>视标</th><th>得分</th></tr></thead><tbody>${tableRows}</tbody></table></div><div class="history-actions"><button id="btn-export-history" class="btn bg-blue"><svg><use href="icons.svg#icon-download"/></svg>导出</button><button id="btn-clear-history" class="btn bg-red"><svg><use href="icons.svg#icon-trash"/></svg>清空</button></div>`;
+                }
+                // 修改此处：链接跳转到 better_vision.html
+                contentHtml += `<div class="back-btn-container"><button onclick="window.location.href='better_vision.html'" class="back-btn">返回</button></div>`;
+                
+                historyContainer.innerHTML = contentHtml;
+                if (history.length > 0) {
+                    document.getElementById('btn-export-history').onclick = exportHistory;
+                    document.getElementById('btn-clear-history').onclick = clearHistory;
+                }
+            }
+
+            // --- 初始化 ---
+            renderHistoryPage();
+        });
+    </script>
+</body>
+</html>

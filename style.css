@@ -1,0 +1,295 @@
+/* --- 全局样式变量 --- */
+:root {
+    --blue-500: #3b82f6; --blue-600: #2563eb;
+    --green-500: #22c55e; --green-600: #16a34a;
+    --purple-500: #a855f7; --purple-600: #9333ea;
+    --gray-500: #6b7280; --gray-600: #4b5563; --gray-700: #374151;
+    --yellow-500: #eab308; --yellow-600: #ca8a04;
+    --red-500: #ef4444; --red-600: #dc2626;
+    --gray-50: #f9fafb; --gray-100: #f3f4f6; --gray-200: #e5e7eb; --gray-300: #d1d5db;
+    --white: #ffffff; --black: #000000;
+    --light-blue: #7dd3fc; /* 淡蓝色 */
+}
+
+/* --- 基础样式 (Mobile-First) --- */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    background-color: var(--gray-50);
+    color: #333;
+    -webkit-font-smoothing: antialiased;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* --- 全局返回按钮样式 (用于内页) --- */
+.global-back-button {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 100;
+    padding: 0.5rem 1rem;
+    background-color: var(--gray-600);
+    color: var(--white);
+    text-decoration: none;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* --- 首页右上角 HOME 按钮样式 (新增) --- */
+.top-nav {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 100; /* 确保在最上层 */
+}
+
+.btn-home-corner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px; /* 关键：控制图标和文字的间距 */
+    background-color: rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--gray-300); /* 使用变量统一颜色 */
+    border-radius: 20px;
+    padding: 5px 12px;
+    text-decoration: none;
+    color: #333;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.btn-home-corner:hover {
+    background-color: var(--gray-200); /* 使用变量统一颜色 */
+}
+
+.btn-home-corner svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+    /* margin-right 已移除，改用 gap */
+}
+
+/* --- 页面容器 --- */
+.page {
+    display: flex; /* 所有页面默认flex布局 */
+    flex-direction: column;
+    min-height: 100vh;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* --- 主页样式 --- */
+#page-home {
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+#page-home h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--gray-700);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+.home-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    width: 100%;
+    max-width: 48rem;
+}
+
+/* --- 按钮通用样式 --- */
+.btn, .footer-btn, .mobile-control-btn {
+    color: var(--white);
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    border: none;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+.btn:active, .footer-btn:active, .mobile-control-btn:active {
+    transform: scale(0.97);
+    filter: brightness(0.95);
+}
+
+/* --- 按钮颜色工具类 --- */
+.bg-blue { background-color: var(--blue-500); }
+.bg-green { background-color: var(--green-500); }
+.bg-purple { background-color: var(--purple-500); }
+.bg-gray { background-color: var(--gray-500); }
+.bg-red { background-color: var(--red-500); }
+.bg-yellow { background-color: var(--yellow-500); }
+.bg-light-blue { background-color: var(--light-blue); } /* 淡蓝色背景类 */
+
+
+/* --- 主页按钮特定样式 --- */
+.btn { padding: 1.25rem; font-size: 1.125rem; width: 100%; }
+.btn svg { margin-right: 0.5rem; width: 20px; height: 20px; }
+
+/* --- 内容页 & Prose 样式 --- */
+.content-page { padding: 1rem; max-width: 56rem; margin: 0 auto; }
+.content-page h2 { font-size: 1.5rem; font-weight: bold; text-align: center; margin-bottom: 0.5rem; }
+.content-page h4 { font-size: 1.1rem; font-weight: bold; margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--gray-700); }
+.back-btn-container { text-align: center; margin-top: 1.5rem; }
+.back-btn { padding: 0.75rem 1.25rem; background-color: var(--gray-600); color: var(--white); border: none; border-radius: 0.5rem; cursor: pointer; }
+.prose { background-color: var(--white); padding: 1.25rem; border-radius: 0.5rem; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1); line-height: 1.6; font-size: 0.95rem; }
+.prose p, .prose li { color: #374151; }
+.prose ol, .prose ul { padding-left: 1.25rem; margin-bottom: 1rem; }
+.prose .disclaimer { font-weight: bold; color: var(--red-600); margin-top: 1rem; }
+.author-info { text-align: center; color: var(--gray-500); font-size: 0.9rem; margin-bottom: 1.5rem; }
+.author-info a { color: var(--blue-500); text-decoration: none; }
+
+/* --- 视标选择页样式 --- */
+.setup-page { padding: 1rem; }
+.setup-page h2 { font-size: 1.5rem; font-weight: bold; text-align: center; margin-bottom: 1rem; }
+.level-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; max-width: 64rem; margin: 0 auto; }
+.level-btn { padding: 0.75rem; background-color: var(--white); border: 2px solid var(--gray-300); border-radius: 0.5rem; cursor: pointer; }
+.level-btn .decimal { display: block; font-size: 1rem; font-weight: bold; color: #1f2937; }
+.level-btn .logmar { display: block; font-size: 0.8rem; color: var(--gray-500); }
+
+/* --- 测试页样式 --- */
+#page-test { background-color: var(--gray-100); }
+.test-header {
+    padding: 0.75rem;
+    background-color: var(--white);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+.test-title { font-size: 1rem; font-weight: bold; text-align: center; }
+.test-info { display: flex; gap: 0.75rem; font-size: 0.875rem; }
+.test-main { flex-grow: 1; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+#e-chart-container { display: flex; align-items: center; justify-content: center; }
+#e-chart-svg { color: var(--black); }
+
+/* --- 移动端专属控制面板 --- */
+.mobile-controls-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: var(--gray-200);
+    flex-shrink: 0;
+    align-items: center;
+}
+
+.directional-pad-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 0.25rem;
+    width: 180px;
+    height: 180px;
+}
+.directional-pad-container .mobile-control-btn {
+    background-color: var(--white);
+    color: var(--gray-700);
+    height: 100%;
+    width: 100%;
+    font-size: 0.75rem;
+    flex-direction: column;
+}
+.directional-pad-container .mobile-control-btn svg { width: 28px; height: 28px; }
+.directional-pad-container .btn-dir-up    { grid-area: 1 / 2 / 2 / 3; }
+.directional-pad-container .btn-dir-left  { grid-area: 2 / 1 / 3 / 2; }
+.directional-pad-container .btn-dir-right { grid-area: 2 / 3 / 3 / 4; }
+.directional-pad-container .btn-dir-down  { grid-area: 3 / 2 / 4 / 3; }
+
+/* 底部菜单按钮 (优化后：正常大小，居中) */
+.menu-btn-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+.menu-btn-container .mobile-control-btn {
+    height: auto;
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+    width: auto; /* 不再全宽 */
+    min-width: 160px;
+    border-radius: 2rem; /* 圆角胶囊状 */
+}
+
+/* --- 桌面端专属底部 --- */
+.desktop-footer {
+    display: none;
+    justify-content: center;
+    padding: 1rem;
+    background-color: var(--white);
+    flex-shrink: 0;
+}
+.desktop-footer .footer-btn { 
+    font-size: 1rem; 
+    padding: 0.75rem 2.5rem; 
+    font-weight: 500;
+    width: auto; /* 正常大小 */
+    border-radius: 2rem; /* 圆角胶囊状 */
+}
+
+/* --- 结果/菜单弹窗样式 --- */
+#result-modal { position: fixed; inset: 0; background-color: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 1rem; }
+.modal-content { 
+    background-color: var(--white); 
+    border-radius: 0.75rem; 
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); 
+    padding: 1.5rem; 
+    max-width: 20rem; /* 调整弹窗宽度 */
+    width: 100%; 
+    text-align: center; 
+}
+.modal-content h2 { font-size: 1.5rem; font-weight: bold; margin-bottom: 0.75rem; }
+.modal-content p { font-size: 1rem; margin-bottom: 0.4rem; }
+.modal-actions { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.5rem; }
+.modal-actions .btn { padding: 0.75rem 1rem; font-size: 0.95rem; }
+.modal-actions button:focus {
+    outline: 3px solid #FFD700; /* 金色边框 */
+    transform: scale(1.1);      /* 稍微放大 */
+    z-index: 10;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+
+/* 评价文字颜色 */
+.eval-text { font-size: 1.1rem; margin-top: 10px; font-weight: bold; }
+.text-green { color: var(--green-600); }
+.text-red { color: var(--red-600); }
+.text-yellow { color: var(--yellow-600); }
+
+/* --- 历史记录页样式 --- */
+.history-table-container { overflow-x: auto; background-color: var(--white); border-radius: 0.5rem; margin-top: 1.5rem; }
+.history-table { width: 100%; text-align: left; color: var(--gray-500); font-size: 0.8rem; border-collapse: collapse; }
+.history-table thead { background-color: var(--gray-50); color: #374151; }
+.history-table th, .history-table td { padding: 0.6rem 0.4rem; border-bottom: 1px solid var(--gray-200); }
+.history-actions { display: flex; justify-content: center; gap: 0.75rem; margin-top: 1.5rem; }
+
+/* --- 桌面端适配 --- */
+@media (min-width: 769px) {
+    #page-home h1 { font-size: 3rem; margin-bottom: 3rem; }
+    .home-grid { grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .content-page { padding: 2rem; }
+    .level-grid { grid-template-columns: repeat(7, 1fr); }
+    
+    .test-header { flex-direction: row; justify-content: space-between; padding: 1rem; }
+    .mobile-controls-panel { display: none; }
+    .desktop-footer { display: flex; }
+    
+    .modal-actions { flex-direction: row; justify-content: center; }
+    .modal-actions .btn { width: auto; min-width: 100px; }
+}

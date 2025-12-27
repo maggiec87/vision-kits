@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>测定基准 - 选择视标</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- SVG 图标定义文件，所有页面共享 -->
+    <div style="display: none;">
+        <object type="image/svg+xml" data="icons.svg"></object>
+    </div>
+
+    <!-- 全局返回按钮 (已删除) -->
+    <!-- <a href="index.html" class="global-back-button">返回首页</a> -->
+
+    <!-- 视标选择页 -->
+    <div id="page-setup" class="page setup-page">
+        <h2 id="setup-title">选择基准视标 (测10次)</h2>
+        <div id="level-grid-container" class="level-grid"></div>
+        <div class="back-btn-container">
+            <!-- 底部返回按钮链接已修改 -->
+            <button onclick="window.location.href='better_vision.html'" class="back-btn">返回</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const PIXELS_PER_MM_ASSUMED = 96 / 25.4;
+            const VISION_LEVELS = [
+              { logMAR: '4.0', decimal: 0.1, sizeMm: 72.72 }, { logMAR: '4.1', decimal: 0.12, sizeMm: 60.60 },
+              { logMAR: '4.2', decimal: 0.15, sizeMm: 48.48 }, { logMAR: '4.3', decimal: 0.2, sizeMm: 36.36 },
+              { logMAR: '4.4', decimal: 0.25, sizeMm: 29.09 }, { logMAR: '4.5', decimal: 0.3, sizeMm: 24.24 },
+              { logMAR: '4.6', decimal: 0.4, sizeMm: 18.18 }, { logMAR: '4.7', decimal: 0.5, sizeMm: 14.54 },
+              { logMAR: '4.8', decimal: 0.6, sizeMm: 12.12 }, { logMAR: '4.9', decimal: 0.8, sizeMm: 9.09 },
+              { logMAR: '5.0', decimal: 1.0, sizeMm: 7.27 }, { logMAR: '5.1', decimal: 1.2, sizeMm: 6.06 },
+              { logMAR: '5.2', decimal: 1.5, sizeMm: 4.85 }, { logMAR: '5.3', decimal: 2.0, sizeMm: 3.64 },
+            ].map(level => ({
+                ...level,
+                sizePx: (level.sizeMm * PIXELS_PER_MM_ASSUMED) / 4
+            }));
+
+            const gridContainer = document.getElementById('level-grid-container');
+            VISION_LEVELS.forEach(level => {
+                const btn = document.createElement('button');
+                btn.className = 'level-btn';
+                btn.innerHTML = `<span class="decimal">${level.decimal}</span><span class="logmar">(${level.logMAR})</span>`;
+                btn.onclick = () => {
+                    // 将测试配置保存到 localStorage
+                    localStorage.setItem('testConfig', JSON.stringify({
+                        type: 'baseline',
+                        level: level
+                    }));
+                    window.location.href = 'test.html'; // 跳转到测试页面
+                };
+                gridContainer.appendChild(btn);
+            });
+        });
+    </script>
+</body>
+</html>

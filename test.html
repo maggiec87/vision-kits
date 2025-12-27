@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>视力测试中</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- SVG 图标定义文件，所有页面共享 -->
+    <div style="display: none;">
+        <object type="image/svg+xml" data="icons.svg"></object>
+    </div>
+
+    <!-- 测试页 -->
+    <div id="page-test" class="page">
+        <header class="test-header">
+            <div id="test-title" class="test-title"></div>
+            <div class="test-info">
+                <div id="timer-display"><span>计时:</span> <span id="test-timer">0</span>s</div>
+                <div><span>得分:</span> <span id="test-score">0/0</span></div>
+            </div>
+        </header>
+        <main class="test-main">
+            <div id="e-chart-container">
+                <svg id="e-chart-svg" viewBox="0 0 5 5">
+                    <path d="M0,0 H5 V1 H1 V2 H5 V3 H1 V4 H5 V5 H0 Z" fill="currentColor"/>
+                </svg>
+            </div>
+        </main>
+        
+        <!-- === 移动端专属控制面板 === -->
+        <div class="mobile-controls-panel">
+            <div class="directional-pad-container">
+                <button class="mobile-control-btn touch-btn btn-dir-up" data-dir="up"><svg><use href="icons.svg#icon-up"/></svg></button>
+                <button class="mobile-control-btn touch-btn btn-dir-left" data-dir="left"><svg><use href="icons.svg#icon-left"/></svg></button>
+                <div style="grid-area: 2 / 2 / 3 / 3;"></div>
+                <button class="mobile-control-btn touch-btn btn-dir-right" data-dir="right"><svg><use href="icons.svg#icon-right"/></svg></button>
+                <button class="mobile-control-btn touch-btn btn-dir-down" data-dir="down"><svg><use href="icons.svg#icon-down"/></svg></button>
+            </div>
+            <div class="menu-btn-container">
+                <button id="mobile-btn-menu" class="mobile-control-btn bg-light-blue"><svg><use href="icons.svg#icon-menu"/></svg><span>菜单 / 暂停</span></button>
+            </div>
+        </div>
+
+        <!-- 已删除桌面端底部按钮 -->
+    </div>
+
+    <!-- 菜单/结果弹窗 (整合) -->
+    <div id="result-modal" style="display: none;">
+        <div class="modal-content">
+            <h2 id="modal-title">已暂停</h2>
+            <div id="modal-body"></div>
+            <div id="modal-actions" class="modal-actions">
+                <!-- 注意：调整了按钮顺序，把“继续”放在中间或第一个，方便操作 -->
+                <button id="modal-btn-end" class="btn bg-red">结束</button>
+                <button id="modal-btn-continue" class="btn bg-blue">继续</button>
+                <button id="modal-btn-exit" class="btn bg-gray">退出</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- 数据和常量 ---
+            const PIXELS_PER_MM_ASSUMED = 96 / 25.4;
+            const VISION_LEVELS = [
+              { logMAR: '4.0', decimal: 0.1, sizeMm: 72.72 }, { logMAR: '4.1', decimal: 0.12, sizeMm: 60.60 },
+              { logMAR: '4.2', decimal: 0.15, sizeMm: 48.48 }, { logMAR: '4.3', decimal: 0.2, sizeMm: 36.36 },
+              { logMAR: '4.4', decimal: 0.25, sizeMm: 29.09 }, { logMAR: '4.5', decimal: 0.3, sizeMm: 24.24 },
+              { logMAR: '4.6', decimal: 0.4, sizeMm: 18.18 }, { logMAR: '4.7', decimal: 0.5, sizeMm: 14.54 },
+              { logMAR: '4.8', decimal: 0.6, sizeMm: 12.12 }, { logMAR: '4.9', decimal: 0.8, sizeMm: 9.09 },
+              { logMAR: '5.0', decimal: 1.0, sizeMm: 7.27 }, { logMAR: '5.1', decimal: 1.2, sizeMm: 6.06 },
+              { logMAR: '5.2', decimal: 1.5, sizeMm: 4.85 }, { logMAR: '5.3', decimal: 2.0, sizeMm: 3.64 },
+            ].map(level => ({
+                ...level,
+                sizePx: (level.sizeMm * PIXELS_PER_MM_ASSUMED) / 4
+            }));
+            const DIRECTIONS = ['up', 'down', 'left', 'right'];
+            const KEY_MAP = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right' };
+            const ROTATION_MAP = { up: -90, down: 90, left: 180, right: 0 };
+
+            // --- 应用状态 (从 localStorage 加载) ---
+            let appState = {
+                testConfig: null,
+                testState: {
+                    status: 'idle', timer: 0, correct: 0, total: 0, currentE: null, type: null,
+                },
+                timerInterval: null,
+            };
+
+            // --- DOM 元素引用 ---
+            const eChartEl = document.getElementById('e-chart-svg');
+            const testTimerEl = document.getElementById('test-timer');
+            const testScoreEl = document.getElementById('test-score');
+            const resultModal = document.getElementById('result-modal');
+            const timerDisplay = document.getElementById('timer-display');
+            
+            // --- 核心功能函数 ---
+            function renderEChart(sizePx, direction) {
+                eChartEl.style.width = `${sizePx}px`;
+                eChartEl.style.height = `${sizePx}px`;
+                eChartEl.style.transform = `rotate(${ROTATION_MAP[direction]}deg)`;
+            }
+
+            function generateRandomE(level) {
+                const randomDirection = DIRECTIONS[Math.floor(Math.random() * DIRECTIONS.length)];
+                return { level, direction: randomDirection };
+            }
+
+            function startTest(config) {
+                appState.testConfig = config;
+                let initialE;
+                if (config.type === 'baseline') {
+                    initialE = generateRandomE(config.level);
+                    timerDisplay.style.display = 'none'; // 基准测试隐藏倒计时
+                } else { // fogging
+                    const levels = [...config.fogLevels, config.minLevel];
+                    const randomLevel = levels[Math.floor(Math.random() * levels.length)];
+                    initialE = generateRandomE(randomLevel);
+                    timerDisplay.style.display = 'block';
+                }
+                
+                const initialTimer = config.type === 'baseline' ? 0 : 60; // 雾视挑战设60秒
+
+                appState.testState = { status: 'running', timer: initialTimer, correct: 0, total: 0, currentE: initialE, type: config.type };
+                updateTestUI();
+                
+                if (config.type === 'fogging') {
+                    startTimer();
+                }
+            }
+            
+            function startTimer() {
+                if (appState.timerInterval) clearInterval(appState.timerInterval);
+                appState.timerInterval = setInterval(() => {
+                    if (appState.testState.status !== 'running') return;
+                    appState.testState.timer--;
+                    testTimerEl.textContent = appState.testState.timer;
+                    if (appState.testState.timer <= 0) {
+                        showMenu('挑战时间结束', null, true); // true 表示结束
+                    }
+                }, 1000);
+            }
+
+            function handleAnswer(answer) {
+                if (appState.testState.status !== 'running') return;
+                const state = appState.testState;
+                const config = appState.testConfig;
+                
+                state.correct += (answer === state.currentE.direction ? 1 : 0);
+                state.total += 1;
+
+                // 基准测试：满10次自动结算
+                if (state.type === 'baseline' && state.total >= 10) {
+                    updateTestUI(); // 更新最后一次分数
+                    evaluateBaselineResult();
+                    return;
+                }
+
+                let nextE;
+                if (state.type === 'baseline') {
+                    nextE = generateRandomE(config.level);
+                } else {
+                    const isNextMinLevel = (state.total + 1) % 2 !== 0;
+                    const levelToUse = isNextMinLevel ? config.minLevel : config.fogLevels[Math.floor(Math.random() * config.fogLevels.length)];
+                    nextE = generateRandomE(levelToUse);
+                }
+                state.currentE = nextE;
+                updateTestUI();
+            }
+
+            // --- 基准测试评估逻辑 ---
+            function evaluateBaselineResult() {
+                clearInterval(appState.timerInterval);
+                appState.testState.status = 'paused'; // 停止交互
+                
+                const { correct } = appState.testState;
+                let title = "基准测试完成";
+                let message = `<p>得分: <strong>${correct}/10</strong></p>`;
+                
+                if (correct >= 8) {
+                    message += `<p class="eval-text text-green">✔ 视标合适</p><p>准确率达标，可进行雾视挑战</p>`;
+                } else if (correct <= 6) {
+                    message += `<p class="eval-text text-red">✘ 建议换大一级</p><p>准确率过低，请调整视标重测。</p>`;
+                } else {
+                    message += `<p class="eval-text text-yellow">⚠ 建议重测</p><p>处于临界值，建议再测一次。</p>`;
+                }
+
+                showMenu(title, message, true); // true 表示是基准测试结束，隐藏"继续"
+            }
+
+            // --- 菜单/模态框逻辑 (支持遥控器焦点) ---
+            
+            // 辅助函数：设置菜单按钮焦点
+            function focusMenuButton(index) {
+                const buttons = document.querySelectorAll('#modal-actions button');
+                // 过滤掉隐藏的按钮（例如基准测试结束时的“继续”按钮）
+                const visibleButtons = Array.from(buttons).filter(btn => btn.style.display !== 'none');
+                
+                if (visibleButtons.length === 0) return;
+
+                // 确保索引在范围内（循环选择）
+                if (index < 0) index = visibleButtons.length - 1;
+                if (index >= visibleButtons.length) index = 0;
+
+                // 设置焦点
+                visibleButtons[index].focus();
+            }
+
+            function showMenu(title = "已暂停", customBody = null, isFinished = false) {
+                // 暂停计时器
+                if (appState.timerInterval) clearInterval(appState.timerInterval);
+                if (appState.testState.status === 'running') appState.testState.status = 'paused';
+
+                resultModal.style.display = 'flex';
+                document.getElementById('modal-title').textContent = title;
+                
+                const { correct, total, type } = appState.testState;
+                const config = appState.testConfig;
+                const level = type === 'baseline' ? config?.level?.decimal : config?.minLevel?.decimal;
+
+                if (customBody) {
+                    document.getElementById('modal-body').innerHTML = customBody;
+                } else {
+                    document.getElementById('modal-body').innerHTML = `
+                        <p>当前模式: ${type === 'baseline' ? '基准测试' : '雾视挑战'}</p>
+                        <p>当前视标: ${level || '-'}</p>
+                        <p>当前得分: <strong>${correct} / ${total}</strong></p>
+                    `;
+                }
+
+                // 按钮控制
+                const btnContinue = document.getElementById('modal-btn-continue');
+                if (isFinished) {
+                    btnContinue.style.display = 'none'; // 结束了就不能继续
+                } else {
+                    btnContinue.style.display = 'inline-block'; // 恢复显示
+                    btnContinue.onclick = resumeTest;
+                }
+
+                document.getElementById('modal-btn-end').onclick = () => endTestAndSave();
+                
+                // 修改：退出按钮跳转到 better_vision.html
+                document.getElementById('modal-btn-exit').onclick = () => {
+                    window.location.href = "better_vision.html"; 
+                };
+
+                // --- 自动聚焦逻辑 ---
+                // 延时一点点，确保 DOM 渲染完成
+                setTimeout(() => {
+                    // 如果是暂停状态，默认聚焦“继续”按钮（它通常是第二个可见按钮，或者根据ID找）
+                    // 如果是结束状态，“继续”隐藏了，默认聚焦第一个可见按钮（通常是“结束”）
+                    const buttons = Array.from(document.querySelectorAll('#modal-actions button')).filter(b => b.style.display !== 'none');
+                    const continueBtnIndex = buttons.indexOf(btnContinue);
+                    
+                    if (continueBtnIndex !== -1) {
+                        focusMenuButton(continueBtnIndex); // 聚焦“继续”
+                    } else {
+                        focusMenuButton(0); // 聚焦第一个（通常是“结束”）
+                    }
+                }, 50);
+            }
+
+            function resumeTest() {
+                resultModal.style.display = 'none';
+                appState.testState.status = 'running';
+                if (appState.testState.type === 'fogging') {
+                    startTimer();
+                }
+            }
+
+            function endTestAndSave() {
+                resultModal.style.display = 'none';
+                const state = appState.testState;
+                
+                // 只有有数据才保存
+                if (state.total > 0 || state.type === 'baseline') { 
+                    let history = JSON.parse(localStorage.getItem('visionHistory') || '[]');
+                    const newRecord = { 
+                        date: new Date().toLocaleDateString(), 
+                        time: new Date().toLocaleTimeString(), 
+                        type: state.type === 'baseline' ? '测定基准' : '雾视挑战', 
+                        level: appState.testConfig?.level?.decimal || appState.testConfig?.minLevel?.decimal, 
+                        accuracy: state.total > 0 ? (state.correct / state.total) * 100 : 0, 
+                        score: `${state.correct}/${state.total}` 
+                    };
+                    history.unshift(newRecord);
+                    try {
+                        localStorage.setItem('visionHistory', JSON.stringify(history));
+                    } catch (e) { console.error(e); }
+                }
+                
+                appState.testState.status = 'idle';
+                window.location.href = 'history.html'; // 跳转到历史记录页
+            }
+
+            function updateTestUI() {
+                const { timer, correct, total, currentE, type } = appState.testState;
+                const config = appState.testConfig;
+                document.getElementById('test-title').textContent = `${type === 'baseline' ? '基准测定' : '雾视挑战'} - ${config?.level?.decimal || config?.minLevel?.decimal || ''}`;
+                testTimerEl.textContent = timer;
+                testScoreEl.textContent = `${correct}/${total}`;
+                if (currentE) renderEChart(currentE.level.sizePx, currentE.direction);
+            }
+
+            // --- 事件监听器 ---
+            document.getElementById('mobile-btn-menu').onclick = () => showMenu();
+            // 已删除 desktop-btn-menu 的监听器
+
+            document.querySelectorAll('.touch-btn').forEach(btn => {
+                btn.onclick = () => handleAnswer(btn.dataset.dir);
+            });
+
+            // --- 键盘/遥控器事件 (重写逻辑) ---
+            window.addEventListener('keydown', (e) => {
+                const keyCode = e.keyCode || e.which;
+                const isMenuOpen = resultModal.style.display === 'flex';
+                
+                // 1. 确定/OK/空格/Select/Enter
+                if (e.key === 'Enter' || e.key === ' ' || e.key === 'OK' || e.key === 'Select' || keyCode === 13) {
+                    e.preventDefault();
+                    
+                    if (isMenuOpen) {
+                        // 菜单打开时：点击当前聚焦的按钮
+                        if (document.activeElement && document.activeElement.tagName === 'BUTTON') {
+                            document.activeElement.click();
+                        } else {
+                            // 容错：如果焦点丢了，尝试找“继续”或第一个按钮
+                            const btnContinue = document.getElementById('modal-btn-continue');
+                            if (btnContinue.style.display !== 'none') {
+                                btnContinue.click();
+                            } else {
+                                // 否则点第一个可见按钮
+                                const firstBtn = document.querySelector('#modal-actions button:not([style*="display: none"])');
+                                if (firstBtn) firstBtn.click();
+                            }
+                        }
+                    } else {
+                        // 菜单没打开：打开菜单
+                        showMenu();
+                    }
+                    return;
+                }
+
+                // 2. 菜单导航 (当菜单打开时)
+                if (isMenuOpen) {
+                    // 获取所有可见按钮
+                    const buttons = Array.from(document.querySelectorAll('#modal-actions button')).filter(b => b.style.display !== 'none');
+                    let currentIndex = buttons.indexOf(document.activeElement);
+                    
+                    // 如果当前没聚焦任何按钮，默认归为 -1
+                    
+                    if (['ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'].includes(e.key) || KEY_MAP[e.key]) {
+                        e.preventDefault(); // 阻止滚动
+                        
+                        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+                            focusMenuButton(currentIndex - 1);
+                        } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+                            focusMenuButton(currentIndex + 1);
+                        }
+                    }
+                    return; // 阻止后续逻辑，不让它去判断视力表方向
+                }
+
+                // 3. 视力表测试操作 (仅当菜单关闭时)
+                if (KEY_MAP[e.key]) {
+                    e.preventDefault();
+                    handleAnswer(KEY_MAP[e.key]);
+                }
+            });
+
+            // --- 初始化 ---
+            function initialize() {
+                const storedConfig = localStorage.getItem('testConfig');
+                if (storedConfig) {
+                    try {
+                        const config = JSON.parse(storedConfig);
+                        startTest(config);
+                    } catch (e) {
+                        console.error("Config parse error", e);
+                        window.location.href = 'better_vision.html'; // 出错也跳到新主页
+                    }
+                } else {
+                    // 如果没有配置，说明是从其他页面直接进入，应该返回主页
+                    window.location.href = 'better_vision.html'; // 修改为新主页
+                }
+            }
+
+            initialize();
+        });
+    </script>
+</body>
+</html>
