@@ -2,14 +2,14 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>视力测试中</title>
     <link rel="stylesheet" href="style.css">
     <style>
         /* 针对移动端中心按钮的内联样式补充 */
         #mobile-btn-menu {
             display: flex;
-            flex-direction: column; /* 图标在上，文字在下 */
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             padding: 0;
@@ -26,13 +26,23 @@
             line-height: 1;
             font-weight: bold;
         }
-        /* 调整方向键容器间隙 */
         .directional-pad-container {
             gap: 8px; 
         }
+        /* 电视兼容性：确保模态框层级最高且可见 */
+        #result-modal {
+            z-index: 9999;
+        }
+        /* 电视兼容性：为获得焦点的按钮添加明显样式 */
+        button:focus {
+            outline: 4px solid #FFD700; /* 金色边框 */
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+        }
     </style>
 </head>
-<body>
+<!-- 添加 tabindex="0" 让 body 可聚焦，捕获电视按键 -->
+<body tabindex="0">
     <!-- SVG 图标定义文件 -->
     <div style="display: none;">
         <object type="image/svg+xml" data="icons.svg"></object>
@@ -58,31 +68,14 @@
         <!-- === 移动端专属控制面板 === -->
         <div class="mobile-controls-panel">
             <div class="directional-pad-container">
-                <!-- 上 -->
-                <button class="mobile-control-btn touch-btn btn-dir-up" data-dir="up">
-                    <svg><use href="icons.svg#icon-up"/></svg>
-                </button>
-                
-                <!-- 左 -->
-                <button class="mobile-control-btn touch-btn btn-dir-left" data-dir="left">
-                    <svg><use href="icons.svg#icon-left"/></svg>
-                </button>
-                
-                <!-- 中间：暂停/菜单键 (黄色小块) -->
+                <button class="mobile-control-btn touch-btn btn-dir-up" data-dir="up"><svg><use href="icons.svg#icon-up"/></svg></button>
+                <button class="mobile-control-btn touch-btn btn-dir-left" data-dir="left"><svg><use href="icons.svg#icon-left"/></svg></button>
                 <button id="mobile-btn-menu" class="mobile-control-btn bg-yellow" style="grid-area: 2 / 2 / 3 / 3;">
                     <svg><use href="icons.svg#icon-menu"/></svg>
                     <span>暂停</span>
                 </button>
-                
-                <!-- 右 -->
-                <button class="mobile-control-btn touch-btn btn-dir-right" data-dir="right">
-                    <svg><use href="icons.svg#icon-right"/></svg>
-                </button>
-                
-                <!-- 下 -->
-                <button class="mobile-control-btn touch-btn btn-dir-down" data-dir="down">
-                    <svg><use href="icons.svg#icon-down"/></svg>
-                </button>
+                <button class="mobile-control-btn touch-btn btn-dir-right" data-dir="right"><svg><use href="icons.svg#icon-right"/></svg></button>
+                <button class="mobile-control-btn touch-btn btn-dir-down" data-dir="down"><svg><use href="icons.svg#icon-down"/></svg></button>
             </div>
         </div>
     </div>
@@ -102,20 +95,11 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // --- 电视焦点初始化 ---
+            document.body.focus();
+
             // --- 数据和常量 ---
             const PIXELS_PER_MM_ASSUMED = 96 / 25.4;
-            const VISION_LEVELS = [
-              { logMAR: '4.0', decimal: 0.1, sizeMm: 72.72 }, { logMAR: '4.1', decimal: 0.12, sizeMm: 60.60 },
-              { logMAR: '4.2', decimal: 0.15, sizeMm: 48.48 }, { logMAR: '4.3', decimal: 0.2, sizeMm: 36.36 },
-              { logMAR: '4.4', decimal: 0.25, sizeMm: 29.09 }, { logMAR: '4.5', decimal: 0.3, sizeMm: 24.24 },
-              { logMAR: '4.6', decimal: 0.4, sizeMm: 18.18 }, { logMAR: '4.7', decimal: 0.5, sizeMm: 14.54 },
-              { logMAR: '4.8', decimal: 0.6, sizeMm: 12.12 }, { logMAR: '4.9', decimal: 0.8, sizeMm: 9.09 },
-              { logMAR: '5.0', decimal: 1.0, sizeMm: 7.27 }, { logMAR: '5.1', decimal: 1.2, sizeMm: 6.06 },
-              { logMAR: '5.2', decimal: 1.5, sizeMm: 4.85 }, { logMAR: '5.3', decimal: 2.0, sizeMm: 3.64 },
-            ].map(level => ({
-                ...level,
-                sizePx: (level.sizeMm * PIXELS_PER_MM_ASSUMED) / 4
-            }));
             const DIRECTIONS = ['up', 'down', 'left', 'right'];
             const KEY_MAP = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right' };
             const ROTATION_MAP = { up: -90, down: 90, left: 180, right: 0 };
@@ -123,9 +107,7 @@
             // --- 应用状态 ---
             let appState = {
                 testConfig: null,
-                testState: {
-                    status: 'idle', timer: 0, correct: 0, total: 0, currentE: null, type: null,
-                },
+                testState: { status: 'idle', timer: 0, correct: 0, total: 0, currentE: null, type: null },
                 timerInterval: null,
             };
 
@@ -179,12 +161,13 @@
                     appState.testState.timer--;
                     testTimerEl.textContent = appState.testState.timer;
                     
-                    // === 修改点：时间结束逻辑 ===
+                    // === 自动结束逻辑 ===
                     if (appState.testState.timer <= 0) {
-                        clearInterval(appState.timerInterval); // 停止计时器
-                        appState.testState.status = 'paused';  // 暂停状态
+                        clearInterval(appState.timerInterval);
+                        appState.testState.status = 'paused';
                         
-                        // 弹出菜单，isFinished = false (保留继续按钮)
+                        // 强制调用显示菜单，确保电视端也能看到
+                        console.log("Timer ended, showing menu"); 
                         showMenu('挑战时间结束', null, false);
                     }
                 }, 1000);
@@ -232,7 +215,6 @@
                     message += `<p class="eval-text text-yellow">⚠ 建议重测</p><p>处于临界值，建议再测一次。</p>`;
                 }
 
-                // 基准测试完成是真正的结束，isFinished = true (隐藏继续按钮)
                 showMenu(title, message, true);
             }
 
@@ -241,8 +223,11 @@
                 const buttons = document.querySelectorAll('#modal-actions button');
                 const visibleButtons = Array.from(buttons).filter(btn => btn.style.display !== 'none');
                 if (visibleButtons.length === 0) return;
+                
+                // 确保索引在有效范围内
                 if (index < 0) index = visibleButtons.length - 1;
                 if (index >= visibleButtons.length) index = 0;
+                
                 visibleButtons[index].focus();
             }
 
@@ -276,28 +261,32 @@
                 }
 
                 document.getElementById('modal-btn-end').onclick = () => endTestAndSave();
+                
+                // === 修改点 1: 退出链接到 better_vision.html ===
                 document.getElementById('modal-btn-exit').onclick = () => {
-                    window.location.href = "index.html"; 
+                    window.location.href = "better_vision.html"; 
                 };
 
+                // 延迟聚焦，确保DOM渲染完成，解决电视端焦点丢失问题
                 setTimeout(() => {
                     const buttons = Array.from(document.querySelectorAll('#modal-actions button')).filter(b => b.style.display !== 'none');
+                    // 默认聚焦“继续”按钮（如果存在），否则聚焦第一个按钮
                     const continueBtnIndex = buttons.indexOf(btnContinue);
-                    if (continueBtnIndex !== -1) {
+                    if (continueBtnIndex !== -1 && btnContinue.style.display !== 'none') {
                         focusMenuButton(continueBtnIndex);
                     } else {
                         focusMenuButton(0);
                     }
-                }, 100);
+                }, 200);
             }
 
             function resumeTest() {
                 resultModal.style.display = 'none';
                 appState.testState.status = 'running';
                 
-                // === 修改点：继续逻辑 ===
-                // 只有当时间还有剩余时，才重新启动倒计时
-                // 如果时间已耗尽(<=0)，用户点击继续则进入"自由练习模式"，不再倒计时
+                // 恢复焦点到 body，以便继续接收方向键
+                document.body.focus();
+
                 if (appState.testState.type === 'fogging' && appState.testState.timer > 0) {
                     startTimer();
                 }
@@ -340,25 +329,28 @@
                 btn.onclick = () => handleAnswer(btn.dataset.dir);
             });
 
-            // --- 键盘/遥控器监听 ---
-            window.addEventListener('keydown', (e) => {
-                const keyCode = e.keyCode || e.which;
+            // --- 键盘/遥控器监听 (核心修改部分) ---
+            // 处理按键逻辑的通用函数
+            function handleRemoteControl(key, keyCode, event) {
                 const isMenuOpen = resultModal.style.display === 'flex';
                 
-                // 兼容性修复：包含 13(PC/标准), 23(Android TV), 108(部分其他)
+                // === 修改点 2: 增强的确定键检测 ===
+                // 13: Enter, 23: D-pad Center(Android TV), 66: Enter(某些老式Android), 108: Start/Select
                 const isConfirmKey = (
-                    e.key === 'Enter' || e.key === ' ' || e.key === 'OK' || 
-                    e.key === 'Select' || e.key === 'Accept' ||
-                    keyCode === 13 || keyCode === 23 || keyCode === 108
+                    key === 'Enter' || key === ' ' || key === 'OK' || 
+                    key === 'Select' || key === 'Accept' ||
+                    keyCode === 13 || keyCode === 23 || keyCode === 66 || keyCode === 108
                 );
 
                 if (isConfirmKey) {
-                    e.preventDefault(); 
+                    if (event) event.preventDefault(); 
                     
                     if (isMenuOpen) {
+                        // 如果菜单打开，触发当前聚焦按钮的点击
                         if (document.activeElement && document.activeElement.tagName === 'BUTTON') {
                             document.activeElement.click();
                         } else {
+                            // 兜底：如果没有聚焦，默认点击高亮的那个
                             const btnContinue = document.getElementById('modal-btn-continue');
                             if (btnContinue.style.display !== 'none') {
                                 btnContinue.click();
@@ -368,30 +360,40 @@
                             }
                         }
                     } else {
+                        // 如果菜单没打开，打开菜单
                         showMenu();
                     }
                     return;
                 }
 
+                // 菜单导航逻辑
                 if (isMenuOpen) {
                     const buttons = Array.from(document.querySelectorAll('#modal-actions button')).filter(b => b.style.display !== 'none');
                     let currentIndex = buttons.indexOf(document.activeElement);
+                    if (currentIndex === -1) currentIndex = 0; // 防止索引丢失
                     
-                    if (['ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'].includes(e.key) || KEY_MAP[e.key]) {
-                        e.preventDefault();
-                        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+                    if (['ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'].includes(key) || KEY_MAP[key]) {
+                        if (event) event.preventDefault();
+                        if (key === 'ArrowUp' || key === 'ArrowLeft') {
                             focusMenuButton(currentIndex - 1);
-                        } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+                        } else if (key === 'ArrowDown' || key === 'ArrowRight') {
                             focusMenuButton(currentIndex + 1);
                         }
                     }
                     return;
                 }
 
-                if (KEY_MAP[e.key]) {
-                    e.preventDefault();
-                    handleAnswer(KEY_MAP[e.key]);
+                // 答题逻辑
+                if (KEY_MAP[key]) {
+                    if (event) event.preventDefault();
+                    handleAnswer(KEY_MAP[key]);
                 }
+            }
+
+            // 监听 keydown (主要)
+            window.addEventListener('keydown', (e) => {
+                const keyCode = e.keyCode || e.which;
+                handleRemoteControl(e.key, keyCode, e);
             });
 
             // --- 初始化 ---
