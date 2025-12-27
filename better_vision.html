@@ -22,13 +22,12 @@
             margin: 0;
             padding: 0;
             height: 100%;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
             background-color: var(--gray-50);
             color: #333;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
             touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent; /* 移除移动端点击高亮 */
+            -webkit-tap-highlight-color: transparent;
         }
 
         /* --- 全局返回按钮样式 --- */
@@ -45,10 +44,6 @@
             font-size: 0.875rem;
             font-weight: 500;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: background-color 0.2s ease;
-        }
-        .global-back-button:hover {
-            background-color: var(--gray-700);
         }
 
         /* --- 页面容器 --- */
@@ -88,10 +83,10 @@
         .btn, .footer-btn, .mobile-control-btn {
             color: var(--white);
             border-radius: 0.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
             border: none;
             cursor: pointer;
-            transition: all 0.1s ease; /* 优化：过渡时间缩短 */
+            transition: all 0.1s ease;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -99,25 +94,18 @@
             text-decoration: none;
             box-sizing: border-box;
         }
-        .btn:focus, .footer-btn:focus, .mobile-control-btn:focus {
-            outline: none;
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.4);
-        }
-
-        /* 新增：为按钮添加按下的 active 状态，提升触摸响应感 */
         .btn:active, .footer-btn:active, .mobile-control-btn:active {
             transform: scale(0.97);
-            box-shadow: 0 2px 4px -1px rgba(0,0,0,0.1);
             filter: brightness(0.95);
         }
 
-        /* --- 按钮颜色工具类 (通用) --- */
-        .bg-blue { background-color: var(--blue-500); } .bg-blue:hover { background-color: var(--blue-600); }
-        .bg-green { background-color: var(--green-500); } .bg-green:hover { background-color: var(--green-600); }
-        .bg-purple { background-color: var(--purple-500); } .bg-purple:hover { background-color: var(--purple-600); }
-        .bg-gray { background-color: var(--gray-500); } .bg-gray:hover { background-color: var(--gray-600); }
-        .bg-red { background-color: var(--red-500); } .bg-red:hover { background-color: var(--red-600); }
-        .bg-yellow { background-color: var(--yellow-500); } .bg-yellow:hover { background-color: var(--yellow-600); }
+        /* --- 按钮颜色工具类 --- */
+        .bg-blue { background-color: var(--blue-500); }
+        .bg-green { background-color: var(--green-500); }
+        .bg-purple { background-color: var(--purple-500); }
+        .bg-gray { background-color: var(--gray-500); }
+        .bg-red { background-color: var(--red-500); }
+        .bg-yellow { background-color: var(--yellow-500); }
 
         /* --- 主页按钮特定样式 --- */
         .btn { padding: 1.25rem; font-size: 1.125rem; width: 100%; }
@@ -125,25 +113,22 @@
 
         /* --- 内容页 & Prose 样式 --- */
         .content-page { padding: 1rem; max-width: 56rem; margin: 0 auto; }
-        .content-page h2 { font-size: 1.5rem; font-weight: bold; text-align: center; margin-bottom: 1rem; }
-        .content-page h4 { font-size: 1.2rem; font-weight: bold; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+        .content-page h2 { font-size: 1.5rem; font-weight: bold; text-align: center; margin-bottom: 0.5rem; }
+        .content-page h4 { font-size: 1.1rem; font-weight: bold; margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--gray-700); }
         .back-btn-container { text-align: center; margin-top: 1.5rem; }
-        .back-btn { padding: 0.75rem 1.25rem; background-color: var(--gray-600); color: var(--white); border: none; border-radius: 0.5rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); cursor: pointer; }
-        .back-btn:hover { background-color: var(--gray-700); }
+        .back-btn { padding: 0.75rem 1.25rem; background-color: var(--gray-600); color: var(--white); border: none; border-radius: 0.5rem; cursor: pointer; }
         .prose { background-color: var(--white); padding: 1.25rem; border-radius: 0.5rem; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1); line-height: 1.6; font-size: 0.95rem; }
         .prose p, .prose li { color: #374151; }
         .prose ol, .prose ul { padding-left: 1.25rem; margin-bottom: 1rem; }
-        .prose .disclaimer { font-weight: bold; color: var(--red-600); }
-        .prose ul li { list-style-type: disc; }
-        .prose ol li { list-style-type: decimal; }
-
+        .prose .disclaimer { font-weight: bold; color: var(--red-600); margin-top: 1rem; }
+        .author-info { text-align: center; color: var(--gray-500); font-size: 0.9rem; margin-bottom: 1.5rem; }
+        .author-info a { color: var(--blue-500); text-decoration: none; }
 
         /* --- 视标选择页样式 --- */
         .setup-page { padding: 1rem; }
         .setup-page h2 { font-size: 1.5rem; font-weight: bold; text-align: center; margin-bottom: 1rem; }
         .level-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; max-width: 64rem; margin: 0 auto; }
-        .level-btn { padding: 0.75rem; background-color: var(--white); border: 2px solid var(--gray-300); border-radius: 0.5rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s; }
-        .level-btn:hover { background-color: var(--gray-100); }
+        .level-btn { padding: 0.75rem; background-color: var(--white); border: 2px solid var(--gray-300); border-radius: 0.5rem; cursor: pointer; }
         .level-btn .decimal { display: block; font-size: 1rem; font-weight: bold; color: #1f2937; }
         .level-btn .logmar { display: block; font-size: 0.8rem; color: var(--gray-500); }
 
@@ -162,16 +147,15 @@
         }
         .test-title { font-size: 1rem; font-weight: bold; text-align: center; }
         .test-info { display: flex; gap: 0.75rem; font-size: 0.875rem; }
-        .test-info span { font-weight: 600; }
         .test-main { flex-grow: 1; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
         #e-chart-container { display: flex; align-items: center; justify-content: center; }
-        #e-chart-svg { color: var(--black); } /* E视标大小由JS控制 */
+        #e-chart-svg { color: var(--black); }
         
         /* --- 移动端专属控制面板 --- */
         .mobile-controls-panel {
             display: flex;
             flex-direction: column;
-            gap: 1rem; /* Gap between D-pad and action grid */
+            gap: 1rem;
             padding: 1rem;
             background-color: var(--gray-200);
             flex-shrink: 0;
@@ -192,127 +176,79 @@
             height: 100%;
             width: 100%;
             font-size: 0.75rem;
-            flex-direction: column; /* Icon above text */
+            flex-direction: column;
         }
-        .directional-pad-container .mobile-control-btn svg {
-            width: 28px;
-            height: 28px;
-        }
-
-        /* D-pad layout */
+        .directional-pad-container .mobile-control-btn svg { width: 28px; height: 28px; }
         .directional-pad-container .btn-dir-up    { grid-area: 1 / 2 / 2 / 3; }
         .directional-pad-container .btn-dir-left  { grid-area: 2 / 1 / 3 / 2; }
-        .directional-pad-container .dpad-center-filler { grid-area: 2 / 2 / 3 / 3; background-color: transparent; }
         .directional-pad-container .btn-dir-right { grid-area: 2 / 3 / 3 / 4; }
         .directional-pad-container .btn-dir-down  { grid-area: 3 / 2 / 4 / 3; }
         
-        /* Action Buttons Grid */
-        .action-buttons-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
+        /* 底部菜单按钮 (优化后：正常大小，居中) */
+        .menu-btn-container {
             width: 100%;
-            max-width: 320px;
+            display: flex;
+            justify-content: center;
         }
-        .action-buttons-grid .mobile-control-btn {
-            height: 56px;
-            font-size: 0.95rem;
-            flex-direction: column; /* Icon above text */
-        }
-        .action-buttons-grid .mobile-control-btn svg {
-            width: 24px;
-            height: 24px;
-            margin-bottom: 0.25rem;
+        .menu-btn-container .mobile-control-btn {
+            height: auto;
+            padding: 0.75rem 2rem;
+            font-size: 1rem;
+            width: auto; /* 不再全宽 */
+            min-width: 160px;
+            border-radius: 2rem; /* 圆角胶囊状 */
         }
 
         /* --- 桌面端专属底部 --- */
         .desktop-footer {
-            display: none; /* 默认隐藏 */
+            display: none;
+            justify-content: center;
+            padding: 1rem;
+            background-color: var(--white);
+            flex-shrink: 0;
         }
         .desktop-footer .footer-btn { 
             font-size: 1rem; 
-            padding: 0.5rem 1rem; 
+            padding: 0.75rem 2.5rem; 
             font-weight: 500;
+            width: auto; /* 正常大小 */
+            border-radius: 2rem; /* 圆角胶囊状 */
         }
-        .desktop-footer .footer-btn svg { margin-right: 0.5rem; width: 20px; height: 20px; }
 
-        #pause-overlay { position: absolute; inset: 0; background-color: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10; }
-        #pause-overlay h2 { font-size: 2.5rem; font-weight: bold; color: var(--white); }
-
-        /* --- 结果弹窗样式 --- */
+        /* --- 结果/菜单弹窗样式 --- */
         #result-modal { position: fixed; inset: 0; background-color: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 1rem; }
         .modal-content { background-color: var(--white); border-radius: 0.75rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); padding: 1.5rem; max-width: 28rem; width: 100%; text-align: center; }
         .modal-content h2 { font-size: 1.5rem; font-weight: bold; margin-bottom: 0.75rem; }
         .modal-content p { font-size: 1rem; margin-bottom: 0.4rem; }
         .modal-actions { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.5rem; }
         .modal-actions .btn { padding: 0.75rem 1rem; font-size: 0.95rem; }
+        
+        /* 评价文字颜色 */
+        .eval-text { font-size: 1.1rem; margin-top: 10px; font-weight: bold; }
+        .text-green { color: var(--green-600); }
+        .text-red { color: var(--red-600); }
+        .text-yellow { color: var(--yellow-600); }
 
         /* --- 历史记录页样式 --- */
-        .history-table-container { overflow-x: auto; background-color: var(--white); border-radius: 0.5rem; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1); margin-top: 1.5rem; }
+        .history-table-container { overflow-x: auto; background-color: var(--white); border-radius: 0.5rem; margin-top: 1.5rem; }
         .history-table { width: 100%; text-align: left; color: var(--gray-500); font-size: 0.8rem; border-collapse: collapse; }
-        .history-table thead { background-color: var(--gray-50); color: #374151; text-transform: uppercase; font-size: 0.7rem; }
+        .history-table thead { background-color: var(--gray-50); color: #374151; }
         .history-table th, .history-table td { padding: 0.6rem 0.4rem; border-bottom: 1px solid var(--gray-200); }
-        .history-table tbody tr:last-child td { border-bottom: none; }
-        .history-table td:first-child { white-space: normal; }
-        .no-history { text-align: center; color: var(--gray-500); margin-top: 2rem; }
-        .history-actions { display: flex; justify-content: center; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap; }
-        .history-actions .btn { padding: 0.75rem 1rem; font-size: 0.95rem; }
+        .history-actions { display: flex; justify-content: center; gap: 0.75rem; margin-top: 1.5rem; }
 
-        /* --- 桌面端适配样式 (min-width: 769px) --- */
+        /* --- 桌面端适配 --- */
         @media (min-width: 769px) {
             #page-home h1 { font-size: 3rem; margin-bottom: 3rem; }
             .home-grid { grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-            .btn { padding: 1.5rem; font-size: 1.25rem; width: auto; }
-            .btn svg { margin-right: 0.75rem; width: 24px; height: 24px; }
-
             .content-page { padding: 2rem; }
-            .content-page h2 { font-size: 2rem; margin-bottom: 1.5rem; }
-            .content-page h4 { font-size: 1.5rem; margin-top: 2rem; margin-bottom: 1rem; }
-            .back-btn-container { margin-top: 2rem; }
-            .prose { padding: 1.5rem; line-height: 1.7; font-size: 1rem; }
-            .prose ol, .prose ul { padding-left: 1.5rem; }
-
-            .setup-page { padding: 2rem; }
-            .setup-page h2 { font-size: 2rem; margin-bottom: 1.5rem; }
-            .level-grid { grid-template-columns: repeat(5, 1fr); gap: 1rem; }
-            @media (min-width: 1024px) { .level-grid { grid-template-columns: repeat(7, 1fr); } }
-            .level-btn .decimal { font-size: 1.125rem; }
-            .level-btn .logmar { font-size: 0.875rem; }
-
-            .test-header {
-                flex-direction: row;
-                justify-content: space-between;
-                padding: 1rem;
-                gap: 1rem;
-            }
-            .test-title { font-size: 1.25rem; }
-            .test-info { font-size: 1.125rem; gap: 1rem; }
+            .level-grid { grid-template-columns: repeat(7, 1fr); }
             
+            .test-header { flex-direction: row; justify-content: space-between; padding: 1rem; }
             .mobile-controls-panel { display: none; }
-            .desktop-footer {
-                display: flex;
-                justify-content: center;
-                gap: 1rem;
-                padding: 1rem;
-                background-color: var(--white);
-                box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
-                flex-shrink: 0;
-            }
-            #pause-overlay h2 { font-size: 3rem; }
-
-            #result-modal .modal-content { padding: 2rem; }
-            #result-modal .modal-content h2 { font-size: 2rem; margin-bottom: 1rem; }
-            .modal-content p { font-size: 1.125rem; margin-bottom: 0.5rem; }
-            .modal-actions { flex-direction: row; justify-content: center; gap: 1rem; margin-top: 2rem; }
-            .modal-actions .btn { padding: 0.75rem 1.5rem; font-size: 1rem; width: auto; }
-
-            .history-table { font-size: 0.875rem; }
-            .history-table thead { font-size: 0.75rem; }
-            .history-table th, .history-table td { padding: 0.75rem 1.5rem; }
-            .history-table td:first-child { white-space: nowrap; }
-            .no-history { margin-top: 3rem; }
-            .history-actions { gap: 1rem; }
-            .history-actions .btn { padding: 0.75rem 1.5rem; font-size: 1rem; }
+            .desktop-footer { display: flex; }
+            
+            .modal-actions { flex-direction: row; justify-content: center; }
+            .modal-actions .btn { width: auto; min-width: 100px; }
         }
     </style>
 </head>
@@ -327,10 +263,7 @@
             <symbol id="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></symbol>
             <symbol id="icon-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></symbol>
             <symbol id="icon-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></symbol>
-            <symbol id="icon-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></symbol>
-            <symbol id="icon-pause" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="14" y="4" width="4" height="16" rx="1"/><rect x="6" y="4" width="4" height="16" rx="1"/></symbol>
-            <symbol id="icon-redo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"/></symbol>
-            <symbol id="icon-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+            <symbol id="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></symbol>
             <symbol id="icon-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 12h14M5 12l4-4m-4 4l4 4"/><circle cx="19" cy="12" r="1" fill="currentColor"/></symbol>         
             <symbol id="icon-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></symbol>
             <symbol id="icon-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></symbol>
@@ -347,8 +280,8 @@
             <h1>视力表提升裸眼</h1>
             <div class="home-grid">
                 <button id="btn-goto-instructions" class="btn bg-gray"><svg><use href="#icon-help"/></svg>使用说明</button>
-                <button id="btn-goto-baseline" class="btn bg-blue"><svg><use href="#icon-eye"/></svg>测定基准</button>
-                <button id="btn-goto-fogging" class="btn bg-green"><svg><use href="#icon-chart"/></svg>雾视挑战</button>
+                <button id="btn-goto-baseline" class="btn bg-blue"><svg><use href="#icon-eye"/></svg>测定基准 (10次)</button>
+                <button id="btn-goto-fogging" class="btn bg-green"><svg><use href="#icon-chart"/></svg>雾视挑战 (计时)</button>
                 <button id="btn-goto-history" class="btn bg-purple"><svg><use href="#icon-chart"/></svg>历史记录</button>
             </div>
         </div>
@@ -368,12 +301,12 @@
         <header class="test-header">
             <div id="test-title" class="test-title"></div>
             <div class="test-info">
-                <div><span>计时:</span> <span id="test-timer">0</span>s</div>
+                <!-- 基准测试不显示计时器 -->
+                <div id="timer-display"><span>计时:</span> <span id="test-timer">0</span>s</div>
                 <div><span>得分:</span> <span id="test-score">0/0</span></div>
             </div>
         </header>
         <main class="test-main">
-            <div id="pause-overlay" style="display: none;"><h2>已暂停</h2></div>
             <div id="e-chart-container">
                 <svg id="e-chart-svg" viewBox="0 0 5 5">
                     <path d="M0,0 H5 V1 H1 V2 H5 V3 H1 V4 H5 V5 H0 Z" fill="currentColor"/>
@@ -381,38 +314,37 @@
             </div>
         </main>
         
-        <!-- === 移动端专属控制面板 (调整后的布局) === -->
+        <!-- === 移动端专属控制面板 === -->
         <div class="mobile-controls-panel">
             <div class="directional-pad-container">
                 <button class="mobile-control-btn touch-btn btn-dir-up" data-dir="up"><svg><use href="#icon-up"/></svg></button>
                 <button class="mobile-control-btn touch-btn btn-dir-left" data-dir="left"><svg><use href="#icon-left"/></svg></button>
-                <div class="dpad-center-filler"></div> <!-- Empty cell for center -->
+                <div style="grid-area: 2 / 2 / 3 / 3;"></div>
                 <button class="mobile-control-btn touch-btn btn-dir-right" data-dir="right"><svg><use href="#icon-right"/></svg></button>
                 <button class="mobile-control-btn touch-btn btn-dir-down" data-dir="down"><svg><use href="#icon-down"/></svg></button>
             </div>
-            <div class="action-buttons-grid">
-                <button id="mobile-btn-pause-resume" class="mobile-control-btn bg-yellow"><svg><use href="#icon-pause"/></svg><span>暂停</span></button>
-                <button id="mobile-btn-retry" class="mobile-control-btn bg-blue"><svg><use href="#icon-redo"/></svg><span>重测</span></button>
-                <button id="mobile-btn-end" class="mobile-control-btn bg-red"><svg><use href="#icon-x"/></svg><span>结束</span></button>
-                <button id="mobile-btn-back-home" class="mobile-control-btn bg-gray"><svg><use href="#icon-home"/></svg><span>返回</span></button>
+            <!-- 替换为单一菜单按钮 -->
+            <div class="menu-btn-container">
+                <button id="mobile-btn-menu" class="mobile-control-btn bg-yellow"><svg><use href="#icon-menu"/></svg><span>菜单 / 暂停</span></button>
             </div>
         </div>
 
         <!-- === 桌面端专属底部 === -->
         <footer class="desktop-footer">
-            <button id="desktop-btn-pause-resume" class="footer-btn bg-yellow"><svg><use href="#icon-pause"/></svg>暂停</button>
-            <button id="desktop-btn-retry" class="footer-btn bg-blue"><svg><use href="#icon-redo"/></svg>重测</button>
-            <button id="desktop-btn-end" class="footer-btn bg-red"><svg><use href="#icon-x"/></svg>结束</button>
-            <button class="footer-btn bg-gray btn-nav-home"><svg><use href="#icon-home"/></svg>返回</button>
+            <button id="desktop-btn-menu" class="footer-btn bg-yellow"><svg><use href="#icon-menu"/></svg>菜单 / 暂停 (按空格或回车)</button>
         </footer>
     </div>
 
-    <!-- 结果弹窗 -->
+    <!-- 菜单/结果弹窗 (整合) -->
     <div id="result-modal" style="display: none;">
         <div class="modal-content">
-            <h2 id="result-title">挑战结束</h2>
-            <div id="result-body"></div>
-            <div id="result-actions" class="modal-actions"></div>
+            <h2 id="modal-title">已暂停</h2>
+            <div id="modal-body"></div>
+            <div id="modal-actions" class="modal-actions">
+                <button id="modal-btn-end" class="btn bg-red">结束 (统计)</button>
+                <button id="modal-btn-continue" class="btn bg-blue">继续</button>
+                <button id="modal-btn-exit" class="btn bg-gray">退出</button>
+            </div>
         </div>
     </div>
 
@@ -421,41 +353,49 @@
         <!-- 内容由JS动态生成 -->
     </div>
 
-    <!-- 使用说明页 -->
+    <!-- 使用说明页 (更新文案) -->
     <div id="page-instructions" class="page content-page">
         <div>
-            <h2>6米雾视法 | 提升裸眼视力 <span style="font-size: 0.8em; color: var(--gray-500);">(by 欧老师)</span></h2>
+            <h2>6米雾视法 | 提升裸眼视力</h2>
+            <div class="author-info">
+                原创：视目佳 欧老师 
+                (<a href="https://mp.weixin.qq.com/s/luT-_g7lBULiP8KDCFDauA" target="_blank">点击查看原文</a>)
+            </div>
             <div class="prose">
-                <h4>训练原理</h4>
-                <p>通过交替看大小视标来刺激睫状肌。</p>
-                
-                <h4>跟练指南</h4>
+                <p><strong>原理：</strong>通过交替看大小视标来刺激睫状肌。</p>
+
+                <h4>步骤：</h4>
                 <ol>
                     <li><strong>基准定位：</strong>站在距视力表 <strong>5米</strong> 处，找到自己能完全看清的那行视标。</li>
                     <li><strong>雾视挑战：</strong>选择上一步测得的基准视标，后退至 <strong>6米</strong> 位置，循环交替指认基准视标和最大三行的视标。(每日早晚各 <strong>10分钟</strong>)</li>
                 </ol>
+
                 <p class="disclaimer">！！！注意：</p>
                 <ul>
-                    <li>双眼视力差 &gt;2行者，请遮盖弱势眼训练。</li>
+                    <li>双眼视力差2行者，请遮盖弱势眼训练。</li>
                     <li>当能轻松看清当前目标行，立即下移一行加大难度，始终保持轻微模糊感。</li>
                 </ul>
 
-                <h4>双眼视差训练周期</h4>
+                <h4>双眼视差训练周期：</h4>
                 <ul>
                     <li><strong>DAY1-3：</strong>遮盖优势眼20 分钟/天</li>
                     <li><strong>DAY4：</strong>遮盖弱势眼30 分钟/天</li>
                     <li><strong>DAY5-7：</strong>循环DAY1-3模式</li>
                 </ul>
 
-                <h4>安全须知</h4>
-                <ol>
+                <p class="disclaimer">！！！安全须知：</p>
+                <ul>
                     <li>出现头晕/眼胀立即暂停</li>
                     <li>散光200度以上必须戴镜</li>
                     <li>训练后热敷眼周3分钟</li>
                     <li>配合20-20-20护眼法则</li>
-                </ol>
+                    <li>频繁揉眼/眨眼, 立即暂停</li>
+                    <li>说"眼睛好酸", 改做晶体操</li>
+                    <li>注意力涣散, 切换动态追视卡</li>
+                    <li>头晕/恶心, 冷敷眼周+远眺，立即暂停</li>
+                </ul>
 
-                <h4>温馨Tips</h4>
+                <h4>温馨Tips：</h4>
                 <ul>
                     <li><strong>最佳时段：</strong>晨起 & 放学后</li>
                     <li><strong>进阶版：</strong>加入动态追视卡</li>
@@ -463,16 +403,8 @@
                     <li><strong>训练后：</strong>做晶体操或看3D动画放松</li>
                 </ul>
 
-                <h4>安全中止信号 (家长必读!)</h4>
-                <ol>
-                    <li>频繁揉眼/眨眼, 立即暂停</li>
-                    <li>说"眼睛好酸", 改做晶体操</li>
-                    <li>注意力涣散, 切换动态追视卡</li>
-                    <li>头晕/恶心, 冷敷眼周+远眺，立即暂停</li>
-                </ol>
-
-                <h4>效果观测</h4>
-                <p>坚持15天左右对比, 裸眼视力表识别能力</p>
+                <h4>效果观测：</h4>
+                <p>坚持15天左右对比视力表提升行数</p>
             </div>
             <div class="back-btn-container">
                 <button class="back-btn btn-nav-home">返回</button>
@@ -517,17 +449,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const eChartEl = document.getElementById('e-chart-svg');
     const testTimerEl = document.getElementById('test-timer');
     const testScoreEl = document.getElementById('test-score');
-    const pauseOverlay = document.getElementById('pause-overlay');
     const resultModal = document.getElementById('result-modal');
     const globalBackButton = document.querySelector('.global-back-button');
+    const timerDisplay = document.getElementById('timer-display');
     
-    // 引用两个版本的按钮
-    const mobileBtnPauseResume = document.getElementById('mobile-btn-pause-resume');
-    const desktopBtnPauseResume = document.getElementById('desktop-btn-pause-resume');
-    const mobileBtnBackHome = document.getElementById('mobile-btn-back-home');
-    const desktopBtnBackHome = document.querySelector('.desktop-footer .btn-nav-home');
-
-
     // --- 核心功能函数 ---
     function navigateTo(pageId) {
         appState.currentPage = pageId;
@@ -560,15 +485,24 @@ document.addEventListener('DOMContentLoaded', () => {
         let initialE;
         if (type === 'baseline') {
             initialE = generateRandomE(config.level);
+            timerDisplay.style.display = 'none'; // 基准测试隐藏倒计时
         } else {
             const levels = [...config.fogLevels, config.minLevel];
             const randomLevel = levels[Math.floor(Math.random() * levels.length)];
             initialE = generateRandomE(randomLevel);
+            timerDisplay.style.display = 'block';
         }
-        appState.testState = { status: 'running', timer: type === 'baseline' ? 30 : 60, correct: 0, total: 0, currentE: initialE, type: type };
+        
+        // 基准测试不设时间，雾视挑战设60秒
+        const initialTimer = type === 'baseline' ? 0 : 60;
+
+        appState.testState = { status: 'running', timer: initialTimer, correct: 0, total: 0, currentE: initialE, type: type };
         updateTestUI();
         navigateTo('test');
-        startTimer();
+        
+        if (type === 'fogging') {
+            startTimer();
+        }
     }
     
     function startTimer() {
@@ -578,7 +512,8 @@ document.addEventListener('DOMContentLoaded', () => {
             appState.testState.timer--;
             testTimerEl.textContent = appState.testState.timer;
             if (appState.testState.timer <= 0) {
-                endTest(true);
+                // 计时结束，自动弹出菜单
+                showMenu('挑战时间结束');
             }
         }, 1000);
     }
@@ -587,8 +522,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (appState.testState.status !== 'running') return;
         const state = appState.testState;
         const config = appState.testConfig;
+        
         state.correct += (answer === state.currentE.direction ? 1 : 0);
         state.total += 1;
+
+        // 基准测试：满10次自动结算
+        if (state.type === 'baseline' && state.total >= 10) {
+            updateTestUI(); // 更新最后一次分数
+            evaluateBaselineResult();
+            return;
+        }
+
         let nextE;
         if (state.type === 'baseline') {
             nextE = generateRandomE(config.level);
@@ -601,130 +545,131 @@ document.addEventListener('DOMContentLoaded', () => {
         updateTestUI();
     }
 
-    function endTest(isFinished) {
+    // --- 基准测试评估逻辑 ---
+    function evaluateBaselineResult() {
         clearInterval(appState.timerInterval);
-        appState.timerInterval = null;
-        const state = appState.testState;
-        if (isFinished) {
-            state.status = 'finished';
-            if (state.total > 0 || state.type === 'baseline') { 
-                const newRecord = { date: new Date().toLocaleDateString(), time: new Date().toLocaleTimeString(), type: state.type === 'baseline' ? '测定基准' : '雾视挑战', level: appState.testConfig?.level?.decimal || appState.testConfig?.minLevel?.decimal, accuracy: state.total > 0 ? (state.correct / state.total) * 100 : 0, score: `${state.correct}/${state.total}` };
-                appState.history.unshift(newRecord);
-                
-                // 健壮性优化：捕获 localStorage 错误
-                try {
-                    localStorage.setItem('visionHistory', JSON.stringify(appState.history));
-                } catch (e) {
-                    console.error("保存历史记录失败:", e);
-                    setTimeout(() => {
-                         alert('无法保存您的训练记录。\n\n这通常是因为您正在使用浏览器的“无痕模式”或“隐私模式”。请切换到正常模式后重试。');
-                    }, 500);
-                }
-            }
-            showResultModal();
+        appState.testState.status = 'paused'; // 停止交互
+        
+        const { correct } = appState.testState;
+        let title = "基准测试完成";
+        let message = `<p>得分: <strong>${correct}/10</strong></p>`;
+        
+        if (correct >= 8) {
+            message += `<p class="eval-text text-green">✔ 视标合适</p><p>准确率达标，可以使用此等级。</p>`;
+        } else if (correct <= 6) {
+            message += `<p class="eval-text text-red">✘ 建议换大一级</p><p>准确率过低，当前视标可能过小。</p>`;
         } else {
-            state.status = 'idle';
-            navigateTo('home');
+            message += `<p class="eval-text text-yellow">⚠ 建议重测</p><p>处于临界值，建议再测一次。</p>`;
         }
+
+        showMenu(title, message, true); // true 表示是基准测试结束，隐藏"继续"
     }
-    
-    function pauseTest() {
-        if (appState.testState.status !== 'running') return;
-        appState.testState.status = 'paused';
-        clearInterval(appState.timerInterval);
-        updateTestUI();
+
+    // --- 菜单/模态框逻辑 ---
+    function showMenu(title = "已暂停", customBody = null, isFinished = false) {
+        // 暂停计时器
+        if (appState.timerInterval) clearInterval(appState.timerInterval);
+        if (appState.testState.status === 'running') appState.testState.status = 'paused';
+
+        resultModal.style.display = 'flex';
+        document.getElementById('modal-title').textContent = title;
+        
+        const { correct, total, type } = appState.testState;
+        const config = appState.testConfig;
+        const level = type === 'baseline' ? config.level.decimal : config.minLevel.decimal;
+
+        if (customBody) {
+            document.getElementById('modal-body').innerHTML = customBody;
+        } else {
+            document.getElementById('modal-body').innerHTML = `
+                <p>当前模式: ${type === 'baseline' ? '基准测试' : '雾视挑战'}</p>
+                <p>当前视标: ${level}</p>
+                <p>当前得分: <strong>${correct} / ${total}</strong></p>
+            `;
+        }
+
+        // 按钮控制
+        const btnContinue = document.getElementById('modal-btn-continue');
+        if (isFinished) {
+            btnContinue.style.display = 'none'; // 结束了就不能继续
+        } else {
+            btnContinue.style.display = 'block';
+            btnContinue.onclick = resumeTest;
+        }
+
+        document.getElementById('modal-btn-end').onclick = () => endTestAndSave();
+        document.getElementById('modal-btn-exit').onclick = () => {
+            window.location.href = "https://maggiec87.github.io/vision-kits/better_vision.html";
+        };
     }
 
     function resumeTest() {
-        if (appState.testState.status !== 'paused') return;
-        appState.testState.status = 'running';
-        startTimer();
-        updateTestUI();
-    }
-    
-    function retryTest() {
         resultModal.style.display = 'none';
-        clearInterval(appState.timerInterval); 
-        startTest(appState.testState.type, appState.testConfig);
+        appState.testState.status = 'running';
+        if (appState.testState.type === 'fogging') {
+            startTimer();
+        }
+    }
+
+    function endTestAndSave() {
+        resultModal.style.display = 'none';
+        const state = appState.testState;
+        
+        // 只有有数据才保存
+        if (state.total > 0 || state.type === 'baseline') { 
+            const newRecord = { 
+                date: new Date().toLocaleDateString(), 
+                time: new Date().toLocaleTimeString(), 
+                type: state.type === 'baseline' ? '测定基准' : '雾视挑战', 
+                level: appState.testConfig?.level?.decimal || appState.testConfig?.minLevel?.decimal, 
+                accuracy: state.total > 0 ? (state.correct / state.total) * 100 : 0, 
+                score: `${state.correct}/${state.total}` 
+            };
+            appState.history.unshift(newRecord);
+            try {
+                localStorage.setItem('visionHistory', JSON.stringify(appState.history));
+            } catch (e) { console.error(e); }
+        }
+        
+        appState.testState.status = 'idle';
+        navigateTo('history');
     }
 
     function updateTestUI() {
-        const { status, timer, correct, total, currentE, type } = appState.testState;
+        const { timer, correct, total, currentE, type } = appState.testState;
         const config = appState.testConfig;
         document.getElementById('test-title').textContent = `${type === 'baseline' ? '基准测定' : '雾视挑战'} - ${config?.level?.decimal || config?.minLevel?.decimal}`;
         testTimerEl.textContent = timer;
         testScoreEl.textContent = `${correct}/${total}`;
         if (currentE) renderEChart(currentE.level.sizePx, currentE.direction);
-        pauseOverlay.style.display = status === 'paused' ? 'flex' : 'none';
-        
-        const isRunning = status === 'running';
-        const pauseResumeIcon = isRunning ? '#icon-pause' : '#icon-play';
-        const pauseResumeText = isRunning ? '暂停' : '继续';
-        const pauseResumeColorClass = isRunning ? 'bg-yellow' : 'bg-green';
-
-        mobileBtnPauseResume.innerHTML = `<svg><use href="${pauseResumeIcon}"/></svg><span>${pauseResumeText}</span>`;
-        mobileBtnPauseResume.className = `mobile-control-btn ${pauseResumeColorClass}`;
-        
-        desktopBtnPauseResume.innerHTML = `<svg><use href="${pauseResumeIcon}"/></svg>${pauseResumeText}`;
-        desktopBtnPauseResume.className = `footer-btn ${pauseResumeColorClass}`;
-    }
-
-    function showResultModal() {
-        resultModal.style.display = 'flex';
-        const { type, correct, total } = appState.testState;
-        const config = appState.testConfig;
-        const level = type === 'baseline' ? config.level.decimal : config.minLevel.decimal;
-        const accuracy = total > 0 ? ((correct / total) * 100).toFixed(0) : 0;
-        
-        document.getElementById('result-title').textContent = type === 'baseline' ? '基准测定完成' : '雾视挑战结束';
-        document.getElementById('result-body').innerHTML = `<p>测试等级: <strong>${level}</strong></p><p>最终得分: <strong>${correct} / ${total}</strong></p><p>正确率: <strong>${accuracy}%</strong></p>`;
-        document.getElementById('result-actions').innerHTML = `<button class="btn bg-blue" id="modal-btn-retry">再试一次</button><button class="btn bg-gray" id="modal-btn-home">返回</button>`;
-        document.getElementById('modal-btn-retry').onclick = retryTest;
-        document.getElementById('modal-btn-home').onclick = () => {
-            resultModal.style.display = 'none';
-            navigateTo('home');
-        };
     }
 
     function clearHistory() {
-        if (confirm('确定要清空所有历史记录吗？此操作不可撤销。')) {
-            try {
-                appState.history = [];
-                localStorage.removeItem('visionHistory');
-                renderHistoryPage();
-            } catch (e) {
-                alert('无法清空记录，可能您正处于无痕模式。');
-            }
+        if (confirm('确定要清空所有历史记录吗？')) {
+            appState.history = [];
+            localStorage.removeItem('visionHistory');
+            renderHistoryPage();
         }
     }
 
     function exportHistory() {
-        if (appState.history.length === 0) {
-            alert('没有历史记录可以导出。');
-            return;
-        }
-        const headers = ['日期', '时间', '类型', '等级', '得分', '正确率'];
-        const csvRows = [headers.map(h => `"${h}"`).join(',')];
-        appState.history.forEach(record => {
-            const values = [record.date, record.time, record.type, record.level, record.score, `${record.accuracy.toFixed(0)}%`];
-            csvRows.push(values.map(v => `"${String(v).replace(/"/g, '""')}"`).join(','));
-        });
-        const csvString = csvRows.join('\n');
-        const blob = new Blob([`\uFEFF${csvString}`], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = `视力训练历史_${new Date().toISOString().slice(0, 10)}.csv`;
+        if (appState.history.length === 0) return alert('没有记录');
+        const csvContent = "data:text/csv;charset=utf-8,\uFEFF" 
+            + "日期,时间,类型,等级,得分,正确率\n" 
+            + appState.history.map(e => `${e.date},${e.time},${e.type},${e.level},${e.score},${e.accuracy.toFixed(0)}%`).join("\n");
+        const link = document.createElement("a");
+        link.href = encodeURI(csvContent);
+        link.download = "vision_history.csv";
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        URL.revokeObjectURL(link.href);
     }
 
     function renderHistoryPage() {
         const container = document.getElementById('page-history');
         let contentHtml = '<h2>历史记录</h2>';
         if (appState.history.length === 0) {
-            contentHtml += `<p class="no-history">暂无历史记录。</p>`;
+            contentHtml += `<p style="text-align:center;color:#666;margin-top:2rem;">暂无历史记录。</p>`;
         } else {
             const tableRows = appState.history.map(r => `<tr><td>${r.date}<br>${r.time}</td><td>${r.type}</td><td>${r.level}</td><td>${r.score}<br>(${r.accuracy.toFixed(0)}%)</td></tr>`).join('');
             contentHtml += `<div class="history-table-container"><table class="history-table"><thead><tr><th>时间</th><th>类型</th><th>等级</th><th>得分</th></tr></thead><tbody>${tableRows}</tbody></table></div><div class="history-actions"><button id="btn-export-history" class="btn bg-blue"><svg><use href="#icon-download"/></svg>导出</button><button id="btn-clear-history" class="btn bg-red"><svg><use href="#icon-trash"/></svg>清空</button></div>`;
@@ -739,7 +684,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function setupLevelSelection(type) {
-        document.getElementById('setup-title').textContent = type === 'baseline' ? '选择基准视标' : '选择最小视标';
+        document.getElementById('setup-title').textContent = type === 'baseline' ? '选择基准视标 (测10次)' : '选择最小视标';
         const gridContainer = document.getElementById('level-grid-container');
         gridContainer.innerHTML = '';
         VISION_LEVELS.forEach(level => {
@@ -765,68 +710,57 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-goto-instructions').onclick = () => navigateTo('instructions');
     document.querySelectorAll('.btn-nav-home').forEach(btn => btn.onclick = () => navigateTo('home'));
     
-    mobileBtnPauseResume.onclick = () => (appState.testState.status === 'running' ? pauseTest() : resumeTest());
-    desktopBtnPauseResume.onclick = () => (appState.testState.status === 'running' ? pauseTest() : resumeTest());
-    document.getElementById('mobile-btn-retry').onclick = retryTest;
-    document.getElementById('desktop-btn-retry').onclick = retryTest;
-    document.getElementById('mobile-btn-end').onclick = () => endTest(true);
-    document.getElementById('desktop-btn-end').onclick = () => endTest(true);
-    mobileBtnBackHome.onclick = () => endTest(false);
-    desktopBtnBackHome.onclick = () => endTest(false);
+    // 菜单按钮点击事件
+    document.getElementById('mobile-btn-menu').onclick = () => showMenu();
+    document.getElementById('desktop-btn-menu').onclick = () => showMenu();
 
     document.querySelectorAll('.touch-btn').forEach(btn => {
         btn.onclick = () => handleAnswer(btn.dataset.dir);
     });
 
-    const TV_REMOTE_KEY_CODES = {
-        OK_ENTER: [13],
-        BACK: [8, 461],
-        HOME: [27, 460],
-        MENU_OPTIONS: [415, 18]
-    };
-
+    // 键盘/遥控器事件
     window.addEventListener('keydown', (e) => {
         const keyCode = e.keyCode || e.which;
-
-        if (appState.currentPage === 'test') {
-            if (KEY_MAP[e.key]) {
-                e.preventDefault();
-                if (appState.testState.status === 'running') {
-                    handleAnswer(KEY_MAP[e.key]);
-                }
-            } 
-            else if (TV_REMOTE_KEY_CODES.OK_ENTER.includes(keyCode)) {
-                e.preventDefault();
-                appState.testState.status === 'running' ? pauseTest() : resumeTest();
-            } else if (TV_REMOTE_KEY_CODES.BACK.includes(keyCode)) {
-                e.preventDefault();
-                retryTest();
-            } else if (TV_REMOTE_KEY_CODES.MENU_OPTIONS.includes(keyCode)) {
-                e.preventDefault();
-                endTest(true);
-            } else if (TV_REMOTE_KEY_CODES.HOME.includes(keyCode)) {
-                e.preventDefault();
-                endTest(false);
-            }
-        } else {
-            if (TV_REMOTE_KEY_CODES.BACK.includes(keyCode) || TV_REMOTE_KEY_CODES.HOME.includes(keyCode) || e.key === 'Escape') {
+        
+        // 如果不在测试页，按返回键回主页
+        if (appState.currentPage !== 'test') {
+            if (e.key === 'Escape' || e.key === 'Backspace') {
                 e.preventDefault();
                 navigateTo('home');
             }
+            return;
+        }
+
+        // 测试页逻辑
+        // 1. 确定/OK/空格 -> 弹出菜单
+        if (e.key === 'Enter' || e.key === ' ' || keyCode === 13) {
+            e.preventDefault();
+            // 如果菜单已打开，按确定默认继续
+            if (resultModal.style.display === 'flex') {
+                const btnContinue = document.getElementById('modal-btn-continue');
+                if (btnContinue.style.display !== 'none') btnContinue.click();
+            } else {
+                showMenu();
+            }
+            return;
+        }
+
+        // 2. 菜单已打开时，阻止方向键操作视标
+        if (resultModal.style.display === 'flex') return;
+
+        // 3. 方向键操作
+        if (KEY_MAP[e.key]) {
+            e.preventDefault();
+            handleAnswer(KEY_MAP[e.key]);
         }
     });
 
     // --- 初始化 ---
     function initialize() {
-        // 健壮性优化：捕获 localStorage 错误
         try {
             const savedHistory = localStorage.getItem('visionHistory');
-            if (savedHistory) {
-                appState.history = JSON.parse(savedHistory);
-            }
-        } catch (e) {
-            console.error("读取历史记录失败:", e);
-        }
+            if (savedHistory) appState.history = JSON.parse(savedHistory);
+        } catch (e) { console.error(e); }
         navigateTo('home');
     }
 
