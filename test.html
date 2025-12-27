@@ -42,17 +42,14 @@
                 <button id="mobile-btn-menu" class="mobile-control-btn bg-light-blue"><svg><use href="icons.svg#icon-menu"/></svg><span>菜单 / 暂停</span></button>
             </div>
         </div>
-
-        <!-- 已删除桌面端底部按钮 -->
     </div>
 
-    <!-- 菜单/结果弹窗 (整合) -->
+    <!-- 菜单/结果弹窗 -->
     <div id="result-modal" style="display: none;">
         <div class="modal-content">
             <h2 id="modal-title">已暂停</h2>
             <div id="modal-body"></div>
             <div id="modal-actions" class="modal-actions">
-                <!-- 注意：调整了按钮顺序，把“继续”放在中间或第一个，方便操作 -->
                 <button id="modal-btn-end" class="btn bg-red">结束</button>
                 <button id="modal-btn-continue" class="btn bg-blue">继续</button>
                 <button id="modal-btn-exit" class="btn bg-gray">退出</button>
@@ -80,7 +77,7 @@
             const KEY_MAP = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right' };
             const ROTATION_MAP = { up: -90, down: 90, left: 180, right: 0 };
 
-            // --- 应用状态 (从 localStorage 加载) ---
+            // --- 应用状态 ---
             let appState = {
                 testConfig: null,
                 testState: {
@@ -113,15 +110,15 @@
                 let initialE;
                 if (config.type === 'baseline') {
                     initialE = generateRandomE(config.level);
-                    timerDisplay.style.display = 'none'; // 基准测试隐藏倒计时
-                } else { // fogging
+                    timerDisplay.style.display = 'none'; 
+                } else { 
                     const levels = [...config.fogLevels, config.minLevel];
                     const randomLevel = levels[Math.floor(Math.random() * levels.length)];
                     initialE = generateRandomE(randomLevel);
                     timerDisplay.style.display = 'block';
                 }
                 
-                const initialTimer = config.type === 'baseline' ? 0 : 60; // 雾视挑战设60秒
+                const initialTimer = config.type === 'baseline' ? 0 : 60;
 
                 appState.testState = { status: 'running', timer: initialTimer, correct: 0, total: 0, currentE: initialE, type: config.type };
                 updateTestUI();
@@ -138,7 +135,7 @@
                     appState.testState.timer--;
                     testTimerEl.textContent = appState.testState.timer;
                     if (appState.testState.timer <= 0) {
-                        showMenu('挑战时间结束', null, true); // true 表示结束
+                        showMenu('挑战时间结束', null, true);
                     }
                 }, 1000);
             }
@@ -151,9 +148,8 @@
                 state.correct += (answer === state.currentE.direction ? 1 : 0);
                 state.total += 1;
 
-                // 基准测试：满10次自动结算
                 if (state.type === 'baseline' && state.total >= 10) {
-                    updateTestUI(); // 更新最后一次分数
+                    updateTestUI();
                     evaluateBaselineResult();
                     return;
                 }
@@ -170,10 +166,9 @@
                 updateTestUI();
             }
 
-            // --- 基准测试评估逻辑 ---
             function evaluateBaselineResult() {
                 clearInterval(appState.timerInterval);
-                appState.testState.status = 'paused'; // 停止交互
+                appState.testState.status = 'paused';
                 
                 const { correct } = appState.testState;
                 let title = "基准测试完成";
@@ -187,29 +182,20 @@
                     message += `<p class="eval-text text-yellow">⚠ 建议重测</p><p>处于临界值，建议再测一次。</p>`;
                 }
 
-                showMenu(title, message, true); // true 表示是基准测试结束，隐藏"继续"
+                showMenu(title, message, true);
             }
 
-            // --- 菜单/模态框逻辑 (支持遥控器焦点) ---
-            
-            // 辅助函数：设置菜单按钮焦点
+            // --- 菜单/模态框逻辑 ---
             function focusMenuButton(index) {
                 const buttons = document.querySelectorAll('#modal-actions button');
-                // 过滤掉隐藏的按钮（例如基准测试结束时的“继续”按钮）
                 const visibleButtons = Array.from(buttons).filter(btn => btn.style.display !== 'none');
-                
                 if (visibleButtons.length === 0) return;
-
-                // 确保索引在范围内（循环选择）
                 if (index < 0) index = visibleButtons.length - 1;
                 if (index >= visibleButtons.length) index = 0;
-
-                // 设置焦点
                 visibleButtons[index].focus();
             }
 
             function showMenu(title = "已暂停", customBody = null, isFinished = false) {
-                // 暂停计时器
                 if (appState.timerInterval) clearInterval(appState.timerInterval);
                 if (appState.testState.status === 'running') appState.testState.status = 'paused';
 
@@ -230,36 +216,29 @@
                     `;
                 }
 
-                // 按钮控制
                 const btnContinue = document.getElementById('modal-btn-continue');
                 if (isFinished) {
-                    btnContinue.style.display = 'none'; // 结束了就不能继续
+                    btnContinue.style.display = 'none';
                 } else {
-                    btnContinue.style.display = 'inline-block'; // 恢复显示
+                    btnContinue.style.display = 'inline-block';
                     btnContinue.onclick = resumeTest;
                 }
 
                 document.getElementById('modal-btn-end').onclick = () => endTestAndSave();
-                
-                // 修改：退出按钮跳转到 better_vision.html
                 document.getElementById('modal-btn-exit').onclick = () => {
-                    window.location.href = "better_vision.html"; 
+                    // 假设首页是 index.html，如果你的首页是 better_vision.html 请自行修改
+                    window.location.href = "index.html"; 
                 };
 
-                // --- 自动聚焦逻辑 ---
-                // 延时一点点，确保 DOM 渲染完成
                 setTimeout(() => {
-                    // 如果是暂停状态，默认聚焦“继续”按钮（它通常是第二个可见按钮，或者根据ID找）
-                    // 如果是结束状态，“继续”隐藏了，默认聚焦第一个可见按钮（通常是“结束”）
                     const buttons = Array.from(document.querySelectorAll('#modal-actions button')).filter(b => b.style.display !== 'none');
                     const continueBtnIndex = buttons.indexOf(btnContinue);
-                    
                     if (continueBtnIndex !== -1) {
-                        focusMenuButton(continueBtnIndex); // 聚焦“继续”
+                        focusMenuButton(continueBtnIndex);
                     } else {
-                        focusMenuButton(0); // 聚焦第一个（通常是“结束”）
+                        focusMenuButton(0);
                     }
-                }, 50);
+                }, 100);
             }
 
             function resumeTest() {
@@ -273,8 +252,6 @@
             function endTestAndSave() {
                 resultModal.style.display = 'none';
                 const state = appState.testState;
-                
-                // 只有有数据才保存
                 if (state.total > 0 || state.type === 'baseline') { 
                     let history = JSON.parse(localStorage.getItem('visionHistory') || '[]');
                     const newRecord = { 
@@ -290,9 +267,8 @@
                         localStorage.setItem('visionHistory', JSON.stringify(history));
                     } catch (e) { console.error(e); }
                 }
-                
                 appState.testState.status = 'idle';
-                window.location.href = 'history.html'; // 跳转到历史记录页
+                window.location.href = 'history.html';
             }
 
             function updateTestUI() {
@@ -306,19 +282,32 @@
 
             // --- 事件监听器 ---
             document.getElementById('mobile-btn-menu').onclick = () => showMenu();
-            // 已删除 desktop-btn-menu 的监听器
-
             document.querySelectorAll('.touch-btn').forEach(btn => {
                 btn.onclick = () => handleAnswer(btn.dataset.dir);
             });
 
-            // --- 键盘/遥控器事件 (重写逻辑) ---
+            // --- 关键修改：增强版键盘/遥控器监听 ---
             window.addEventListener('keydown', (e) => {
                 const keyCode = e.keyCode || e.which;
                 const isMenuOpen = resultModal.style.display === 'flex';
                 
-                // 1. 确定/OK/空格/Select/Enter
-                if (e.key === 'Enter' || e.key === ' ' || e.key === 'OK' || e.key === 'Select' || keyCode === 13) {
+                // 1. 定义所有可能的“确认”键
+                // 13: 标准回车
+                // 23: 安卓电视 DPAD_CENTER (非常重要)
+                // 108: 部分其他遥控器
+                const isConfirmKey = (
+                    e.key === 'Enter' || 
+                    e.key === ' ' || 
+                    e.key === 'OK' || 
+                    e.key === 'Select' || 
+                    e.key === 'Accept' ||
+                    keyCode === 13 || 
+                    keyCode === 23 || 
+                    keyCode === 108
+                );
+
+                if (isConfirmKey) {
+                    // 关键：立即阻止默认行为，防止焦点在背景元素上触发点击
                     e.preventDefault();
                     
                     if (isMenuOpen) {
@@ -326,12 +315,11 @@
                         if (document.activeElement && document.activeElement.tagName === 'BUTTON') {
                             document.activeElement.click();
                         } else {
-                            // 容错：如果焦点丢了，尝试找“继续”或第一个按钮
+                            // 容错：如果焦点丢了，默认点“继续”
                             const btnContinue = document.getElementById('modal-btn-continue');
                             if (btnContinue.style.display !== 'none') {
                                 btnContinue.click();
                             } else {
-                                // 否则点第一个可见按钮
                                 const firstBtn = document.querySelector('#modal-actions button:not([style*="display: none"])');
                                 if (firstBtn) firstBtn.click();
                             }
@@ -345,22 +333,18 @@
 
                 // 2. 菜单导航 (当菜单打开时)
                 if (isMenuOpen) {
-                    // 获取所有可见按钮
                     const buttons = Array.from(document.querySelectorAll('#modal-actions button')).filter(b => b.style.display !== 'none');
                     let currentIndex = buttons.indexOf(document.activeElement);
                     
-                    // 如果当前没聚焦任何按钮，默认归为 -1
-                    
                     if (['ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'].includes(e.key) || KEY_MAP[e.key]) {
-                        e.preventDefault(); // 阻止滚动
-                        
+                        e.preventDefault();
                         if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
                             focusMenuButton(currentIndex - 1);
                         } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
                             focusMenuButton(currentIndex + 1);
                         }
                     }
-                    return; // 阻止后续逻辑，不让它去判断视力表方向
+                    return;
                 }
 
                 // 3. 视力表测试操作 (仅当菜单关闭时)
@@ -379,11 +363,10 @@
                         startTest(config);
                     } catch (e) {
                         console.error("Config parse error", e);
-                        window.location.href = 'better_vision.html'; // 出错也跳到新主页
+                        window.location.href = 'index.html';
                     }
                 } else {
-                    // 如果没有配置，说明是从其他页面直接进入，应该返回主页
-                    window.location.href = 'better_vision.html'; // 修改为新主页
+                    window.location.href = 'index.html';
                 }
             }
 
