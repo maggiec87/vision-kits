@@ -15,7 +15,6 @@
             --red-500: #ef4444; --red-600: #dc2626;
             --gray-50: #f9fafb; --gray-100: #f3f4f6; --gray-200: #e5e7eb; --gray-300: #d1d5db;
             --white: #ffffff; --black: #000000;
-            --light-blue: #7dd3fc; /* 新增淡蓝色 */
         }
 
         /* --- 基础样式 (Mobile-First) --- */
@@ -81,7 +80,7 @@
         }
 
         /* --- 按钮通用样式 --- */
-        .btn, .footer-btn, .mobile-control-btn {
+        .btn, .mobile-control-btn {
             color: var(--white);
             border-radius: 0.5rem;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
@@ -95,7 +94,7 @@
             text-decoration: none;
             box-sizing: border-box;
         }
-        .btn:active, .footer-btn:active, .mobile-control-btn:active {
+        .btn:active, .mobile-control-btn:active {
             transform: scale(0.97);
             filter: brightness(0.95);
         }
@@ -107,14 +106,12 @@
         .bg-gray { background-color: var(--gray-500); }
         .bg-red { background-color: var(--red-500); }
         .bg-yellow { background-color: var(--yellow-500); }
-        .bg-light-blue { background-color: var(--light-blue); } /* 新增淡蓝色背景类 */
-
 
         /* --- 主页按钮特定样式 --- */
         .btn { padding: 1.25rem; font-size: 1.125rem; width: 100%; }
         .btn svg { margin-right: 0.5rem; width: 20px; height: 20px; }
 
-        /* --- 内容页 & Prose 样式 --- */
+        /* --- 内容页 & Prose样式 --- */
         .content-page { padding: 1rem; max-width: 56rem; margin: 0 auto; }
         .content-page h2 { font-size: 1.5rem; font-weight: bold; text-align: center; margin-bottom: 0.5rem; }
         .content-page h4 { font-size: 1.1rem; font-weight: bold; margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--gray-700); }
@@ -186,59 +183,14 @@
         .directional-pad-container .btn-dir-left  { grid-area: 2 / 1 / 3 / 2; }
         .directional-pad-container .btn-dir-right { grid-area: 2 / 3 / 3 / 4; }
         .directional-pad-container .btn-dir-down  { grid-area: 3 / 2 / 4 / 3; }
-        
-        /* 底部菜单按钮 (优化后：正常大小，居中) */
-        .menu-btn-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-        }
-        .menu-btn-container .mobile-control-btn {
-            height: auto;
-            padding: 0.75rem 2rem;
-            font-size: 1rem;
-            width: auto; /* 不再全宽 */
-            min-width: 160px;
-            border-radius: 2rem; /* 圆角胶囊状 */
-        }
 
-        /* --- 桌面端专属底部 --- */
-        .desktop-footer {
-            display: none;
-            justify-content: center;
-            padding: 1rem;
-            background-color: var(--white);
-            flex-shrink: 0;
-        }
-        .desktop-footer .footer-btn { 
-            font-size: 1rem; 
-            padding: 0.75rem 2.5rem; 
-            font-weight: 500;
-            width: auto; /* 正常大小 */
-            border-radius: 2rem; /* 圆角胶囊状 */
-        }
-
-        /* --- 结果/菜单弹窗样式 --- */
+        /* --- 结果/菜单弹窗样式 (恢复) --- */
         #result-modal { position: fixed; inset: 0; background-color: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 1rem; }
-        .modal-content { 
-            background-color: var(--white); 
-            border-radius: 0.75rem; 
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); 
-            padding: 1.5rem; 
-            max-width: 22rem; /* 调整弹窗宽度 */
-            width: 100%; 
-            text-align: center; 
-        }
+        .modal-content { background-color: var(--white); border-radius: 0.75rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); padding: 1.5rem; max-width: 28rem; width: 100%; text-align: center; }
         .modal-content h2 { font-size: 1.5rem; font-weight: bold; margin-bottom: 0.75rem; }
         .modal-content p { font-size: 1rem; margin-bottom: 0.4rem; }
         .modal-actions { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.5rem; }
         .modal-actions .btn { padding: 0.75rem 1rem; font-size: 0.95rem; }
-        
-        /* 评价文字颜色 */
-        .eval-text { font-size: 1.1rem; margin-top: 10px; font-weight: bold; }
-        .text-green { color: var(--green-600); }
-        .text-red { color: var(--red-600); }
-        .text-yellow { color: var(--yellow-600); }
 
         /* --- 历史记录页样式 --- */
         .history-table-container { overflow-x: auto; background-color: var(--white); border-radius: 0.5rem; margin-top: 1.5rem; }
@@ -256,8 +208,7 @@
             
             .test-header { flex-direction: row; justify-content: space-between; padding: 1rem; }
             .mobile-controls-panel { display: none; }
-            .desktop-footer { display: flex; }
-            
+
             .modal-actions { flex-direction: row; justify-content: center; }
             .modal-actions .btn { width: auto; min-width: 100px; }
         }
@@ -334,27 +285,18 @@
                 <button class="mobile-control-btn touch-btn btn-dir-right" data-dir="right"><svg><use href="#icon-right"/></svg></button>
                 <button class="mobile-control-btn touch-btn btn-dir-down" data-dir="down"><svg><use href="#icon-down"/></svg></button>
             </div>
-            <!-- 替换为单一菜单按钮 -->
-            <div class="menu-btn-container">
-                <button id="mobile-btn-menu" class="mobile-control-btn bg-light-blue"><svg><use href="#icon-menu"/></svg><span>菜单 / 暂停</span></button>
-            </div>
         </div>
-
-        <!-- === 桌面端专属底部 === -->
-        <footer class="desktop-footer">
-            <button id="desktop-btn-menu" class="footer-btn bg-light-blue"><svg><use href="#icon-menu"/></svg>菜单 / 暂停 (按空格或回车)</button>
-        </footer>
     </div>
 
-    <!-- 菜单/结果弹窗 (整合) -->
+    <!-- 菜单/结果弹窗 (恢复) -->
     <div id="result-modal" style="display: none;">
         <div class="modal-content">
             <h2 id="modal-title">已暂停</h2>
             <div id="modal-body"></div>
             <div id="modal-actions" class="modal-actions">
-                <button id="modal-btn-end" class="btn bg-red">结束 (统计)</button>
+                <button id="modal-btn-end" class="btn bg-red">结束 (保存)</button>
                 <button id="modal-btn-continue" class="btn bg-blue">继续</button>
-                <button id="modal-btn-exit" class="btn bg-gray">退出</button>
+                <button id="modal-btn-exit" class="btn bg-gray">退出 (不保存)</button>
             </div>
         </div>
     </div>
@@ -380,6 +322,8 @@
                     <li><strong>基准定位：</strong>站在距视力表 <strong>5米</strong> 处，找到自己能完全看清的那行视标。</li>
                     <li><strong>雾视挑战：</strong>选择上一步测得的基准视标，后退至 <strong>6米</strong> 位置，循环交替指认基准视标和最大三行的视标。(每日早晚各 <strong>10分钟</strong>)</li>
                 </ol>
+                
+                <p><strong>控制提示：</strong>测试过程中，按键盘 <strong>空格键</strong> 或 遥控器 <strong>确定键</strong> 可暂停并查看当前结果。</p>
 
                 <p class="disclaimer">！！！注意：</p>
                 <ul>
@@ -523,8 +467,8 @@ document.addEventListener('DOMContentLoaded', () => {
             appState.testState.timer--;
             testTimerEl.textContent = appState.testState.timer;
             if (appState.testState.timer <= 0) {
-                // 计时结束，自动弹出菜单
-                showMenu('挑战时间结束');
+                // 计时结束，自动结束并保存
+                endTestAndSave();
             }
         }, 1000);
     }
@@ -558,59 +502,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 基准测试评估逻辑 ---
     function evaluateBaselineResult() {
-        clearInterval(appState.timerInterval);
-        appState.testState.status = 'paused'; // 停止交互
-        
-        const { correct } = appState.testState;
-        let title = "基准测试完成";
-        let message = `<p>得分: <strong>${correct}/10</strong></p>`;
-        
-        if (correct >= 8) {
-            message += `<p class="eval-text text-green">✔ 视标合适</p><p>准确率达标，可以使用此等级。</p>`;
-        } else if (correct <= 6) {
-            message += `<p class="eval-text text-red">✘ 建议换大一级</p><p>准确率过低，当前视标可能过小。</p>`;
-        } else {
-            message += `<p class="eval-text text-yellow">⚠ 建议重测</p><p>处于临界值，建议再测一次。</p>`;
-        }
-
-        showMenu(title, message, true); // true 表示是基准测试结束，隐藏"继续"
+        endTestAndSave();
     }
 
-    // --- 菜单/模态框逻辑 ---
-    function showMenu(title = "已暂停", customBody = null, isFinished = false) {
+    // --- 菜单/模态框逻辑 (恢复) ---
+    function showMenu() {
         // 暂停计时器
         if (appState.timerInterval) clearInterval(appState.timerInterval);
         if (appState.testState.status === 'running') appState.testState.status = 'paused';
 
         resultModal.style.display = 'flex';
-        document.getElementById('modal-title').textContent = title;
+        document.getElementById('modal-title').textContent = "已暂停";
         
         const { correct, total, type } = appState.testState;
         const config = appState.testConfig;
         const level = type === 'baseline' ? config.level.decimal : config.minLevel.decimal;
 
-        if (customBody) {
-            document.getElementById('modal-body').innerHTML = customBody;
-        } else {
-            document.getElementById('modal-body').innerHTML = `
-                <p>当前模式: ${type === 'baseline' ? '基准测试' : '雾视挑战'}</p>
-                <p>当前视标: ${level}</p>
-                <p>当前得分: <strong>${correct} / ${total}</strong></p>
-            `;
-        }
+        document.getElementById('modal-body').innerHTML = `
+            <p>当前模式: ${type === 'baseline' ? '基准测试' : '雾视挑战'}</p>
+            <p>当前视标: ${level}</p>
+            <p>当前得分: <strong>${correct} / ${total}</strong></p>
+        `;
 
-        // 按钮控制
-        const btnContinue = document.getElementById('modal-btn-continue');
-        if (isFinished) {
-            btnContinue.style.display = 'none'; // 结束了就不能继续
-        } else {
-            btnContinue.style.display = 'block';
-            btnContinue.onclick = resumeTest;
-        }
-
+        // 绑定按钮事件
+        document.getElementById('modal-btn-continue').onclick = resumeTest;
         document.getElementById('modal-btn-end').onclick = () => endTestAndSave();
         document.getElementById('modal-btn-exit').onclick = () => {
-            window.location.href = "https://maggiec87.github.io/vision-kits/better_vision.html";
+             resultModal.style.display = 'none';
+             appState.testState.status = 'idle';
+             navigateTo('home'); // 退出不保存
         };
     }
 
@@ -624,6 +544,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function endTestAndSave() {
         resultModal.style.display = 'none';
+        if (appState.timerInterval) clearInterval(appState.timerInterval);
         const state = appState.testState;
         
         // 只有有数据才保存
@@ -721,10 +642,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-goto-instructions').onclick = () => navigateTo('instructions');
     document.querySelectorAll('.btn-nav-home').forEach(btn => btn.onclick = () => navigateTo('home'));
     
-    // 菜单按钮点击事件
-    document.getElementById('mobile-btn-menu').onclick = () => showMenu();
-    document.getElementById('desktop-btn-menu').onclick = () => showMenu();
-
     document.querySelectorAll('.touch-btn').forEach(btn => {
         btn.onclick = () => handleAnswer(btn.dataset.dir);
     });
@@ -743,14 +660,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // 测试页逻辑
-        // 1. 确定/OK/空格 -> 弹出菜单
-        // 增加了对 'OK' 和 'Select' 键的兼容
-        if (e.key === 'Enter' || e.key === ' ' || e.key === 'OK' || e.key === 'Select' || keyCode === 13) {
+        // 1. 确定/OK/空格 -> 弹出菜单 (恢复此功能)
+        if (e.key === 'Enter' || e.key === ' ' || keyCode === 13) {
             e.preventDefault();
             // 如果菜单已打开，按确定默认继续
             if (resultModal.style.display === 'flex') {
-                const btnContinue = document.getElementById('modal-btn-continue');
-                if (btnContinue.style.display !== 'none') btnContinue.click();
+                resumeTest();
             } else {
                 showMenu();
             }
