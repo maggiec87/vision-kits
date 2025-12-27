@@ -5,9 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>视力测试中</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* 针对移动端中心按钮的内联样式补充 */
+        #mobile-btn-menu {
+            display: flex;
+            flex-direction: column; /* 图标在上，文字在下 */
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+            border-radius: 8px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+        }
+        #mobile-btn-menu svg {
+            width: 24px; 
+            height: 24px;
+            margin-bottom: 2px;
+        }
+        #mobile-btn-menu span {
+            font-size: 12px;
+            line-height: 1;
+            font-weight: bold;
+        }
+        /* 调整方向键容器间隙 */
+        .directional-pad-container {
+            gap: 8px; 
+        }
+    </style>
 </head>
 <body>
-    <!-- SVG 图标定义文件，所有页面共享 -->
+    <!-- SVG 图标定义文件 -->
     <div style="display: none;">
         <object type="image/svg+xml" data="icons.svg"></object>
     </div>
@@ -32,14 +58,31 @@
         <!-- === 移动端专属控制面板 === -->
         <div class="mobile-controls-panel">
             <div class="directional-pad-container">
-                <button class="mobile-control-btn touch-btn btn-dir-up" data-dir="up"><svg><use href="icons.svg#icon-up"/></svg></button>
-                <button class="mobile-control-btn touch-btn btn-dir-left" data-dir="left"><svg><use href="icons.svg#icon-left"/></svg></button>
-                <div style="grid-area: 2 / 2 / 3 / 3;"></div>
-                <button class="mobile-control-btn touch-btn btn-dir-right" data-dir="right"><svg><use href="icons.svg#icon-right"/></svg></button>
-                <button class="mobile-control-btn touch-btn btn-dir-down" data-dir="down"><svg><use href="icons.svg#icon-down"/></svg></button>
-            </div>
-            <div class="menu-btn-container">
-                <button id="mobile-btn-menu" class="mobile-control-btn bg-light-blue"><svg><use href="icons.svg#icon-menu"/></svg><span>菜单 / 暂停</span></button>
+                <!-- 上 -->
+                <button class="mobile-control-btn touch-btn btn-dir-up" data-dir="up">
+                    <svg><use href="icons.svg#icon-up"/></svg>
+                </button>
+                
+                <!-- 左 -->
+                <button class="mobile-control-btn touch-btn btn-dir-left" data-dir="left">
+                    <svg><use href="icons.svg#icon-left"/></svg>
+                </button>
+                
+                <!-- 中间：暂停/菜单键 (黄色小块) -->
+                <button id="mobile-btn-menu" class="mobile-control-btn bg-yellow" style="grid-area: 2 / 2 / 3 / 3;">
+                    <svg><use href="icons.svg#icon-menu"/></svg>
+                    <span>暂停</span>
+                </button>
+                
+                <!-- 右 -->
+                <button class="mobile-control-btn touch-btn btn-dir-right" data-dir="right">
+                    <svg><use href="icons.svg#icon-right"/></svg>
+                </button>
+                
+                <!-- 下 -->
+                <button class="mobile-control-btn touch-btn btn-dir-down" data-dir="down">
+                    <svg><use href="icons.svg#icon-down"/></svg>
+                </button>
             </div>
         </div>
     </div>
@@ -132,10 +175,17 @@
                 if (appState.timerInterval) clearInterval(appState.timerInterval);
                 appState.timerInterval = setInterval(() => {
                     if (appState.testState.status !== 'running') return;
+                    
                     appState.testState.timer--;
                     testTimerEl.textContent = appState.testState.timer;
+                    
+                    // === 修改点：时间结束逻辑 ===
                     if (appState.testState.timer <= 0) {
-                        showMenu('挑战时间结束', null, true);
+                        clearInterval(appState.timerInterval); // 停止计时器
+                        appState.testState.status = 'paused';  // 暂停状态
+                        
+                        // 弹出菜单，isFinished = false (保留继续按钮)
+                        showMenu('挑战时间结束', null, false);
                     }
                 }, 1000);
             }
@@ -182,6 +232,7 @@
                     message += `<p class="eval-text text-yellow">⚠ 建议重测</p><p>处于临界值，建议再测一次。</p>`;
                 }
 
+                // 基准测试完成是真正的结束，isFinished = true (隐藏继续按钮)
                 showMenu(title, message, true);
             }
 
@@ -226,7 +277,6 @@
 
                 document.getElementById('modal-btn-end').onclick = () => endTestAndSave();
                 document.getElementById('modal-btn-exit').onclick = () => {
-                    // 假设首页是 index.html，如果你的首页是 better_vision.html 请自行修改
                     window.location.href = "index.html"; 
                 };
 
@@ -244,7 +294,11 @@
             function resumeTest() {
                 resultModal.style.display = 'none';
                 appState.testState.status = 'running';
-                if (appState.testState.type === 'fogging') {
+                
+                // === 修改点：继续逻辑 ===
+                // 只有当时间还有剩余时，才重新启动倒计时
+                // 如果时间已耗尽(<=0)，用户点击继续则进入"自由练习模式"，不再倒计时
+                if (appState.testState.type === 'fogging' && appState.testState.timer > 0) {
                     startTimer();
                 }
             }
@@ -286,36 +340,25 @@
                 btn.onclick = () => handleAnswer(btn.dataset.dir);
             });
 
-            // --- 关键修改：增强版键盘/遥控器监听 ---
+            // --- 键盘/遥控器监听 ---
             window.addEventListener('keydown', (e) => {
                 const keyCode = e.keyCode || e.which;
                 const isMenuOpen = resultModal.style.display === 'flex';
                 
-                // 1. 定义所有可能的“确认”键
-                // 13: 标准回车
-                // 23: 安卓电视 DPAD_CENTER (非常重要)
-                // 108: 部分其他遥控器
+                // 兼容性修复：包含 13(PC/标准), 23(Android TV), 108(部分其他)
                 const isConfirmKey = (
-                    e.key === 'Enter' || 
-                    e.key === ' ' || 
-                    e.key === 'OK' || 
-                    e.key === 'Select' || 
-                    e.key === 'Accept' ||
-                    keyCode === 13 || 
-                    keyCode === 23 || 
-                    keyCode === 108
+                    e.key === 'Enter' || e.key === ' ' || e.key === 'OK' || 
+                    e.key === 'Select' || e.key === 'Accept' ||
+                    keyCode === 13 || keyCode === 23 || keyCode === 108
                 );
 
                 if (isConfirmKey) {
-                    // 关键：立即阻止默认行为，防止焦点在背景元素上触发点击
-                    e.preventDefault();
+                    e.preventDefault(); 
                     
                     if (isMenuOpen) {
-                        // 菜单打开时：点击当前聚焦的按钮
                         if (document.activeElement && document.activeElement.tagName === 'BUTTON') {
                             document.activeElement.click();
                         } else {
-                            // 容错：如果焦点丢了，默认点“继续”
                             const btnContinue = document.getElementById('modal-btn-continue');
                             if (btnContinue.style.display !== 'none') {
                                 btnContinue.click();
@@ -325,13 +368,11 @@
                             }
                         }
                     } else {
-                        // 菜单没打开：打开菜单
                         showMenu();
                     }
                     return;
                 }
 
-                // 2. 菜单导航 (当菜单打开时)
                 if (isMenuOpen) {
                     const buttons = Array.from(document.querySelectorAll('#modal-actions button')).filter(b => b.style.display !== 'none');
                     let currentIndex = buttons.indexOf(document.activeElement);
@@ -347,7 +388,6 @@
                     return;
                 }
 
-                // 3. 视力表测试操作 (仅当菜单关闭时)
                 if (KEY_MAP[e.key]) {
                     e.preventDefault();
                     handleAnswer(KEY_MAP[e.key]);
