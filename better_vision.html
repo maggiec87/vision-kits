@@ -93,10 +93,20 @@
             font-weight: 600;
             text-decoration: none;
             box-sizing: border-box;
+            outline: none; /* 移除默认 outline，使用自定义的 */
         }
         .btn:active, .mobile-control-btn:active {
             transform: scale(0.97);
             filter: brightness(0.95);
+        }
+        
+        /* === 电视端核心修复：焦点样式 === */
+        /* 当按钮被遥控器选中时，显示粗边框和发光效果 */
+        .btn:focus, .mobile-control-btn:focus, .level-btn:focus, .back-btn:focus {
+            outline: 4px solid var(--yellow-500);
+            box-shadow: 0 0 15px rgba(234, 179, 8, 0.6);
+            transform: scale(1.05);
+            z-index: 10;
         }
 
         /* --- 按钮颜色工具类 --- */
@@ -184,8 +194,8 @@
         .directional-pad-container .btn-dir-right { grid-area: 2 / 3 / 3 / 4; }
         .directional-pad-container .btn-dir-down  { grid-area: 3 / 2 / 4 / 3; }
 
-        /* --- 结果/菜单弹窗样式 (恢复) --- */
-        #result-modal { position: fixed; inset: 0; background-color: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 1rem; }
+        /* --- 结果/菜单弹窗样式 --- */
+        #result-modal { position: fixed; inset: 0; background-color: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 1rem; }
         .modal-content { background-color: var(--white); border-radius: 0.75rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); padding: 1.5rem; max-width: 28rem; width: 100%; text-align: center; }
         .modal-content h2 { font-size: 1.5rem; font-weight: bold; margin-bottom: 0.75rem; }
         .modal-content p { font-size: 1rem; margin-bottom: 0.4rem; }
@@ -288,15 +298,16 @@
         </div>
     </div>
 
-    <!-- 菜单/结果弹窗 (恢复) -->
+    <!-- 菜单/结果弹窗 -->
     <div id="result-modal" style="display: none;">
         <div class="modal-content">
             <h2 id="modal-title">已暂停</h2>
             <div id="modal-body"></div>
             <div id="modal-actions" class="modal-actions">
-                <button id="modal-btn-end" class="btn bg-red">结束 (保存)</button>
-                <button id="modal-btn-continue" class="btn bg-blue">继续</button>
-                <button id="modal-btn-exit" class="btn bg-gray">退出 (不保存)</button>
+                <!-- 注意：tabindex="0" 帮助电视浏览器识别这些是可聚焦元素 -->
+                <button id="modal-btn-continue" class="btn bg-blue" tabindex="0">继续</button>
+                <button id="modal-btn-end" class="btn bg-red" tabindex="0">结束 (保存)</button>
+                <button id="modal-btn-exit" class="btn bg-gray" tabindex="0">退出 (不保存)</button>
             </div>
         </div>
     </div>
@@ -306,7 +317,7 @@
         <!-- 内容由JS动态生成 -->
     </div>
 
-    <!-- 使用说明页 (更新文案) -->
+    <!-- 使用说明页 -->
     <div id="page-instructions" class="page content-page">
         <div>
             <h2>6米雾视法 | 提升裸眼视力</h2>
@@ -467,7 +478,6 @@ document.addEventListener('DOMContentLoaded', () => {
             appState.testState.timer--;
             testTimerEl.textContent = appState.testState.timer;
             if (appState.testState.timer <= 0) {
-                // 计时结束，自动结束并保存
                 endTestAndSave();
             }
         }, 1000);
@@ -500,12 +510,11 @@ document.addEventListener('DOMContentLoaded', () => {
         updateTestUI();
     }
 
-    // --- 基准测试评估逻辑 ---
     function evaluateBaselineResult() {
         endTestAndSave();
     }
 
-    // --- 菜单/模态框逻辑 (恢复) ---
+    // --- 菜单/模态框逻辑 ---
     function showMenu() {
         // 暂停计时器
         if (appState.timerInterval) clearInterval(appState.timerInterval);
@@ -532,6 +541,15 @@ document.addEventListener('DOMContentLoaded', () => {
              appState.testState.status = 'idle';
              navigateTo('home'); // 退出不保存
         };
+
+        // --- 关键修复：电视端强制聚焦 ---
+        // 延时一点点，确保元素已经渲染出来
+        setTimeout(() => {
+            const continueBtn = document.getElementById('modal-btn-continue');
+            if (continueBtn) {
+                continueBtn.focus();
+            }
+        }, 100);
     }
 
     function resumeTest() {
@@ -540,6 +558,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (appState.testState.type === 'fogging') {
             startTimer();
         }
+        // 恢复后，焦点移除，防止误触
+        if (document.activeElement) document.activeElement.blur();
     }
 
     function endTestAndSave() {
@@ -659,23 +679,22 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // --- 关键修复：如果菜单已打开，停止全局监听 ---
+        // 让浏览器的原生焦点导航（Tab/方向键）去控制按钮，
+        // 让原生 Enter 键去触发按钮的 onclick 事件。
+        if (resultModal.style.display === 'flex') {
+            return; 
+        }
+
         // 测试页逻辑
-        // 1. 确定/OK/空格 -> 弹出菜单 (恢复此功能)
+        // 1. 确定/OK/空格 -> 弹出菜单
         if (e.key === 'Enter' || e.key === ' ' || keyCode === 13) {
             e.preventDefault();
-            // 如果菜单已打开，按确定默认继续
-            if (resultModal.style.display === 'flex') {
-                resumeTest();
-            } else {
-                showMenu();
-            }
+            showMenu();
             return;
         }
 
-        // 2. 菜单已打开时，阻止方向键操作视标
-        if (resultModal.style.display === 'flex') return;
-
-        // 3. 方向键操作
+        // 2. 方向键操作
         if (KEY_MAP[e.key]) {
             e.preventDefault();
             handleAnswer(KEY_MAP[e.key]);
