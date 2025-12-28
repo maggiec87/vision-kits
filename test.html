@@ -239,7 +239,15 @@
                 const { correct, total, type } = appState.testState;
                 const config = appState.testConfig;
                 const level = type === 'baseline' ? config?.level?.decimal : config?.minLevel?.decimal;
-
+if (confirm("你确定要删除这个文件吗？")) {
+    // 如果用户点击了“确定”
+    console.log("文件将被删除");
+    // 这里可以添加删除文件的代码
+} else {
+    // 如果用户点击了“取消”
+    console.log("取消删除");
+    // 这里可以添加取消操作的代码
+}
                 // 设置标题
                 if (!title) {
                     title = type === 'baseline' ? '基准测试完成' : '雾视挑战完成';
@@ -477,6 +485,7 @@
     </script>
 </body>
 </html>
+
 
 
 
