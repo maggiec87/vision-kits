@@ -8,7 +8,7 @@
     <style>
         /* 针对移动端中心按钮的内联样式补充 */
         #mobile-btn-menu {
-            display: flex;
+            display: block;
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -35,7 +35,7 @@
         }
         /* 电视兼容性：为获得焦点的按钮添加明显样式 */
          button:focus {
-            outline: 10px solid #FFD700 /* 金色边框 */
+            outline: 30px solid #FFD700 /* 金色边框 */
             transform: scale(1.05);
             box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
         } 
@@ -232,7 +232,7 @@
                 clearInterval(appState.timerInterval);
                 appState.testState.status = 'paused';
 
-                resultModal.style.display = 'flex';
+                resultModal.style.display = 'block';
                 
                 const { correct, total, type } = appState.testState;
                 const config = appState.testConfig;
@@ -286,7 +286,7 @@
                 if (appState.timerInterval) clearInterval(appState.timerInterval);
                 if (appState.testState.status === 'running') appState.testState.status = 'paused';
 
-                resultModal.style.display = 'flex';
+                resultModal.style.display = 'block';
                 document.getElementById('modal-title').textContent = title;
                 
                 const { correct, total, type } = appState.testState;
@@ -396,7 +396,7 @@
 
             // === 修改：键盘/遥控器监听 ===
             function handleRemoteControl(key, keyCode, event) {
-                const isMenuOpen = resultModal.style.display === 'flex';
+                const isMenuOpen = resultModal.style.display === 'block';
                 
                 // 确定键检测（支持多种遥控器）
                 const isConfirmKey = (
@@ -475,3 +475,4 @@
     </script>
 </body>
 </html>
+
