@@ -34,11 +34,11 @@
             z-index: 9999;
         }
         /* 电视兼容性：为获得焦点的按钮添加明显样式 */
-        button:focus {
-            outline: 4px solid #FFD700; /* 金色边框 */
+         button:focus {
+            outline: 10px solid #FFD700 /* 金色边框 */
             transform: scale(1.05);
             box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
-        }
+        } 
         /* 历史记录样式 */
         .eval-text {
             font-weight: bold;
@@ -273,9 +273,12 @@
                 };
 
                 // 延迟聚焦，确保DOM渲染完成
+		/*
                 setTimeout(() => {
                     focusMenuButton(0); // 默认聚焦第一个按钮（查看历史）
                 }, 200);
+		*/
+		
             }
 
             // === 修改：菜单显示函数（用于暂停） ===
@@ -318,9 +321,11 @@
                 };
 
                 // 延迟聚焦
+		/*
                 setTimeout(() => {
                     focusMenuButton(1); // 默认聚焦"继续"按钮
                 }, 200);
+		*/
             }
 
             // === 新增：保存测试记录的函数 ===
