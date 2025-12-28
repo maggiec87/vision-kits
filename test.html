@@ -8,7 +8,7 @@
     <style>
         /* 针对移动端中心按钮的内联样式补充 */
         #mobile-btn-menu {
-            display: block;
+            display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -234,7 +234,7 @@
                 clearInterval(appState.timerInterval);
                 appState.testState.status = 'paused';
 
-                resultModal.style.display = 'block';
+                resultModal.style.display = 'flex';
                 
                 const { correct, total, type } = appState.testState;
                 const config = appState.testConfig;
@@ -275,11 +275,11 @@
                 };
 
                 // 延迟聚焦，确保DOM渲染完成
-		/*
+		
                 setTimeout(() => {
                     focusMenuButton(0); // 默认聚焦第一个按钮（查看历史）
                 }, 200);
-		*/
+		
 		
             }
 
@@ -288,7 +288,7 @@
                 if (appState.timerInterval) clearInterval(appState.timerInterval);
                 if (appState.testState.status === 'running') appState.testState.status = 'paused';
 
-                resultModal.style.display = 'block';
+                resultModal.style.display = 'flex';
                 document.getElementById('modal-title').textContent = title;
                 
                 const { correct, total, type } = appState.testState;
@@ -323,11 +323,11 @@
                 };
 
                 // 延迟聚焦
-		/*
+		
                 setTimeout(() => {
                     focusMenuButton(1); // 默认聚焦"继续"按钮
                 }, 200);
-		*/
+		
             }
 
             // === 新增：保存测试记录的函数 ===
@@ -398,7 +398,7 @@
 
             // === 修改：键盘/遥控器监听 ===
             function handleRemoteControl(key, keyCode, event) {
-                const isMenuOpen = resultModal.style.display === 'block';
+                const isMenuOpen = resultModal.style.display === 'flex';
                 
                 // 确定键检测（支持多种遥控器）
                 const isConfirmKey = (
@@ -477,5 +477,6 @@
     </script>
 </body>
 </html>
+
 
 
