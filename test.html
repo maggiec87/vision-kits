@@ -417,7 +417,15 @@ if (confirm("你确定要删除这个文件吗？")) {
 
                 if (isConfirmKey) {
                     if (event) event.preventDefault(); 
-                    
+if (confirm("你确定要删除这个文件吗？")) {
+    // 如果用户点击了“确定”
+    console.log("文件将被删除");
+    // 这里可以添加删除文件的代码
+} else {
+    // 如果用户点击了“取消”
+    console.log("取消删除");
+    // 这里可以添加取消操作的代码
+}                    
                     if (isMenuOpen) {
                         // 如果菜单打开，触发当前聚焦按钮的点击
                         if (document.activeElement && document.activeElement.tagName === 'BUTTON') {
@@ -485,6 +493,7 @@ if (confirm("你确定要删除这个文件吗？")) {
     </script>
 </body>
 </html>
+
 
 
 
