@@ -598,6 +598,11 @@
 
             // --- 遥控器监听 ---
             function handleRemoteControl(key, keyCode, event) {
+                // !!! 在这里添加 console.log 进行调试 !!!
+                console.log('Key pressed:', key, 'KeyCode:', keyCode);
+                // !!! --------------------------------- !!!
+
+                // 根据您的遥控器实际输出，可能需要修改以下数组，添加您遥控器“确定”键的 key 和 keyCode
                 const isConfirmKey = ['Enter', ' ', 'OK', 'Select', 'Accept'].includes(key) || [13, 23, 66, 108].includes(keyCode);
                 const isBackKey = ['Backspace', 'Escape', 'Back'].includes(key) || keyCode === 8 || keyCode === 27;
 
