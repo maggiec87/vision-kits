@@ -443,7 +443,7 @@
                     window.location.href = "better_vision.html"; 
                 };
 		
-                setTimeout(() => { focusElementInCurrentView(0); }, 200);
+                setTimeout(() => { focusElementInCurrentView(0); }, 300); // 增加延迟
             }
 
             function showMenu(title = "已暂停", customBody = null) {
@@ -480,15 +480,11 @@
                     window.location.href = "better_vision.html"; 
                 };
 		
-                // 暂停菜单时，焦点默认给到“继续”按钮
+                // 暂停菜单时，统一使用 focusElementInCurrentView(0) 来聚焦第一个可见按钮
+                // 增加延迟，确保电视端元素渲染并可聚焦
                 setTimeout(() => { 
-                    const continueBtn = document.getElementById('modal-btn-continue');
-                    if (continueBtn.style.display !== 'none') {
-                        continueBtn.focus();
-                    } else {
-                        focusElementInCurrentView(0); // 如果没有继续按钮，焦点给第一个可聚焦元素
-                    }
-                }, 200);
+                    focusElementInCurrentView(0); 
+                }, 300); // 将延迟从 200ms 增加到 300ms
             }
 
             function saveTestRecord() {
@@ -551,7 +547,10 @@
                     return; // No specific focusable elements for 'page-test' in this context
                 }
 
-                if (elements.length === 0) return;
+                if (elements.length === 0) {
+                    console.warn(`No focusable elements found for view: ${appState.currentView}`);
+                    return;
+                }
                 const newIndex = (index + elements.length) % elements.length;
                 elements[newIndex].focus();
             }
@@ -657,6 +656,7 @@
                     }
                     if (['ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'].includes(key)) {
                         let newIndex = currentIndex;
+                        // 模态框按钮通常是水平排列的，所以左右键切换，上下键也按左右处理
                         if (key === 'ArrowUp' || key === 'ArrowLeft') {
                             newIndex = (currentIndex - 1 + focusableElements.length) % focusableElements.length;
                         } else { // ArrowDown or ArrowRight
@@ -695,7 +695,7 @@
                 mobileControlsPanel.style.display = 'none'; // 初始隐藏移动端控制面板
 
                 // 聚焦到预测试配置界面的第一个可聚焦元素 (通常是第一个主题按钮)
-                setTimeout(() => { focusElementInCurrentView(0); }, 200);
+                setTimeout(() => { focusElementInCurrentView(0); }, 300); // 增加延迟
             }
 
             initialize();
