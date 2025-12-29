@@ -72,12 +72,14 @@
             padding: 10px 15px;
             border: none; border-radius: 6px; font-size: 16px;
             font-weight: bold; cursor: pointer; transition: all 0.2s;
-            text-decoration: none; display: inline-block; text-align: center;
+            text-decoration: none; display: inline-flex; /* 改为 inline-flex 以便对齐图标 */
+            align-items: center;
+            justify-content: center;
             box-sizing: border-box;
         }
         button[type="submit"] { width: 100%; background-color: #1a73e8; color: #fff; margin-top: 10px; }
         button[type="submit"]:hover { background-color: #185abc; }
-        button:active { transform: scale(0.98); }
+        button:active, .btn:active { transform: scale(0.98); } /* 统一 active 效果 */
 
         .result-container {
             margin-top: 30px; padding: 20px; background-color: #f0f5ff;
@@ -86,11 +88,10 @@
         .results-wrapper { display: flex; justify-content: space-around; gap: 20px; margin-bottom: 20px; }
         .result-item { flex: 1; padding: 15px; background-color: #fff; border-radius: 6px; border: 1px solid #d9d9d9; }
         .result-item-title { font-size: 14px; color: #5f6368; margin: 0 0 10px 0; }
-        .result-item-value { font-size: 28px; font-weight: bold; color: #1a73e8; } /* 默认蓝色 */
+        .result-item-value { font-size: 28px; font-weight: bold; color: #1a73e8; }
         
-        /* ▼▼▼ 修正：CSS 注释与颜色匹配 ▼▼▼ */
-        .result-positive { color: #cf1322 !important; } /* 红色，用于远储 */
-        .result-negative { color: #38a169 !important; } /* 绿色，用于近视 */
+        .result-positive { color: #cf1322 !important; }
+        .result-negative { color: #38a169 !important; }
 
         .result-note {
             font-size: 13px; color: #d46b08; background-color: #fffbe6;
@@ -102,8 +103,24 @@
             color: #cf1322; text-align: center;
         }
         
-        .btn-secondary { background-color: var(--light-bg-color); color: var(--secondary-color); border: 1px solid var(--border-color);   }
-        .btn-secondary:hover { background-color: #e2e8f0;   }
+        /* ▼▼▼ 新增和优化的样式 ▼▼▼ */
+        .btn-secondary {
+            background-color: #f0f2f5; /* 浅灰色背景，与页面背景协调 */
+            color: #5f6368; /* 中性灰色文字 */
+            border: 1px solid #dee2e6; /* 定义清晰的边框 */
+            gap: 8px; /* 图标与文字的间距 */
+        }
+        .btn-secondary:hover {
+            background-color: #e9ecef; /* 悬停时背景变深 */
+            border-color: #ced4da; /* 边框也变深 */
+            color: #3c4043; /* 文字颜色加深 */
+        }
+        .btn-secondary svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor; /* 使SVG图标颜色与按钮文字颜色保持一致 */
+        }
+        /* ▲▲▲ 新增和优化的样式 ▲▲▲ */
         
         @media (max-width: 768px) {
             .header-nav { flex-direction: column; align-items: stretch; }
@@ -119,8 +136,12 @@
         <div class="header-nav">
             <h1>屈光度数测算</h1>
             <div class="header-actions">
-                <!-- ▼▼▼ 修改：更新返回按钮的链接 ▼▼▼ -->
-                <a href="https://maggiec87.github.io/vision-kits/" class="btn btn-secondary">HOME</a>
+                <!-- ▼▼▼ 修改：更新了HOME按钮的内部结构，加入了SVG图标 ▼▼▼ -->
+                <a href="https://maggiec87.github.io/vision-kits/" class="btn btn-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/></svg>
+                    HOME
+                </a>
+                <!-- ▲▲▲ 修改完成 ▲▲▲ -->
             </div>
         </div>
         <p class="description">使用盼兮老师公式</p>
@@ -194,10 +215,10 @@
 
                 if (roundedDegree > 0) {
                     element.textContent = `远储 ${roundedDegree} D`;
-                    element.classList.add('result-positive'); // 应用红色样式
+                    element.classList.add('result-positive');
                 } else if (roundedDegree < 0) {
                     element.textContent = `近视 ${Math.abs(roundedDegree)} D`;
-                    element.classList.add('result-negative'); // 应用绿色样式
+                    element.classList.add('result-negative');
                 } else {
                     element.textContent = `正视 0 D`;
                 }
@@ -221,9 +242,8 @@
                 if (isNaN(al) || isNaN(k1) || isNaN(lt) || isNaN(ad)) { return alert('请输入所有必填项的有效数字！'); }
                 const commonPart = (43 - k1) * 100 - (3.1 - ad) * 150 + (3.6 - lt) * 150;
                 
-                // 计算逻辑与结果标题匹配
-                const degree1 = (23.5 - al) * 250 + commonPart; // 对应 "结果1 (眼轴基准 23.5)"
-                const degree2 = (24.0 - al) * 250 + commonPart; // 对应 "结果2 (眼轴基准 24.0)"
+                const degree1 = (23.5 - al) * 250 + commonPart;
+                const degree2 = (24.0 - al) * 250 + commonPart;
                 
                 formatAndDisplayResult(result1Element, degree1);
                 formatAndDisplayResult(result2Element, degree2);
@@ -234,6 +254,3 @@
     </script>
 </body>
 </html>
-
-
-
