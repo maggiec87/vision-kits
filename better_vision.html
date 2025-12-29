@@ -3,45 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>视力表提升裸眼 - 首页</title>
+    <title>视力表练习</title>
     <link rel="stylesheet" href="style.css">
-    <!-- 建议把内联样式加到 style.css 中，这里为了方便演示直接写在 head 里 -->
     <style>
-        /* 新增的右上角按钮样式 */
-        .top-nav {
+        /* 确保 html 和 body 占满整个视口高度，以便绝对定位正确 */
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        /* .page 容器需要相对定位，以便其内部的绝对定位元素能正确放置 */
+        .page {
+            position: relative; /* 关键：使子元素的 absolute 定位相对于此容器 */
+            height: 100%; /* 关键：让 .page 占满父容器高度 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            /* 其他 .page 样式保持不变 */
+        }
+
+        /* 移除原有的 .top-nav 和 .btn-home-corner 样式，因为 HOME 按钮已移动 */
+        /* .top-nav {
             position: absolute;
             top: 15px;
             right: 15px;
+            z-index: 100;
+        } */
+
+        /* .btn-home-corner 的样式现在由 .btn-home-bottom 接管 */
+        /* .btn-home-corner { ... } */
+
+        /* 新增：底部导航容器样式 */
+        .bottom-nav {
+            position: absolute;
+            bottom: 20px; /* 距离底部 20px */
+            left: 50%;
+            transform: translateX(-50%); /* 水平居中 */
             z-index: 100; /* 确保在最上层 */
         }
 
-        .btn-home-corner {
+        /* 新增：不显眼的 HOME 按钮样式 */
+        .btn-home-bottom {
             display: flex;
             align-items: center;
             justify-content: center;
-            /* 新增：使用 gap 来控制子元素之间的间距 */
-            gap: 4px; /* 这里设置你想要的 svg 和文本之间的间距 */
-            background-color: rgba(0, 0, 0, 0.05); /* 轻微的背景色 */
-            border: 1px solid #ccc;
-            border-radius: 20px; /* 圆角 */
-            padding: 5px 12px;
+            gap: 4px;
+            background-color: rgba(0, 0, 0, 0.05); /* 更低的透明度 */
+            border: 1px solid rgba(0, 0, 0, 0.1); /* 更淡的边框 */
+            border-radius: 20px;
+            padding: 5px 12px; /* 适中的内边距 */
             text-decoration: none;
-            color: #333;
-            font-size: 14px;
-            font-weight: bold;
+            color: #999; /* 浅灰色文字 */
+            font-size: 13px; /* 略小的字体 */
+            font-weight: normal; /* 不加粗 */
             transition: all 0.2s;
             cursor: pointer;
         }
 
-        .btn-home-corner:hover {
-            background-color: #e0e0e0;
+        .btn-home-bottom:hover {
+            background-color: rgba(0, 0, 0, 0.1); /* 鼠标悬停时略微明显 */
+            border-color: rgba(0, 0, 0, 0.2);
+            color: #666;
         }
 
-        .btn-home-corner svg {
-            width: 16px;
-            height: 16px;
-            /* 删除了 margin-right: 4px; */
+        .btn-home-bottom svg {
+            width: 15px; /* 略小的图标 */
+            height: 15px;
             fill: currentColor;
+        }
+
+        /* 电视兼容性焦点样式：确保新的按钮也能获得焦点样式 */
+        button:focus, .btn-home-bottom:focus, .theme-buttons .btn:focus {
+            outline: 3px solid #FFD700; /* 金色边框 */
+            /* 注意：对于 translateX 居中的元素，transform: scale 需要这样组合 */
+            transform: translateX(-50%) scale(1.05); /* 底部按钮的焦点放大效果 */
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+            z-index: 1001;
+        }
+        /* 其他按钮的焦点样式可以保持原样，或者也调整为组合 transform */
+        button:focus, .theme-buttons .btn:focus {
+             /* 如果这些按钮没有 translateX，则可以只用 scale(1.05) */
+             transform: scale(1.05);
         }
     </style>
 </head>
@@ -54,22 +97,30 @@
     <!-- 主页 -->
     <div id="page-home" class="page">
         
-        <!-- 新增：右上角 HOME 按钮 -->
-        <div class="top-nav">
+        <!-- 原有的 .top-nav 容器可以移除，因为 HOME 按钮已移动 -->
+        <!-- <div class="top-nav">
             <a href="https://maggiec87.github.io/vision-kits/" class="btn-home-corner">
                 <svg><use href="icons.svg#icon-home"/></svg>
                 HOME
             </a>
-        </div>
+        </div> -->
 
         <div class="main-content">
-            <h1>视力表提升裸眼</h1>
+            <h1>视力表练习</h1>
             <div class="home-grid">
                 <button onclick="window.location.href='instructions.html'" class="btn bg-gray"><svg><use href="icons.svg#icon-help"/></svg>使用说明</button>
                 <button onclick="window.location.href='baseline-setup.html'" class="btn bg-blue"><svg><use href="icons.svg#icon-eye"/></svg>测定基准</button>
                 <button onclick="window.location.href='fogging-setup.html'" class="btn bg-green"><svg><use href="icons.svg#icon-chart"/></svg>雾视挑战</button>
                 <button onclick="window.location.href='history.html'" class="btn bg-purple"><svg><use href="icons.svg#icon-history"/></svg>历史记录</button>
             </div>
+        </div>
+
+        <!-- 新增：底部 HOME 按钮 -->
+        <div class="bottom-nav">
+            <a href="https://maggiec87.github.io/vision-kits/" class="btn-home-bottom">
+                <svg><use href="icons.svg#icon-home"/></svg>
+                HOME
+            </a>
         </div>
     </div>
 </body>
