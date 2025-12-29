@@ -31,18 +31,11 @@
         }
         
         /* --- 电视兼容性焦点样式 (已更新) --- */
-        button:focus {
+        button:focus, .theme-buttons .btn:focus { /* 确保焦点样式 */
             outline: 3px solid #FFD700; /* 金色边框 */
             transform: scale(1.05);
             box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
             z-index: 1001; /* 确保焦点在最上层 */
-        }
-        /* 为主题菜单中的按钮应用同样的焦点样式 */
-        #theme-menu button:focus {
-            outline: 3px solid #FFD700;
-            transform: none; /* 菜单内按钮不需要缩放 */
-            box-shadow: none;
-            background-color: var(--color-bg-hover); /* 使用悬停背景色作为高亮 */
         }
 
         /* 历史记录样式 */
@@ -53,6 +46,144 @@
         .text-green { color: #4CAF50; }
         .text-red { color: #f44336; }
         .text-yellow { color: #FF9800; }
+
+        /* --- 主题样式 (通常应在 style.css 中，这里为了演示方便保留) --- */
+        body {
+            background-color: #f0f0f0; /* 默认背景 */
+            color: #333; /* 默认文字颜色 */
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        body.theme-paper { background-color: #fdf6e3; color: #586e75; }
+        body.theme-eyecare { background-color: #e0f2f1; color: #263238; }
+        body.theme-bright { background-color: #ffffff; color: #000000; }
+        body.theme-dark { background-color: #282c34; color: #abb2bf; }
+        
+        /* 模态框背景和文字颜色也需要适配主题 */
+        .modal-content {
+            background-color: #fff;
+            color: #333;
+        }
+        body.theme-dark .modal-content {
+            background-color: #3e444f;
+            color: #abb2bf;
+        }
+        body.theme-dark .modal-actions .btn {
+             background-color: #555;
+             color: #eee;
+             border-color: #666;
+        }
+        body.theme-dark .modal-actions .btn.bg-red {
+            background-color: #d32f2f;
+        }
+        body.theme-dark .modal-actions .btn.bg-blue {
+            background-color: #1976d2;
+        }
+        body.theme-dark .modal-actions .btn.bg-gray {
+            background-color: #757575;
+        }
+
+        /* --- 新增的预测试配置界面样式 --- */
+        #pre-test-config {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8); /* 半透明背景 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: #fff;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+        #pre-test-config .config-panel {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            color: #333;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        body.theme-dark #pre-test-config .config-panel {
+            background-color: #3e444f;
+            color: #abb2bf;
+        }
+        body.theme-paper #pre-test-config .config-panel {
+            background-color: #fff8e8;
+            color: #586e75;
+        }
+        body.theme-eyecare #pre-test-config .config-panel {
+            background-color: #ffffff;
+            color: #263238;
+        }
+        #pre-test-config h2 {
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            color: inherit;
+        }
+        #pre-test-config .theme-buttons {
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
+        #pre-test-config .btn-start-test {
+            padding: 15px 40px;
+            font-size: 1.2em;
+            background-color: #28a745;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        #pre-test-config .btn-start-test:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+
+        /* 主题选择按钮样式 */
+        .theme-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .theme-buttons .btn {
+            min-width: 80px;
+            padding: 8px 15px;
+            font-size: 14px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: #eee;
+            color: #333;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+        }
+        .theme-buttons .btn.active-theme {
+            border-color: #4CAF50; /* 选中主题的边框颜色 */
+            background-color: #e8f5e9; /* 选中主题的背景颜色 */
+            color: #4CAF50; /* 选中主题的文字颜色 */
+            font-weight: bold;
+        }
+
+        /* --------------------------------------------------- */
+        /* 新增：媒体查询，在大屏幕上隐藏移动端控制面板 */
+        /* --------------------------------------------------- */
+        .mobile-controls-panel {
+            display: flex; /* 默认在小屏幕上显示 */
+        }
+
+        @media (min-width: 768px) { /* 768px 通常是平板电脑的最小宽度 */
+            .mobile-controls-panel {
+                display: none !important; /* 在大屏幕上强制隐藏 */
+            }
+        }
+        /* --------------------------------------------------- */
+        /* --------------------------------------------------- */
     </style>
 </head>
 <!-- 添加 tabindex="0" 让 body 可聚焦，捕获电视按键 -->
@@ -62,8 +193,22 @@
         <object type="image/svg+xml" data="icons.svg"></object>
     </div>
 
-    <!-- 测试页 -->
-    <div id="page-test" class="page">
+    <!-- 预测试配置界面 -->
+    <div id="pre-test-config">
+        <div class="config-panel">
+            <h2>选择视觉模式</h2>
+            <div class="theme-buttons">
+                <button class="btn theme-btn" data-theme="paper">纸模</button>
+                <button class="btn theme-btn" data-theme="eyecare">护眼</button>
+                <button class="btn theme-btn" data-theme="bright">亮白</button>
+                <button class="btn theme-btn" data-theme="dark">暗黑</button>
+            </div>
+            <button id="start-test-from-config" class="btn btn-start-test">开始测试</button>
+        </div>
+    </div>
+
+    <!-- 测试页 (初始隐藏) -->
+    <div id="page-test" class="page" style="display: none;">
         <header class="test-header">
             <div id="test-title" class="test-title"></div>
             <div class="test-info">
@@ -80,7 +225,8 @@
         </main>
         
         <!-- === 移动端专属控制面板 === -->
-        <div class="mobile-controls-panel">
+        <!-- 注意：这里的 style="display: none;" 只是初始状态，JS会根据设备类型决定是否显示 -->
+        <div class="mobile-controls-panel" style="display: none;"> 
             <div class="directional-pad-container">
                 <button class="mobile-control-btn touch-btn btn-dir-up" data-dir="up"><svg><use href="icons.svg#icon-up"/></svg></button>
                 <button class="mobile-control-btn touch-btn btn-dir-left" data-dir="left"><svg><use href="icons.svg#icon-left"/></svg></button>
@@ -99,43 +245,12 @@
         <div class="modal-content">
             <h2 id="modal-title">已暂停</h2>
             <div id="modal-body"></div>
+            
             <div id="modal-actions" class="modal-actions">
                 <button id="modal-btn-end" class="btn bg-red">结束</button>
                 <button id="modal-btn-continue" class="btn bg-blue">继续</button>
                 <button id="modal-btn-exit" class="btn bg-gray">退出</button>
             </div>
-        </div>
-    </div>
-
-
-    <!-- ======================================================= -->
-    <!-- ============== 主题切换器 (Theme Switcher) ============== -->
-    <!-- ======================================================= -->
-    <div id="theme-switcher">
-        <!-- 主切换按钮 -->
-        <button id="theme-toggle-btn" title="切换主题">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2.25a.75.75 0 01.75.75v.518a9.75 9.75 0 018.013 8.013h.518a.75.75 0 010 1.5h-.518a9.75 9.75 0 01-8.013 8.013v.518a.75.75 0 01-1.5 0v-.518a9.75 9.75 0 01-8.013-8.013H2.25a.75.75 0 010-1.5h.518A9.75 9.75 0 0110.768 3.518v-.518A.75.75 0 0112 2.25zM4.665 11.25a7.25 7.25 0 006.585 6.585 7.25 7.25 0 006.585-6.585 7.25 7.25 0 00-6.585-6.585 7.25 7.25 0 00-6.585 6.585zM12 8.25a3.75 3.75 0 110 7.5 3.75 3.75 0 010-7.5z" />
-            </svg>
-        </button>
-        <!-- 主题选择菜单 (默认隐藏) -->
-        <div id="theme-menu" class="hidden">
-            <button data-theme="light">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 2a.75.75 0 01.75.75v.518a7.25 7.25 0 016.013 6.013h.518a.75.75 0 010 1.5h-.518a7.25 7.25 0 01-6.013 6.013v.518a.75.75 0 01-1.5 0v-.518A7.25 7.25 0 013.232 10.75h-.518a.75.75 0 010-1.5h.518A7.25 7.25 0 019.25 3.268v-.518A.75.75 0 0110 2zM8.5 10a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z" clip-rule="evenodd" /></svg>
-                <span>默认模式</span>
-            </button>
-            <button data-theme="dark">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M7.455 2.104a.75.75 0 00-.91.093l-.292.313a.75.75 0 00.093.91l7.072 6.61-7.072 6.61a.75.75 0 00-.093.91l.292.313a.75.75 0 00.91.093l7.622-7.128a.75.75 0 000-1.002L7.455 2.104z" /></svg>
-                <span>暗黑模式</span>
-            </button>
-            <button data-theme="paper">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M3.5 2.75a.75.75 0 00-1.5 0v14.5a.75.75 0 001.5 0v-4.392l1.657-.348a6.44 6.44 0 014.271.024l.143.048.143-.048a6.44 6.44 0 014.271-.024l1.657.348V2.75a.75.75 0 00-1.5 0v10.45l-1.224-.257a4.94 4.94 0 00-3.276-.02L8.5 13.207l-.223-.074a4.94 4.94 0 00-3.276.02L3.776 13.45v-10.7z" /></svg>
-                <span>纸质模式</span>
-            </button>
-            <button data-theme="eyecare">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 12.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" /><path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 010-1.18l.88-1.84a1.65 1.65 0 011.529-1.047h1.402a1.65 1.65 0 011.529 1.047l.88 1.84a1.651 1.651 0 010 1.18l-.88 1.84a1.65 1.65 0 01-1.529 1.047H3.073a1.65 1.65 0 01-1.529-1.047l-.88-1.84zM10 15a5 5 0 100-10 5 5 0 000 10z" clip-rule="evenodd" /></svg>
-                <span>护眼模式</span>
-            </button>
         </div>
     </div>
 
@@ -160,16 +275,45 @@
                 testConfig: null,
                 testState: { status: 'idle', timer: 0, correct: 0, total: 0, currentE: null, type: null },
                 timerInterval: null,
+                currentView: 'pre-test-config' // 新增状态，表示当前显示哪个界面
             };
 
+            // --- 主题管理 ---
+            let currentTheme = localStorage.getItem('selectedTheme') || 'bright'; // 默认主题
+            const themeButtons = document.querySelectorAll('.theme-btn');
+
+            function applyTheme(themeName) {
+                document.body.className = ''; // 清除所有主题类
+                document.body.classList.add(`theme-${themeName}`);
+                localStorage.setItem('selectedTheme', themeName);
+                currentTheme = themeName;
+                
+                // 更新主题按钮的激活状态
+                themeButtons.forEach(btn => {
+                    if (btn.dataset.theme === themeName) {
+                        btn.classList.add('active-theme');
+                    } else {
+                        btn.classList.remove('active-theme');
+                    }
+                });
+            }
+
             // --- DOM 元素引用 ---
+            const preTestConfigDiv = document.getElementById('pre-test-config');
+            const startTestFromConfigBtn = document.getElementById('start-test-from-config');
+            const pageTestDiv = document.getElementById('page-test');
+            const mobileControlsPanel = document.querySelector('.mobile-controls-panel'); // 获取移动端控制面板
+
             const eChartEl = document.getElementById('e-chart-svg');
             const testTimerEl = document.getElementById('test-timer');
             const testScoreEl = document.getElementById('test-score');
             const resultModal = document.getElementById('result-modal');
             const timerDisplay = document.getElementById('timer-display');
-            const themeToggleBtn = document.getElementById('theme-toggle-btn');
-            const themeMenu = document.getElementById('theme-menu');
+
+            // --- 判断是否为移动设备 (基于屏幕宽度) ---
+            function isMobileDevice() {
+                return window.matchMedia("(max-width: 767px)").matches; // 767px 及以下认为是移动设备
+            }
             
             // --- 核心功能函数 ---
             function renderEChart(sizePx, direction) {
@@ -270,6 +414,7 @@
                 clearInterval(appState.timerInterval);
                 appState.testState.status = 'paused';
                 resultModal.style.display = 'flex';
+                appState.currentView = 'result-modal'; // 更新当前视图状态
                 
                 const { correct, total, type } = appState.testState;
                 const config = appState.testConfig;
@@ -298,14 +443,15 @@
                     window.location.href = "better_vision.html"; 
                 };
 		
-                setTimeout(() => { focusMenuButton(0); }, 200);
+                setTimeout(() => { focusElementInCurrentView(0); }, 200);
             }
 
-            function showMenu(title = "已暂停", customBody = null, isFinished = false) {
+            function showMenu(title = "已暂停", customBody = null) {
                 if (appState.timerInterval) clearInterval(appState.timerInterval);
                 if (appState.testState.status === 'running') appState.testState.status = 'paused';
 
                 resultModal.style.display = 'flex';
+                appState.currentView = 'result-modal'; // 更新当前视图状态
                 document.getElementById('modal-title').textContent = title;
                 
                 const { correct, total, type } = appState.testState;
@@ -317,7 +463,7 @@
                 } else {
                     document.getElementById('modal-body').innerHTML = `<p>当前模式: ${type === 'baseline' ? '基准测试' : '雾视挑战'}</p><p>当前视标: ${level || '-'}</p><p>当前得分: <strong>${correct} / ${total}</strong></p>`;
                 }
-
+                
                 const btnEnd = document.getElementById('modal-btn-end');
                 btnEnd.textContent = '结束';
                 btnEnd.className = 'btn bg-red';
@@ -334,7 +480,15 @@
                     window.location.href = "better_vision.html"; 
                 };
 		
-                setTimeout(() => { focusMenuButton(1); }, 200);
+                // 暂停菜单时，焦点默认给到“继续”按钮
+                setTimeout(() => { 
+                    const continueBtn = document.getElementById('modal-btn-continue');
+                    if (continueBtn.style.display !== 'none') {
+                        continueBtn.focus();
+                    } else {
+                        focusElementInCurrentView(0); // 如果没有继续按钮，焦点给第一个可聚焦元素
+                    }
+                }, 200);
             }
 
             function saveTestRecord() {
@@ -352,9 +506,14 @@
             function resumeTest() {
                 resultModal.style.display = 'none';
                 appState.testState.status = 'running';
-                document.body.focus();
+                appState.currentView = 'page-test'; // 更新当前视图状态
+                document.body.focus(); // 确保 body 重新获得焦点以捕获按键
                 if (appState.testState.type === 'fogging' && appState.testState.timer > 0) {
                     startTimer();
+                }
+                // 恢复时，如果不是移动设备，则隐藏虚拟按键
+                if (!isMobileDevice()) {
+                    mobileControlsPanel.style.display = 'none';
                 }
             }
 
@@ -374,18 +533,27 @@
             }
 
             // --- 焦点管理函数 ---
-            function focusMenuButton(index) {
-                const buttons = Array.from(document.querySelectorAll('#modal-actions button')).filter(btn => btn.style.display !== 'none');
-                if (buttons.length === 0) return;
-                const newIndex = (index + buttons.length) % buttons.length;
-                buttons[newIndex].focus();
+            function getFocusablePreTestElements() {
+                return Array.from(document.querySelectorAll('#pre-test-config .config-panel button')).filter(btn => btn.style.display !== 'none');
             }
 
-            function focusThemeMenuButton(index) {
-                const buttons = Array.from(themeMenu.querySelectorAll('button'));
-                if (buttons.length === 0) return;
-                const newIndex = (index + buttons.length) % buttons.length;
-                buttons[newIndex].focus();
+            function getFocusableModalElements() {
+                return Array.from(document.querySelectorAll('#modal-actions button')).filter(btn => btn.style.display !== 'none');
+            }
+
+            function focusElementInCurrentView(index) {
+                let elements;
+                if (appState.currentView === 'pre-test-config') {
+                    elements = getFocusablePreTestElements();
+                } else if (appState.currentView === 'result-modal') {
+                    elements = getFocusableModalElements();
+                } else {
+                    return; // No specific focusable elements for 'page-test' in this context
+                }
+
+                if (elements.length === 0) return;
+                const newIndex = (index + elements.length) % elements.length;
+                elements[newIndex].focus();
             }
 
             // --- 事件监听器 ---
@@ -394,42 +562,79 @@
                 btn.onclick = () => handleAnswer(btn.dataset.dir);
             });
 
+            // 主题按钮事件监听 (在预测试配置界面)
+            themeButtons.forEach(btn => {
+                btn.onclick = () => applyTheme(btn.dataset.theme);
+            });
+
+            // "开始测试" 按钮事件监听
+            startTestFromConfigBtn.onclick = () => {
+                preTestConfigDiv.style.display = 'none';
+                pageTestDiv.style.display = 'flex';
+                
+                // 根据设备类型决定是否显示移动端控制面板
+                if (isMobileDevice()) {
+                    mobileControlsPanel.style.display = 'flex'; 
+                } else {
+                    mobileControlsPanel.style.display = 'none';
+                }
+
+                appState.currentView = 'page-test'; // 更新当前视图状态
+                document.body.focus(); // 确保测试界面获得焦点
+                
+                const storedConfig = localStorage.getItem('testConfig');
+                if (storedConfig) {
+                    try {
+                        const config = JSON.parse(storedConfig);
+                        startTest(config);
+                    } catch (e) {
+                        console.error("Config parse error", e);
+                        window.location.href = 'better_vision.html';
+                    }
+                } else {
+                    window.location.href = 'better_vision.html';
+                }
+            };
+
             // --- 遥控器监听 ---
             function handleRemoteControl(key, keyCode, event) {
-                const isPauseMenuOpen = resultModal.style.display === 'flex';
-                const isThemeMenuOpen = !themeMenu.classList.contains('hidden');
-
                 const isConfirmKey = ['Enter', ' ', 'OK', 'Select', 'Accept'].includes(key) || [13, 23, 66, 108].includes(keyCode);
                 const isBackKey = ['Backspace', 'Escape', 'Back'].includes(key) || keyCode === 8 || keyCode === 27;
 
-                if (event) event.preventDefault();
+                if (event) event.preventDefault(); // 阻止默认滚动等行为
 
-                // 优先级 1: 主题菜单已打开
-                if (isThemeMenuOpen) {
-                    if (isConfirmKey && document.activeElement.parentElement === themeMenu) {
+                // 优先级 1: 预测试配置界面
+                if (appState.currentView === 'pre-test-config') {
+                    const focusableElements = getFocusablePreTestElements();
+                    let currentIndex = focusableElements.indexOf(document.activeElement);
+
+                    if (isConfirmKey && document.activeElement && document.activeElement.closest('#pre-test-config')) {
                         document.activeElement.click();
                         return;
                     }
                     if (isBackKey) {
-                        themeMenu.classList.add('hidden');
-                        themeToggleBtn.focus();
+                        window.location.href = 'better_vision.html'; // 返回主菜单
                         return;
                     }
-                    if (key === 'ArrowUp' || key === 'ArrowDown') {
-                        const buttons = Array.from(themeMenu.querySelectorAll('button'));
-                        let currentIndex = buttons.indexOf(document.activeElement);
-                        if (currentIndex === -1) currentIndex = 0;
-                        
-                        const nextIndex = key === 'ArrowUp' ? currentIndex - 1 : currentIndex + 1;
-                        focusThemeMenuButton(nextIndex);
+                    if (['ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'].includes(key)) {
+                        let newIndex = currentIndex;
+                        if (key === 'ArrowUp' || key === 'ArrowLeft') {
+                            newIndex = (currentIndex - 1 + focusableElements.length) % focusableElements.length;
+                        } else { // ArrowDown or ArrowRight
+                            newIndex = (currentIndex + 1) % focusableElements.length;
+                        }
+                        focusElementInCurrentView(newIndex);
                         return;
                     }
                     return;
                 }
 
                 // 优先级 2: 暂停/结果菜单已打开
-                if (isPauseMenuOpen) {
-                    if (isConfirmKey && document.activeElement.closest('#modal-actions')) {
+                if (appState.currentView === 'result-modal') {
+                    const focusableElements = getFocusableModalElements();
+                    let currentIndex = focusableElements.indexOf(document.activeElement);
+
+                    if (isConfirmKey && document.activeElement && document.activeElement.closest('#result-modal')) {
                         document.activeElement.click();
                         return;
                     }
@@ -438,32 +643,34 @@
                         if (continueBtn.style.display !== 'none') {
                             continueBtn.click();
                         } else {
-                            document.getElementById('modal-btn-exit').click();
+                            const exitBtn = document.getElementById('modal-btn-exit');
+                            const endBtn = document.getElementById('modal-btn-end');
+                            if (exitBtn) exitBtn.click();
+                            else if (endBtn) endBtn.click(); 
                         }
                         return;
                     }
                     if (['ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'].includes(key)) {
-                        const buttons = Array.from(document.querySelectorAll('#modal-actions button')).filter(b => b.style.display !== 'none');
-                        let currentIndex = buttons.indexOf(document.activeElement);
-                        const direction = (key === 'ArrowUp' || key === 'ArrowLeft') ? -1 : 1;
-                        focusMenuButton(currentIndex + direction);
+                        let newIndex = currentIndex;
+                        if (key === 'ArrowUp' || key === 'ArrowLeft') {
+                            newIndex = (currentIndex - 1 + focusableElements.length) % focusableElements.length;
+                        } else { // ArrowDown or ArrowRight
+                            newIndex = (currentIndex + 1) % focusableElements.length;
+                        }
+                        focusElementInCurrentView(newIndex);
                         return;
                     }
                     return;
                 }
 
-                // 优先级 3: 正常测试中
+                // 优先级 3: 正常测试中 (appState.currentView === 'page-test')
                 if (isConfirmKey) {
-                    if (document.activeElement === themeToggleBtn) {
-                        themeToggleBtn.click();
-                    } else {
-                        showMenu();
-                    }
+                    showMenu(); // 按确认键暂停
                     return;
                 }
 
                 if (KEY_MAP[key]) {
-                    handleAnswer(KEY_MAP[key]);
+                    handleAnswer(KEY_MAP[key]); // 处理方向键答案
                 }
             }
 
@@ -474,26 +681,21 @@
 
             // --- 初始化 ---
             function initialize() {
-                const storedConfig = localStorage.getItem('testConfig');
-                if (storedConfig) {
-                    try {
-                        const config = JSON.parse(storedConfig);
-                        startTest(config);
-                    } catch (e) {
-                        console.error("Config parse error", e);
-                        window.location.href = 'index.html';
-                    }
-                } else {
-                    window.location.href = 'index.html';
-                }
+                // 应用存储的主题到预测试界面
+                applyTheme(currentTheme); 
+                
+                // 默认显示预测试配置界面
+                preTestConfigDiv.style.display = 'flex';
+                pageTestDiv.style.display = 'none';
+                mobileControlsPanel.style.display = 'none'; // 初始隐藏移动端控制面板
+
+                // 聚焦到预测试配置界面的第一个可聚焦元素 (通常是第一个主题按钮)
+                setTimeout(() => { focusElementInCurrentView(0); }, 200);
             }
 
             initialize();
         });
     </script>
-
-    <!-- 引入您已修改好的 theme.js 文件 -->
-    <script src="theme.js"></script>
     
 </body>
 </html>
