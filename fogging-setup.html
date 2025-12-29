@@ -5,6 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>雾视挑战 - 选择视标</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* 新增的样式，用于提示框 */
+        .continue-prompt {
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin: 20px auto; /* 居中显示 */
+            border-radius: 8px;
+            text-align: center;
+            max-width: 400px; /* 限制宽度 */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .continue-prompt p {
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .prompt-buttons button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.2s ease;
+        }
+        .prompt-buttons .action-btn {
+            background-color: #007bff;
+            color: white;
+        }
+        .prompt-buttons .action-btn:hover {
+            background-color: #0056b3;
+        }
+        .prompt-buttons .secondary-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+        .prompt-buttons .secondary-btn:hover {
+            background-color: #5a6268;
+        }
+
+        /* 确保level-grid-container在需要时显示为grid */
+        .level-grid {
+            display: grid; /* 确保默认是grid */
+            /* 其他样式保持不变 */
+        }
+    </style>
 </head>
 <body>
     <!-- SVG 图标定义文件，所有页面共享 -->
@@ -12,12 +59,19 @@
         <object type="image/svg+xml" data="icons.svg"></object>
     </div>
 
-    <!-- 全局返回按钮 (已删除) -->
-    <!-- <a href="index.html" class="global-back-button">返回首页</a> -->
-
     <!-- 视标选择页 -->
     <div id="page-setup" class="page setup-page">
         <h2 id="setup-title">选择最小视标 (雾视挑战)</h2>
+
+        <!-- 新增：上次选择的提示框 -->
+        <div id="continue-prompt" class="continue-prompt" style="display: none;">
+            <p>上次选择了视标 <span id="last-decimal"></span> (<span id="last-logmar"></span>)。是否继续？</p>
+            <div class="prompt-buttons">
+                <button id="btn-continue-last" class="action-btn">继续</button>
+                <button id="btn-new-selection" class="secondary-btn">重选</button>
+            </div>
+        </div>
+
         <div id="level-grid-container" class="level-grid"></div>
         <div class="back-btn-container">
             <!-- 底部返回按钮链接已修改 -->
@@ -42,6 +96,47 @@
             }));
 
             const gridContainer = document.getElementById('level-grid-container');
+            const continuePrompt = document.getElementById('continue-prompt');
+            const lastDecimalSpan = document.getElementById('last-decimal');
+            const lastLogmarSpan = document.getElementById('last-logmar');
+            const btnContinueLast = document.getElementById('btn-continue-last');
+            const btnNewSelection = document.getElementById('btn-new-selection');
+
+            let lastConfig = null;
+            try {
+                const storedConfig = localStorage.getItem('testConfig');
+                if (storedConfig) {
+                    lastConfig = JSON.parse(storedConfig);
+                }
+            } catch (e) {
+                console.error("Error parsing testConfig from localStorage:", e);
+                // 如果数据损坏，则清除它
+                localStorage.removeItem('testConfig');
+            }
+
+            // 检查是否有上次的有效雾视挑战配置
+            if (lastConfig && lastConfig.minLevel && lastConfig.type === 'fogging') {
+                lastDecimalSpan.textContent = lastConfig.minLevel.decimal;
+                lastLogmarSpan.textContent = lastConfig.minLevel.logMAR;
+                continuePrompt.style.display = 'block'; // 显示提示
+                gridContainer.style.display = 'none'; // 隐藏视标网格
+
+                btnContinueLast.onclick = () => {
+                    // testConfig 已经在 localStorage 中，直接跳转
+                    window.location.href = 'test.html';
+                };
+
+                btnNewSelection.onclick = () => {
+                    continuePrompt.style.display = 'none'; // 隐藏提示
+                    gridContainer.style.display = 'grid'; // 显示视标网格
+                };
+            } else {
+                // 没有上次的选择或配置无效，直接显示视标网格
+                continuePrompt.style.display = 'none';
+                gridContainer.style.display = 'grid';
+            }
+
+            // 动态生成视标选择按钮
             VISION_LEVELS.forEach(level => {
                 const btn = document.createElement('button');
                 btn.className = 'level-btn';
@@ -49,11 +144,11 @@
                 btn.onclick = () => {
                     // 将测试配置保存到 localStorage
                     localStorage.setItem('testConfig', JSON.stringify({
-                        type: 'fogging',
+                        type: 'fogging', // 明确指定挑战类型
                         minLevel: level,
                         fogLevels: VISION_LEVELS.slice(0, 3) // 最大的三行
                     }));
-                    window.location.href = 'test.html'; // 跳转到测试页面
+                    window.location.href = 'test.html'; // 跳转到测试   面
                 };
                 gridContainer.appendChild(btn);
             });
