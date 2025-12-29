@@ -108,6 +108,9 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             color: #333;
             transition: background-color 0.3s ease, color 0.3s ease;
+            display: flex; /* 使用 flexbox */
+            flex-direction: column; /* 垂直排列子元素 */
+            align-items: center; /* 水平居中 */
         }
         body.theme-dark #pre-test-config .config-panel {
             background-color: #3e444f;
@@ -122,7 +125,7 @@
             color: #263238;
         }
         #pre-test-config h2 {
-            margin-top: 0;
+            margin-top: 25px; /* 调整标题上边距 */
             margin-bottom: 25px;
             font-size: 1.8em;
             color: inherit;
@@ -134,14 +137,15 @@
         #pre-test-config .btn-start-test {
             padding: 15px 40px;
             font-size: 1.2em;
-            background-color: #28a745;
+            background-color: #007bff; /* 改为蓝色 */
             color: white;
             border-radius: 8px;
             cursor: pointer;
             transition: background-color 0.2s, transform 0.1s;
+            margin-bottom: 20px; /* 为按钮下方增加一些空间 */
         }
         #pre-test-config .btn-start-test:hover {
-            background-color: #218838;
+            background-color: #0056b3; /* 悬停时更深的蓝色 */
             transform: translateY(-2px);
         }
 
@@ -196,14 +200,16 @@
     <!-- 预测试配置界面 -->
     <div id="pre-test-config">
         <div class="config-panel">
-            <h2>选择视觉模式</h2>
+            <!-- "开始测试" 按钮现在位于顶部 -->
+            <button id="start-test-from-config" class="btn btn-start-test">开始测试</button>
+
+            <h2>选择背景</h2>
             <div class="theme-buttons">
                 <button class="btn theme-btn" data-theme="paper">纸模</button>
                 <button class="btn theme-btn" data-theme="eyecare">护眼</button>
                 <button class="btn theme-btn" data-theme="bright">亮白</button>
                 <button class="btn theme-btn" data-theme="dark">暗黑</button>
             </div>
-            <button id="start-test-from-config" class="btn btn-start-test">开始测试</button>
         </div>
     </div>
 
@@ -270,7 +276,7 @@
             const KEY_MAP = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right' };
             const ROTATION_MAP = { up: -90, down: 90, left: 180, right: 0 };
 
-            // --- 应用状态 ---
+        // --- 应用状态 ---
             let appState = {
                 testConfig: null,
                 testState: { status: 'idle', timer: 0, correct: 0, total: 0, currentE: null, type: null },
@@ -434,7 +440,7 @@
                 document.getElementById('modal-btn-continue').style.display = 'none';
                 
                 const btnEnd = document.getElementById('modal-btn-end');
-                btnEnd.textContent = '查看历史';
+btnEnd.textContent = '查看历史';
                 btnEnd.className = 'btn bg-blue';
                 btnEnd.onclick = () => endTestAndSave();
 
@@ -530,7 +536,10 @@
 
             // --- 焦点管理函数 ---
             function getFocusablePreTestElements() {
-                return Array.from(document.querySelectorAll('#pre-test-config .config-panel button')).filter(btn => btn.style.display !== 'none');
+                // 确保按照页面上的实际顺序获取可聚焦元素
+                const panel = document.querySelector('#pre-test-config .config-panel');
+                if (!panel) return [];
+                return Array.from(panel.querySelectorAll('button, .theme-buttons .btn')).filter(btn => btn.style.display !== 'none');
             }
 
             function getFocusableModalElements() {
@@ -622,10 +631,33 @@
                     }
                     if (['ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'].includes(key)) {
                         let newIndex = currentIndex;
-                        if (key === 'ArrowUp' || key === 'ArrowLeft') {
+                        // 预测试界面是垂直排列的按钮，所以上下键切换
+                        if (key === 'ArrowUp') {
                             newIndex = (currentIndex - 1 + focusableElements.length) % focusableElements.length;
-                        } else { // ArrowDown or ArrowRight
+                        } else if (key === 'ArrowDown') {
                             newIndex = (currentIndex + 1) % focusableElements.length;
+                        } else if (key === 'ArrowLeft' || key === 'ArrowRight') {
+                            // 对于主题按钮组，左右键可以在组内切换
+                            if (document.activeElement && document.activeElement.classList.contains('theme-btn')) {
+                                const themeBtns = Array.from(document.querySelectorAll('.theme-btn'));
+                                const themeIndex = themeBtns.indexOf(document.activeElement);
+                                let newThemeIndex = themeIndex;
+                                if (key === 'ArrowLeft') {
+                                    newThemeIndex = (themeIndex - 1 + themeBtns.length) % themeBtns.length;
+                                } else {
+                                    newThemeIndex = (themeIndex + 1) % themeBtns.length;
+                                }
+                                themeBtns[newThemeIndex].focus();
+                                return;
+                            } else {
+                                // 如果焦点不在主题按钮上，左右键可以跳过主题按钮组
+                                // 简单处理为跳到下一个或上一个主要按钮
+                                if (key === 'ArrowLeft') {
+                                    newIndex = (currentIndex - 1 + focusableElements.length) % focusableElements.length;
+                                } else {
+                                    newIndex = (currentIndex + 1) % focusableElements.length;
+                                }
+                            }
                         }
                         focusElementInCurrentView(newIndex);
                         return;
@@ -694,7 +726,7 @@
                 pageTestDiv.style.display = 'none';
                 mobileControlsPanel.style.display = 'none'; // 初始隐藏移动端控制面板
 
-                // 聚焦到预测试配置界面的第一个可聚焦元素 (通常是第一个主题按钮)
+                // 聚焦到预测试配置界面的第一个可聚焦元素 (现在是 "开始测试" 按钮)
                 setTimeout(() => { focusElementInCurrentView(0); }, 300); // 增加延迟
             }
 
