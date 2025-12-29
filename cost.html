@@ -97,18 +97,27 @@
             margin-top: 10px;
         }
         
+        /* ▼▼▼ 修改：调整通用按钮样式以支持图标 ▼▼▼ */
         .btn, button {
-            padding: 10px 20px;
-            border: 1px solid transparent; /* 统一添加透明边框，防止悬停时跳动 */
+            padding: 10px 15px; /* 调整内边距以适应图标 */
+            border: 1px solid transparent;
             border-radius: 6px;
             font-size: 1em;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            transition: all 0.2s;
             text-decoration: none;
-            text-align: center;
             white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px; /* 图标和文字的间距 */
         }
+        .btn:active, button:active {
+            transform: scale(0.98); /* 统一点击效果 */
+        }
+        /* ▲▲▲ 修改完成 ▲▲▲ */
+
         .button-group button {
              flex-grow: 1;
         }
@@ -122,21 +131,29 @@
             border-color: var(--primary-color-dark);
         }
         
-        /* ▼▼▼ 1. 返回键颜色调浅 ▼▼▼ */
+        /* ▼▼▼ 修改：替换为统一的 HOME 按钮样式 ▼▼▼ */
         .btn-secondary {
-            background-color: var(--light-bg-color);
-            color: var(--secondary-color);
-            border: 1px solid var(--border-color);
+            background-color: #f0f2f5;
+            color: #5f6368;
+            border: 1px solid #dee2e6;
         }
         .btn-secondary:hover {
-            background-color: #e2e8f0;
+            background-color: #e9ecef;
+            border-color: #ced4da;
+            color: #3c4043;
         }
+        .btn-secondary svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+        /* ▲▲▲ 修改完成 ▲▲▲ */
 
-        /* ▼▼▼ 3. 为详情、修改、删除按钮设置通用样式 ▼▼▼ */
         .btn-view, .btn-edit, .btn-danger {
             padding: 5px 10px;
             font-size: 0.9em;
             color: white;
+            gap: 4px; /* 缩小内部间距 */
         }
         .btn-view { background-color: var(--view-color); }
         .btn-edit { background-color: var(--info-color); }
@@ -154,15 +171,14 @@
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid var(--border-color);
-            vertical-align: middle; /* 垂直居中单元格内容 */
+            vertical-align: middle;
         }
         .actions-cell {
             white-space: nowrap;
         }
-        /* ▼▼▼ 3. 修改和删除紧凑排列的容器样式 ▼▼▼ */
         .action-buttons {
             display: flex;
-            gap: 6px; /* 按钮之间的间距 */
+            gap: 6px;
             align-items: center;
         }
 
@@ -180,7 +196,6 @@
             color: var(--primary-color);
         }
         
-        /* ▼▼▼ 2. 导出键底色用绿色 ▼▼▼ */
         .btn-export {
             background-color: var(--primary-color);
             color: white;
@@ -191,9 +206,8 @@
             background-color: var(--primary-color-dark);
         }
 
-        /* ▼▼▼ 3. 详情模态框样式 ▼▼▼ */
         .modal {
-            display: none; /* 默认隐藏 */
+            display: none;
             position: fixed;
             z-index: 1000;
             left: 0;
@@ -201,7 +215,7 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(0,0,0,0.5); /* 半透明黑色背景 */
+            background-color: rgba(0,0,0,0.5);
             justify-content: center;
             align-items: center;
         }
@@ -251,10 +265,9 @@
         .modal-body strong {
             color: var(--secondary-color);
             display: inline-block;
-            width: 80px; /* 对齐标签 */
+            width: 80px;
         }
         
-        /* 手机适配优化 */
         @media (max-width: 768px) {
             body { padding: 10px; }
             
@@ -318,7 +331,12 @@
         <div class="header-nav">
             <h1>防控账单</h1>
             <div class="header-actions">
-                <a href="https://maggiec87.github.io/vision-kits/" class="btn btn-secondary">HOME</a>
+                <!-- ▼▼▼ 修改：更新 HOME 按钮，加入 SVG 图标 ▼▼▼ -->
+                <a href="https://maggiec87.github.io/vision-kits/" class="btn btn-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/></svg>
+                    HOME
+                </a>
+                <!-- ▲▲▲ 修改完成 ▲▲▲ -->
             </div>
         </div>
 
@@ -370,7 +388,6 @@
         </div>
     </div>
 
-    <!-- ▼▼▼ 3. 详情模态框 HTML 结构 ▼▼▼ -->
     <div id="details-modal" class="modal">
         <div class="modal-content">
             <span id="modal-close-btn" class="modal-close">&times;</span>
@@ -382,6 +399,7 @@
     </div>
 
     <script>
+        // --- JavaScript部分保持不变 ---
         document.addEventListener('DOMContentLoaded', () => {
             const costForm = document.getElementById('cost-form');
             const costList = document.getElementById('cost-list');
@@ -394,7 +412,6 @@
             const cancelEditBtn = document.getElementById('cancel-edit-btn');
             const exportCsvBtn = document.getElementById('export-csv-btn');
 
-            // ▼▼▼ 3. 获取模态框相关元素 ▼▼▼
             const detailsModal = document.getElementById('details-modal');
             const modalCloseBtn = document.getElementById('modal-close-btn');
             const modalBodyContent = document.getElementById('modal-body-content');
@@ -412,12 +429,11 @@
                 let total = 0;
 
                 if (sortedCosts.length === 0) {
-                    costList.innerHTML = '<tr><td colspan="4" style="text-align:center; display:table-cell;">暂无记录</td></tr>';
+      costList.innerHTML = '<tr><td colspan="4" style="text-align:center; display:table-cell;">暂无记录</td></tr>';
                 } else {
                     sortedCosts.forEach((cost) => {
                         const originalIndex = costs.findIndex(c => c.id === cost.id);
                         const row = document.createElement('tr');
-                        // ▼▼▼ 3. 更新行内操作按钮，增加详情并用div包裹 ▼▼▼
                         row.innerHTML = `
                             <td data-label="项目">${cost.name}</td>
                             <td data-label="金额 (元)">${parseFloat(cost.amount).toFixed(2)}</td>
@@ -450,14 +466,12 @@
                 e.preventDefault();
                 
                 if (editIndex !== null) {
-                    // 更新现有记录
                     costs[editIndex].name = itemNameInput.value.trim();
                     costs[editIndex].amount = itemAmountInput.value;
                     costs[editIndex].date = itemDateInput.value;
                 } else {
-                    // 添加新记录，并给一个唯一ID
                     const newCost = {
-                        id: Date.now(), // 使用时间戳作为简单唯一ID
+                        id: Date.now(),
                         name: itemNameInput.value.trim(),
                         amount: itemAmountInput.value,
                         date: itemDateInput.value,
@@ -494,7 +508,6 @@
                     cancelEditBtn.style.display = 'block';
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 } 
-                // ▼▼▼ 3. 增加详情按钮的点击事件处理 ▼▼▼
                 else if (target.classList.contains('btn-view')) {
                     const costToShow = costs[index];
                     modalBodyContent.innerHTML = `
@@ -510,7 +523,6 @@
                 resetForm();
             });
 
-            // ▼▼▼ 3. 关闭模态框的事件监听 ▼▼▼
             modalCloseBtn.addEventListener('click', () => {
                 detailsModal.style.display = 'none';
             });
@@ -544,10 +556,9 @@
                 document.body.removeChild(link);
             });
 
-            // 为了让修改和删除更可靠，为现有数据添加ID（如果它们还没有）
             costs.forEach(cost => {
                 if (!cost.id) {
-                    cost.id = Date.now() + Math.random(); // 确保唯一性
+                    cost.id = Date.now() + Math.random();
                 }
             });
             saveCosts();
@@ -559,4 +570,3 @@
 
 </body>
 </html>
-
