@@ -60,16 +60,24 @@
             transform: translateY(-50%);
         }
         
+        /* ▼▼▼ 修改：调整 .btn 样式以支持图标对齐 ▼▼▼ */
         .btn {
             padding: 10px 15px; border: none; border-radius: 8px; font-size: 16px;
             font-weight: 600; cursor: pointer; transition: all 0.2s;
-            text-decoration: none; display: inline-block; text-align: center;
+            text-decoration: none; 
+            display: inline-flex; /* 改为 inline-flex */
+            align-items: center;   /* 垂直居中 */
+            justify-content: center; /* 水平居中 */
         }
+        .btn:active {
+            transform: scale(0.98); /* 新增点击效果 */
+        }
+        /* ▲▲▲ 修改完成 ▲▲▲ */
+
         .btn-sm { padding: 5px 10px; font-size: 12px; border-radius: 6px; }
         .btn-primary { background-color: var(--primary-color); color: white; width: 100%; margin-top: 20px; }
         .btn-primary:hover { background-color: #005a4f; }
-        .btn-secondary { background-color: #e2e8f0; color: #595959; }
-        .btn-secondary:hover { background-color: #e2e8f0; }
+        /* 原始的 .btn-secondary 样式将被下面的新样式覆盖 */
         .btn-info { background-color: var(--info-color); color: white; }
         .btn-danger { background-color: var(--danger-color); color: white; }
         .btn-warning { background-color: var(--warning-color); color: white; }
@@ -185,11 +193,25 @@
             flex-grow: 1;
         }
 
+        /* ▼▼▼ 修改：替换为新的 HOME 按钮样式 ▼▼▼ */
         .btn-secondary {
-            background-color: #e2e8f0;
-            color: #595959; font-weight: normal;
+            background-color: #f0f2f5; /* 浅灰色背景 */
+            color: #5f6368;           /* 中性灰色文字 */
+            border: 1px solid #dee2e6; /* 定义边框 */
+            gap: 8px;                  /* 图标与文字的间距 */
+            font-weight: 600;          /* 确保字体粗细与 .btn 一致 */
         }
-        .btn-secondary:hover { background-color: #cbd5e0; }
+        .btn-secondary:hover {
+            background-color: #e9ecef; /* 悬停时背景变深 */
+            border-color: #ced4da;     /* 边框也变深 */
+            color: #3c4043;           /* 文字颜色加深 */
+        }
+        .btn-secondary svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor; /* 使SVG图标颜色与按钮文字颜色保持一致 */
+        }
+        /* ▲▲▲ 修改完成 ▲▲▲ */
         
         @media (max-width: 768px) {
             body { padding: 10px; }
@@ -228,11 +250,17 @@
         <div class="header-nav">
             <h1>检查记录</h1>
             <div class="header-actions">
-                <a href="https://maggiec87.github.io/vision-kits/" class="btn btn-secondary">HOME</a>
+                <!-- ▼▼▼ 修改：更新 HOME 按钮，加入 SVG 图标 ▼▼▼ -->
+                <a href="https://maggiec87.github.io/vision-kits/" class="btn btn-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/></svg>
+                    HOME
+                </a>
+                <!-- ▲▲▲ 修改完成 ▲▲▲ -->
             </div>
         </div>
      
         <form id="exam-form">
+            <!-- ... 表单的其余部分保持不变 ... -->
             <!-- 基本信息 -->
             <fieldset>
                 <legend>基本信息</legend>
@@ -354,6 +382,7 @@
     <div id="details-modal" class="modal"><div class="modal-content"><div class="modal-header"><h3 id="modal-title">检查详情</h3><span class="close-btn">&times;</span></div><div id="modal-body"></div></div></div>
     
     <script>
+    // --- JavaScript部分保持不变 ---
     document.addEventListener('DOMContentLoaded', () => {
         // --- Element Selectors ---
         const form = document.getElementById('exam-form');
