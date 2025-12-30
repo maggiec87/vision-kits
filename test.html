@@ -403,15 +403,15 @@
                 appState.testState.status = 'paused';
                 
                 const { correct } = appState.testState;
-                let title = "基准测试完成";
-                let message = `<p>得分: <strong>${correct}/10</strong></p>`;
+                let title = "基准测试完成\n\n";
+                let message = `得分: ${correct}/10\n\n`;
                 
                 if (correct >= 8) {
-                    message += `<p class="eval-text text-green">✔ 视标合适</p><p>准确率达标，可进行雾视挑战</p>`;
+                    message += `✔ 视标合适\n\n准确率达标，可进行雾视挑战\n\n`;
                 } else if (correct <= 6) {
-                    message += `<p class="eval-text text-red">✘ 建议换大一级</p><p>准确率过低，请调整视标重测。</p>`;
+                    message += `✘ 建议换大一级\n\n准确率过低，请调整视标重测。\n\n`;
                 } else {
-                    message += `<p class="eval-text text-yellow">⚠ 建议重测</p><p>处于临界值，建议再测一次。</p>`;
+                    message += `⚠ 建议重测\n\n处于临界值，建议再测一次\n\n`;
                 }
                 showFinalResult(title, message);
             }
@@ -421,7 +421,7 @@
                 appState.testState.status = 'paused';
                 resultModal.style.display = 'flex';
                 appState.currentView = 'result-modal'; // 更新当前视图状态
-                
+
                 const { correct, total, type } = appState.testState;
                 const config = appState.testConfig;
                 const level = type === 'baseline' ? config?.level?.decimal : config?.minLevel?.decimal;
@@ -433,23 +433,18 @@
 
                 if (!customBody) {
                     const accuracy = total > 0 ? ((correct / total) * 100).toFixed(1) : 0;
-                    customBody = `<p>测试模式: ${type === 'baseline' ? '基准测定' : '雾视挑战'}</p><p>视标级别: ${level || '-'}</p><p>最终得分: <strong>${correct} / ${total}</strong></p><p>准确率: <strong>${accuracy}%</strong></p>`;
+                    customBody = `测试模式: ${type === 'baseline' ? '基准测定' : '雾视挑战'}\n\n视标级别: ${level || '-'}\n\n最终得分: ${correct} / ${total}\n\n准确率: ${accuracy}%\n\n`;
                 }
-                document.getElementById('modal-body').innerHTML = customBody;
 
-                document.getElementById('modal-btn-continue').style.display = 'none';
-                
-                const btnEnd = document.getElementById('modal-btn-end');
-btnEnd.textContent = '查看历史';
-                btnEnd.className = 'btn bg-blue';
-                btnEnd.onclick = () => endTestAndSave();
-
-                document.getElementById('modal-btn-exit').onclick = () => {
-                    saveTestRecord();
-                    window.location.href = "better_vision.html"; 
-                };
-		
-                setTimeout(() => { focusElementInCurrentView(0); }, 300); // 增加延迟
+				if (confirm(customBody))
+				{
+					endTestAndSave();
+				}
+				else
+				{
+					saveTestRecord();
+					window.location.href = "better_vision.html"; 
+				}
             }
 
             function showMenu(title = "已暂停", customBody = null) {
@@ -467,30 +462,21 @@ btnEnd.textContent = '查看历史';
                 if (customBody) {
                     document.getElementById('modal-body').innerHTML = customBody;
                 } else {
-                    document.getElementById('modal-body').innerHTML = `<p>当前模式: ${type === 'baseline' ? '基准测试' : '雾视挑战'}</p><p>当前视标: ${level || '-'}</p><p>当前得分: <strong>${correct} / ${total}</strong></p>`;
+					customBody = `已暂停\n\n\n\n当前模式: ${type === 'baseline' ? '基准测试' : '雾视挑战'}\n\n当前视标: ${level || '-'}\n\n当前得分: ${correct} / ${total}\n\n`;
+                    document.getElementById('modal-body').innerHTML = customBody;
                 }
-                
-                const btnEnd = document.getElementById('modal-btn-end');
-                btnEnd.textContent = '结束';
-                btnEnd.className = 'btn bg-red';
-                btnEnd.onclick = () => {
-                    saveTestRecord();
-                    window.location.href = 'history.html';
-                };
-
-                const btnContinue = document.getElementById('modal-btn-continue');
-                btnContinue.style.display = 'inline-block';
-                btnContinue.onclick = resumeTest;
-
-                document.getElementById('modal-btn-exit').onclick = () => {
-                    window.location.href = "better_vision.html"; 
-                };
-		
-                // 暂停菜单时，统一使用 focusElementInCurrentView(0) 来聚焦第一个可见按钮
-                // 增加延迟，确保电视端元素渲染并可聚焦
-                setTimeout(() => { 
-                    focusElementInCurrentView(0); 
-                }, 300); // 将延迟从 200ms 增加到 300ms
+				
+				if (customBody) {
+					if (confirm(customBody))
+					{
+						resumeTest();
+					}
+					else
+					{
+						saveTestRecord();
+						window.location.href = "better_vision.html"; 
+					}
+				}
             }
 
             function saveTestRecord() {
