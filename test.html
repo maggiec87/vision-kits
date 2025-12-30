@@ -434,7 +434,6 @@
                     const accuracy = total > 0 ? ((correct / total) * 100).toFixed(1) : 0;
                     customBody = `测试模式: ${type === 'baseline' ? '基准测定' : '雾视挑战'}\n\n视标级别: ${level || '-'}\n\n最终得分: ${correct} / ${total}\n\n准确率: ${accuracy}%\n\n`;
                 }
-				alert(title)
 				saveTestRecord();
 				window.location.href = "better_vision.html"; 
             }
@@ -458,15 +457,8 @@
                 }
 				
 				if (customBody) {
-					if (confirm(customBody))
-					{
-						resumeTest();
-					}
-					else
-					{
-						saveTestRecord();
-						window.location.href = "better_vision.html"; 
-					}
+					saveTestRecord();
+					window.location.href = "better_vision.html"; 
 				}
             }
 
@@ -678,6 +670,7 @@
     
 </body>
 </html>
+
 
 
 
