@@ -420,7 +420,6 @@
                 clearInterval(appState.timerInterval);
                 appState.testState.status = 'paused';
                 resultModal.style.display = 'flex';
-                appState.currentView = 'result-modal'; // 更新当前视图状态
 
                 const { correct, total, type } = appState.testState;
                 const config = appState.testConfig;
@@ -452,7 +451,6 @@
                 if (appState.testState.status === 'running') appState.testState.status = 'paused';
 
                 resultModal.style.display = 'flex';
-                appState.currentView = 'result-modal'; // 更新当前视图状态
                 document.getElementById('modal-title').textContent = title;
                 
                 const { correct, total, type } = appState.testState;
@@ -651,41 +649,6 @@
                     return;
                 }
 
-                // 优先级 2: 暂停/结果菜单已打开
-                if (appState.currentView === 'result-modal') {
-                    const focusableElements = getFocusableModalElements();
-                    let currentIndex = focusableElements.indexOf(document.activeElement);
-
-                    if (isConfirmKey && document.activeElement && document.activeElement.closest('#result-modal')) {
-                        document.activeElement.click();
-                        return;
-                    }
-                    if (isBackKey) {
-                        const continueBtn = document.getElementById('modal-btn-continue');
-                        if (continueBtn.style.display !== 'none') {
-                            continueBtn.click();
-                        } else {
-                            const exitBtn = document.getElementById('modal-btn-exit');
-                            const endBtn = document.getElementById('modal-btn-end');
-                            if (exitBtn) exitBtn.click();
-                            else if (endBtn) endBtn.click(); 
-                        }
-                        return;
-                    }
-                    if (['ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'].includes(key)) {
-                        let newIndex = currentIndex;
-                        // 模态框按钮通常是水平排列的，所以左右键切换，上下键也按左右处理
-                        if (key === 'ArrowUp' || key === 'ArrowLeft') {
-                            newIndex = (currentIndex - 1 + focusableElements.length) % focusableElements.length;
-                        } else { // ArrowDown or ArrowRight
-                            newIndex = (currentIndex + 1) % focusableElements.length;
-                        }
-                        focusElementInCurrentView(newIndex);
-                        return;
-                    }
-                    return;
-                }
-
                 // 优先级 3: 正常测试中 (appState.currentView === 'page-test')
                 if (isConfirmKey) {
                     showMenu(); // 按确认键暂停
@@ -722,5 +685,6 @@
     
 </body>
 </html>
+
 
 
