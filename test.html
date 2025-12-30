@@ -601,16 +601,6 @@
                 const isBackKey = ['Backspace', 'Escape', 'Back'].includes(key) || keyCode === 8 || keyCode === 27;
 
                 if (event) event.preventDefault(); // 阻止默认滚动等行为
-if (confirm("你确定要删除这个文件11111吗？")) {
-    // 如果用户点击了“确定”
-    console.log("文件将被删除");
-    // 这里可以添加删除文件的代码
-} else {
-    // 如果用户点击了“取消”
-    console.log("取消删除");
-    // 这里可以添加取消操作的代码
-}   
-				
 
                 // 优先级 1: 预测试配置界面
                 if (appState.currentView === 'pre-test-config') {
@@ -732,4 +722,5 @@ if (confirm("你确定要删除这个文件11111吗？")) {
     
 </body>
 </html>
+
 
