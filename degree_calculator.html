@@ -56,7 +56,7 @@
             font-size: 14px;
         }
         .form-group { margin-bottom: 20px; }
-        .radio-group label { display: inline-block; margin-right: 20px; font-weight: normal; }
+        .radio-group label { display: inline-block; margin-right: 20px; font-weight: normal; cursor: pointer; }
         label { display: block; font-weight: 600; margin-bottom: 8px; color: #3c4043; }
         input[type="number"] {
             width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px;
@@ -72,14 +72,14 @@
             padding: 10px 15px;
             border: none; border-radius: 6px; font-size: 16px;
             font-weight: bold; cursor: pointer; transition: all 0.2s;
-            text-decoration: none; display: inline-flex; /* 改为 inline-flex 以便对齐图标 */
+            text-decoration: none; display: inline-flex;
             align-items: center;
             justify-content: center;
             box-sizing: border-box;
         }
         button[type="submit"] { width: 100%; background-color: #1a73e8; color: #fff; margin-top: 10px; }
         button[type="submit"]:hover { background-color: #185abc; }
-        button:active, .btn:active { transform: scale(0.98); } /* 统一 active 效果 */
+        button:active, .btn:active { transform: scale(0.98); }
 
         .result-container {
             margin-top: 30px; padding: 20px; background-color: #f0f5ff;
@@ -100,33 +100,34 @@
         .disclaimer {
             margin-top: 30px; padding: 15px; background-color: #fff1f0;
             border: 1px solid #ffccc7; border-radius: 8px; font-size: 13px;
-            color: #cf1322; text-align: center;
+            color: #cf1322; text-align: center; line-height: 1.5;
         }
         
-        /* ▼▼▼ 新增和优化的样式 ▼▼▼ */
         .btn-secondary {
-            background-color: #f0f2f5; /* 浅灰色背景，与页面背景协调 */
-            color: #5f6368; /* 中性灰色文字 */
-            border: 1px solid #dee2e6; /* 定义清晰的边框 */
-            gap: 8px; /* 图标与文字的间距 */
+            background-color: #f0f2f5;
+            color: #5f6368;
+            border: 1px solid #dee2e6;
+            gap: 8px;
         }
         .btn-secondary:hover {
-            background-color: #e9ecef; /* 悬停时背景变深 */
-            border-color: #ced4da; /* 边框也变深 */
-            color: #3c4043; /* 文字颜色加深 */
+            background-color: #e9ecef;
+            border-color: #ced4da;
+            color: #3c4043;
         }
         .btn-secondary svg {
             width: 18px;
             height: 18px;
-            fill: currentColor; /* 使SVG图标颜色与按钮文字颜色保持一致 */
+            fill: currentColor;
         }
-        /* ▲▲▲ 新增和优化的样式 ▲▲▲ */
         
         @media (max-width: 768px) {
+            .container { padding: 20px; }
             .header-nav { flex-direction: column; align-items: stretch; }
-            .header-nav h1 { text-align: left; margin-bottom: 10px; }
+            .header-nav h1 { text-align: center; margin-bottom: 15px; }
             .header-actions { justify-content: stretch; }
             .header-actions .btn { flex-grow: 1; }
+            .results-wrapper { flex-direction: column; gap: 10px; }
+            .ad-inputs { flex-direction: column; gap: 0; }
         }
     </style>
 </head>
@@ -136,12 +137,10 @@
         <div class="header-nav">
             <h1>屈光度数测算</h1>
             <div class="header-actions">
-                <!-- ▼▼▼ 修改：更新了HOME按钮的内部结构，加入了SVG图标 ▼▼▼ -->
                 <a href="https://maggiec87.github.io/vision-kits/" class="btn btn-secondary">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/></svg>
                     HOME
                 </a>
-                <!-- ▲▲▲ 修改完成 ▲▲▲ -->
             </div>
         </div>
         <p class="description">使用盼兮老师公式</p>
@@ -154,7 +153,8 @@
                 <label>前房深度(AD) mm</label>
                 <div class="radio-group">
                     <label><input type="radio" name="ad_option" value="direct" checked> 直接输入 AD</label>
-                    <label><input type="radio" name="ad_option" value="calculate"> 计算公式 AD=ACD-CCT</label>
+                    <!-- ▼▼▼ 修改点 2: 更新了这里的文本 ▼▼▼ -->
+                    <label><input type="radio" name="ad_option" value="calculate"> 计算公式 AD=ACD-CCT/1000</label>
                 </div>
             </div>
             <div id="ad_direct_container" class="form-group">
@@ -163,7 +163,8 @@
             <div id="ad_calculated_container" style="display: none;">
                 <div class="ad-inputs">
                     <div class="form-group"><label for="acd">前房深度(ACD)</label><input type="number" id="acd" step="0.01" placeholder="例如: 3.75"></div>
-                    <div class="form-group"><label for="cct">角膜厚度(CCT)</label><input type="number" id="cct" step="0.001" placeholder="例如: 0.550"></div>
+                    <!-- ▼▼▼ 修改点 4: 优化了 placeholder 提示 ▼▼▼ -->
+                    <div class="form-group"><label for="cct">角膜厚度(CCT)</label><input type="number" id="cct" step="0.001" placeholder="例如: 550 (单位μm)"></div>
                 </div>
             </div>
             <button type="submit">计算</button>
@@ -177,7 +178,8 @@
             <p class="result-note"><strong>！免责声明：</strong>此结果仅供参考。</p>
         </div>
 
-        <div class="disclaimer"><strong>重要提示：</strong> 盼兮老师公式(23.5或调试24-AL)*250+(43-K1)*100-(3.1-AD)*150+(3.6-LT)*150 计算仅为理论估值，+为远储 -为近视度数。仅供参考，不可作配镜参数。</div>
+        <!-- ▼▼▼ 修改点 3: 更新了提示信息 ▼▼▼ -->
+        <div class="disclaimer"><strong>重要提示：</strong> 盼兮老师公式(23.5或调试24-AL)*250+(43-K1)*100-(3.1-AD)*150+(3.6-LT)*150 计算仅为理论估值，+为远储 -为近视度数。当选择计算AD时，公式为 AD=ACD-CCT/1000。仅供参考，不可作配镜参数。</div>
     </div>
 
     <script>
@@ -237,7 +239,8 @@
                     const acd = parseFloat(document.getElementById('acd').value);
                     const cct = parseFloat(document.getElementById('cct').value);
                     if (isNaN(acd) || isNaN(cct)) { return alert('请输入有效的ACD和CCT值！'); }
-                    ad = acd - cct;
+                    // ▼▼▼ 修改点 1: 更新了这里的计算公式 ▼▼▼
+                    ad = acd - (cct / 1000);
                 }
                 if (isNaN(al) || isNaN(k1) || isNaN(lt) || isNaN(ad)) { return alert('请输入所有必填项的有效数字！'); }
                 const commonPart = (43 - k1) * 100 - (3.1 - ad) * 150 + (3.6 - lt) * 150;
@@ -249,6 +252,7 @@
                 formatAndDisplayResult(result2Element, degree2);
                 
                 resultContainer.style.display = 'block';
+                resultContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
         });
     </script>
