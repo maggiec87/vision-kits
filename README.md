@@ -1,10 +1,8 @@
 # vision-kits — 近视防控工具箱
 
-> 个人作品展示 · 近视防控与视力管理的静态前端工具箱
+> 近视防控与视力管理的静态前端工具箱
 
-作者：maggiec87
-
-在线演示：https://maggiec87.github.io/vision-kits/
+在线使用：https://maggiec87.github.io/vision-kits/
 
 ---
 
@@ -49,11 +47,6 @@
 
 - 本仓库以个人作品展示为主，不是一个对外提供服务的产品
 - 如需在他人项目中使用或二次开发，请与我联系
-
-联系方式
-
-- 仓库： https://github.com/maggiec87/vision-kits
-- 反馈（页面内提示）：WX-Ping20251987
 
 免责声明
 
